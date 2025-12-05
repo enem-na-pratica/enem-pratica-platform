@@ -1,4 +1,4 @@
-import { UserDTO } from "./user.dto";
+import { UserDTO } from "@/src/core/application/dtos/user";
 
 export type LoginOutputDTO = {
   accessToken: string;

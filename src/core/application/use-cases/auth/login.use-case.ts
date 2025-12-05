@@ -1,17 +1,15 @@
 import { UserRepository } from "@/src/core/domain/user/user.repository.interface";
-import { Login } from "@/src/core/application/interfaces/user/login-use-case.interface";
+import { Login } from "@/src/core/application/interfaces/auth/login-use-case.interface";
+import { UserDTO } from "@/src/core/application/dtos/user";
 import {
   LoginInputDTO,
   LoginOutputDTO,
-  UserDTO
-} from "@/src/core/application/dtos/user";
+} from "@/src/core/application/dtos/auth";
 
 export class LoginUseCase implements Login {
   constructor(private userRepository: UserRepository) { }
 
   async execute(credentials: LoginInputDTO): Promise<LoginOutputDTO> {
-    // TODO: Implementar validação de dados
-
     const user = await this.userRepository.findByUsername(credentials.username);
 
     // TODO: Implementar erro personalizado
