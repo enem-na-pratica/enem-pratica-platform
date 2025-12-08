@@ -24,9 +24,7 @@ export class LoginController implements Controller {
 
       return {
         statusCode: 200,
-        body: {
-          data: result,
-        },
+        body: result,
       };
     } catch (err: unknown) {
       const error = err as Error;
