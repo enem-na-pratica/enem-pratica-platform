@@ -1,3 +1,4 @@
+import { LoginInputDTO, LoginOutputDTO } from '@/src/core/application/dtos/auth';
 import { Login } from '@/src/core/application/interfaces/auth/login-use-case.interface';
 import {
   Controller,
@@ -8,7 +9,9 @@ import {
 export class LoginController implements Controller {
   constructor(private loginUseCase: Login) { }
 
-  async handle(request: HttpRequest): Promise<HttpResponse> {
+  async handle(
+    request: HttpRequest<LoginInputDTO>
+  ): Promise<HttpResponse> {
     try {
       const { username, password } = request.body;
 
@@ -25,7 +28,7 @@ export class LoginController implements Controller {
       return {
         statusCode: 200,
         body: result,
-      };
+      } as HttpResponse<LoginOutputDTO>;
     } catch (err: unknown) {
       const error = err as Error;
       return {

@@ -3,10 +3,10 @@ import { NextResponse, NextRequest } from "next/server";
 
 
 export async function POST(request: NextRequest) {
-  let body;
+  let credentials;
 
   try {
-    body = await request.json();
+    credentials = await request.json();
   } catch {
     return NextResponse.json(
       { error: "Body inválido ou vazio." },
@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const loginController = await makeLoginController().handle({ body });
+  const loginController = await makeLoginController().handle({body: credentials});
 
   const response = NextResponse.json(
     loginController.body.user,

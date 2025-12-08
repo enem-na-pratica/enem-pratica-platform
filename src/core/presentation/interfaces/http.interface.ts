@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export interface HttpRequest {
-  body: any;
+export interface HttpRequest<T = any> {
+  body: T;
 }
 
-export interface HttpResponse {
+export interface HttpResponse<T = any> {
   statusCode: number;
-  body: any;
+  body: T;
   cookies?: Array<{
     name: string;
     value: string;
