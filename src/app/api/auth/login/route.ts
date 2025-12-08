@@ -6,15 +6,17 @@ export async function POST(request: NextRequest) {
   let credentials;
 
   try {
-    credentials = await request.json();
+    if (request.headers.get("content-type")?.includes("application/json")) {
+      credentials = await request.json();
+    }
   } catch {
     return NextResponse.json(
-      { error: "Body inválido ou vazio." },
+      { error: "Invalid or malformed JSON request body." },
       { status: 400 }
     );
   }
 
-  const loginController = await makeLoginController().handle({body: credentials});
+  const loginController = await makeLoginController().handle({ body: credentials });
 
   const response = NextResponse.json(
     loginController.body.user,
