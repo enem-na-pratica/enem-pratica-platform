@@ -18,6 +18,13 @@ export async function POST(request: NextRequest) {
 
   const loginController = await makeLoginController().handle({ body: credentials });
 
+  if (loginController.statusCode !== 200) {
+    return NextResponse.json(
+      loginController.body,
+      { status: loginController.statusCode }
+    );
+  }
+
   const response = NextResponse.json(
     loginController.body.user,
     { status: loginController.statusCode }
