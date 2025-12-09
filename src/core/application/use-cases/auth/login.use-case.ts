@@ -5,7 +5,7 @@ import {
   LoginInputDTO,
   LoginOutputDTO,
 } from "@/src/core/application/dtos/auth";
-import { UserNotFoundError } from "@/src/core/domain/errors";
+import { UserNotFoundError, IncorrectPasswordError } from "@/src/core/domain/errors";
 import { HashComparer } from "@/src/core/domain/secure";
 
 export type LoginUseCaseDep = {
@@ -31,10 +31,7 @@ export class LoginUseCase implements Login {
       credentials.password,
       user.passwordHash
     );
-    if (!passwordMatch) {
-      // TODO: Implementar erro personalizado
-      throw new Error("Invalid password");
-    }
+    if (!passwordMatch) throw new IncorrectPasswordError()
 
     // TODO: Implementar geração de token JWT
     const fakeJwtToken = `fake_token_${user.id}_${Date.now()}`;
