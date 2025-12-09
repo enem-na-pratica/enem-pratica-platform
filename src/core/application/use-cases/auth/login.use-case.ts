@@ -5,6 +5,7 @@ import {
   LoginInputDTO,
   LoginOutputDTO,
 } from "@/src/core/application/dtos/auth";
+import { UserNotFoundError } from "@/src/core/domain/errors";
 
 export class LoginUseCase implements Login {
   constructor(private userRepository: UserRepository) { }
@@ -12,8 +13,7 @@ export class LoginUseCase implements Login {
   async execute(credentials: LoginInputDTO): Promise<LoginOutputDTO> {
     const user = await this.userRepository.findByUsername(credentials.username);
 
-    // TODO: Implementar erro personalizado
-    if (!user) throw new Error("User not found");
+    if (!user) throw new UserNotFoundError('username', credentials.username);
 
     // TODO: Implementar verificação de senha com hash
     if (user.passwordHash !== credentials.password) {

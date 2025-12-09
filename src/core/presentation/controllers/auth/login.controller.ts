@@ -1,6 +1,7 @@
 import { LoginInputDTO } from '@/src/core/application/dtos/auth';
 import { UserDTO } from "@/src/core/application/dtos/user";
 import { Login } from '@/src/core/application/interfaces/auth/login-use-case.interface';
+import { NotFoundError } from '@/src/core/domain/errors';
 import { ValidationError } from '@/src/core/domain/errors/validation.error';
 import { Validation } from '@/src/core/domain/validation/validator.interface';
 import {
@@ -56,6 +57,13 @@ export class LoginController implements Controller {
         return {
           statusCode: 400,
           body: err.details,
+        };
+      }
+
+      if (err instanceof NotFoundError) {
+        return {
+          statusCode: 404,
+          body: err.message,
         };
       }
 
