@@ -6,7 +6,8 @@ const MOCK_DB: User[] = [
   User.create({
     name: "Carlos Andrade",
     username: "carlos.andrade",
-    passwordHash: "hash_aleatorio_123456789",
+    passwordHash: "$2b$12$8QHdhZ8bP4tLH.ZjaOKNpuCQUt5plrgKfbCUKEGX1Gc2hDmSGewkC",
+    // 0123456789
     role: ROLES.TEACHER,
   }),
 ];

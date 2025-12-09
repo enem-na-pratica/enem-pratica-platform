@@ -4,10 +4,13 @@ import { LoginUseCase } from '@/src/core/application/use-cases/auth/login.use-ca
 import { UserRepositoryLocal } from '@/src/core/infrastructure/repositories/local/user.repository';
 import { ZodValidation } from '@/src/core/infrastructure/validation/zod/zod-validation';
 import { loginSchema } from '@/src/core/infrastructure/validation/zod/schemas/login.schema';
+import { BcryptAdapter } from '@/src/core/infrastructure/criptography/bcrypt.adapter';
 
 export function makeLoginController(): Controller {
-  const userRepository = new UserRepositoryLocal()
-  const loginUseCase = new LoginUseCase(userRepository)
-  const loginValidator = new ZodValidation(loginSchema)
-  return new LoginController({ loginUseCase, loginValidator })
+  const salt = 12;
+  const userRepository = new UserRepositoryLocal();
+  const hashComparer = new BcryptAdapter(salt);
+  const loginUseCase = new LoginUseCase({ hashComparer, userRepository });
+  const loginValidator = new ZodValidation(loginSchema);
+  return new LoginController({ loginUseCase, loginValidator });
 }

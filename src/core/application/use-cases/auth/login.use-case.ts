@@ -6,17 +6,33 @@ import {
   LoginOutputDTO,
 } from "@/src/core/application/dtos/auth";
 import { UserNotFoundError } from "@/src/core/domain/errors";
+import { HashComparer } from "@/src/core/domain/secure";
+
+export type LoginUseCaseDep = {
+  userRepository: UserRepository;
+  hashComparer: HashComparer;
+}
 
 export class LoginUseCase implements Login {
-  constructor(private userRepository: UserRepository) { }
+  private readonly userRepository: UserRepository;
+  private readonly hashComparer: HashComparer;
+
+  constructor(deps: LoginUseCaseDep) {
+    this.userRepository = deps.userRepository;
+    this.hashComparer = deps.hashComparer;
+  }
 
   async execute(credentials: LoginInputDTO): Promise<LoginOutputDTO> {
     const user = await this.userRepository.findByUsername(credentials.username);
 
     if (!user) throw new UserNotFoundError('username', credentials.username);
 
-    // TODO: Implementar verificação de senha com hash
-    if (user.passwordHash !== credentials.password) {
+    const passwordMatch = await this.hashComparer.compare(
+      credentials.password,
+      user.passwordHash
+    );
+    if (!passwordMatch) {
+      // TODO: Implementar erro personalizado
       throw new Error("Invalid password");
     }
 
