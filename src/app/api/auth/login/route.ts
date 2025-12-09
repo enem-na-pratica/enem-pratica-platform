@@ -1,4 +1,5 @@
 import { makeLoginController } from "@/src/core/main/factories/auth/login.factory";
+import { CookieData } from "@/src/core/presentation/interfaces";
 import { NextResponse, NextRequest } from "next/server";
 
 
@@ -26,21 +27,19 @@ export async function POST(request: NextRequest) {
   }
 
   const response = NextResponse.json(
-    loginController.body.user,
+    loginController.body,
     { status: loginController.statusCode }
   );
 
-  response.cookies.set(
-    "auth_token",
-    loginController.body.accessToken,
-    {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 60 * 60 * 24 * 7,
-      path: "/",
-      sameSite: "strict",
-    }
-  );
+  if (loginController.cookies) {
+    loginController.cookies.forEach((cookie: CookieData) => {
+      response.cookies.set(
+        cookie.name,
+        cookie.value,
+        cookie.options
+      );
+    });
+  }
 
   return response;
 }

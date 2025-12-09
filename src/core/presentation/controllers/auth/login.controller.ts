@@ -1,12 +1,22 @@
-import { LoginInputDTO, LoginOutputDTO } from '@/src/core/application/dtos/auth';
+import { LoginInputDTO } from '@/src/core/application/dtos/auth';
+import { UserDTO } from "@/src/core/application/dtos/user";
 import { Login } from '@/src/core/application/interfaces/auth/login-use-case.interface';
 import { ValidationError } from '@/src/core/domain/errors/validation.error';
 import { Validation } from '@/src/core/domain/validation/validator.interface';
 import {
   Controller,
   HttpRequest,
-  HttpResponse
+  HttpResponse,
+  CookieOptions
 } from '@/src/core/presentation/interfaces';
+
+const COOKIE_OPTIONS: CookieOptions = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  maxAge: 60 * 60 * 24 * 7, // 7 dias
+  path: "/",
+  sameSite: "strict",
+};
 
 export type LoginDep = {
   loginUseCase: Login;
@@ -34,8 +44,13 @@ export class LoginController implements Controller {
 
       return {
         statusCode: 200,
-        body: result,
-      } as HttpResponse<LoginOutputDTO>;
+        body: result.user,
+        cookies: [{
+          name: "auth_token",
+          value: result.accessToken,
+          options: COOKIE_OPTIONS,
+        }]
+      } as HttpResponse<UserDTO>;
     } catch (err: unknown) {
       if (err instanceof ValidationError) {
         return {
