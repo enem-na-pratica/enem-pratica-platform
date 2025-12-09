@@ -5,12 +5,18 @@ import { UserRepositoryLocal } from '@/src/core/infrastructure/repositories/loca
 import { ZodValidation } from '@/src/core/infrastructure/validation/zod/zod-validation';
 import { loginSchema } from '@/src/core/infrastructure/validation/zod/schemas/login.schema';
 import { BcryptAdapter } from '@/src/core/infrastructure/criptography/bcrypt.adapter';
+import { JwtTokenAdapter } from '@/src/core/infrastructure/criptography/jwt.adapter';
 
 export function makeLoginController(): Controller {
-  const salt = 12;
+  const SALT = 12;
   const userRepository = new UserRepositoryLocal();
-  const hashComparer = new BcryptAdapter(salt);
-  const loginUseCase = new LoginUseCase({ hashComparer, userRepository });
+  const bcryptAdapter = new BcryptAdapter(SALT);
+  const jwtTokenAdapter = new JwtTokenAdapter("NODE_ENV", "7D");
+  const loginUseCase = new LoginUseCase({
+    hashComparer: bcryptAdapter,
+    userRepository,
+    tokenGenerator: jwtTokenAdapter,
+  });
   const loginValidator = new ZodValidation(loginSchema);
   return new LoginController({ loginUseCase, loginValidator });
 }
