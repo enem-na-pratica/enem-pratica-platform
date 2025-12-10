@@ -1,17 +1,20 @@
 import { Controller } from '@/src/core/presentation/interfaces';
 import { LoginController } from '@/src/core/presentation/controllers/auth/login.controller';
 import { LoginUseCase } from '@/src/core/application/use-cases/auth/login.use-case';
-import { UserRepositoryLocal } from '@/src/core/infrastructure/repositories/local/user.repository';
 import { ZodValidation } from '@/src/core/infrastructure/validation/zod/zod-validation';
 import { loginSchema } from '@/src/core/infrastructure/validation/zod/schemas/login.schema';
 import { BcryptAdapter } from '@/src/core/infrastructure/criptography/bcrypt.adapter';
 import { JwtTokenAdapter } from '@/src/core/infrastructure/criptography/jwt.adapter';
+import { UserPrismaRepository } from '@/src/core/infrastructure/repositories/prisma/user-prisma.repository';
+import { prisma } from '@/src/core/infrastructure/databases/prisma/prisma';
 
 export function makeLoginController(): Controller {
   const SALT = 12;
-  const userRepository = new UserRepositoryLocal();
+  const SECRET = process.env.JWT_SECRET || "NODE_ENV";
+
+  const userRepository = new UserPrismaRepository(prisma);
   const bcryptAdapter = new BcryptAdapter(SALT);
-  const jwtTokenAdapter = new JwtTokenAdapter("NODE_ENV", "7D");
+  const jwtTokenAdapter = new JwtTokenAdapter(SECRET, "7D");
   const loginUseCase = new LoginUseCase({
     hashComparer: bcryptAdapter,
     userRepository,
