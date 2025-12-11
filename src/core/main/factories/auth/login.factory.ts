@@ -7,12 +7,17 @@ import { BcryptAdapter } from '@/src/core/infrastructure/criptography/bcrypt.ada
 import { JwtTokenAdapter } from '@/src/core/infrastructure/criptography/jwt.adapter';
 import { UserPrismaRepository } from '@/src/core/infrastructure/repositories/prisma/user-prisma.repository';
 import { prisma } from '@/src/core/infrastructure/databases/prisma/prisma';
+import { UserPrismaMapper } from '@/src/core/infrastructure/mapper/user-prisma.mapper';
 
 export function makeLoginController(): Controller {
   const SALT = 12;
   const SECRET = process.env.JWT_SECRET || "NODE_ENV";
 
-  const userRepository = new UserPrismaRepository(prisma);
+  const userPrismaMapper = new UserPrismaMapper();
+  const userRepository = new UserPrismaRepository({
+    prisma,
+    mapper: userPrismaMapper
+  });
   const bcryptAdapter = new BcryptAdapter(SALT);
   const jwtTokenAdapter = new JwtTokenAdapter(SECRET, "7D");
   const loginUseCase = new LoginUseCase({
