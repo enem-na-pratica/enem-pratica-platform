@@ -8,6 +8,8 @@ import {
 import { UserNotFoundError, IncorrectPasswordError } from "@/src/core/domain/errors";
 import { HashComparer } from "@/src/core/domain/secure";
 import { TokenGenerator } from "@/src/core/domain/auth";
+import { ToDtoMapper } from "@/src/core/domain/mapper"
+import { User } from "@/src/core/domain/user/user.entity";
 
 export type AuthPayload = {
   id: string;
@@ -20,17 +22,20 @@ export type LoginUseCaseDep = {
   userRepository: UserRepository;
   hashComparer: HashComparer;
   tokenGenerator: TokenGenerator<AuthPayload>;
+  mapper: ToDtoMapper<User, UserDTO>
 }
 
 export class LoginUseCase implements Login {
   private readonly userRepository: UserRepository;
   private readonly hashComparer: HashComparer;
   private readonly tokenGenerator: TokenGenerator<AuthPayload>;
+  private readonly mapper: ToDtoMapper<User, UserDTO>;
 
   constructor(deps: LoginUseCaseDep) {
     this.userRepository = deps.userRepository;
     this.hashComparer = deps.hashComparer;
     this.tokenGenerator = deps.tokenGenerator;
+    this.mapper = deps.mapper;
   }
 
   async execute(credentials: LoginInputDTO): Promise<LoginOutputDTO> {
@@ -50,15 +55,7 @@ export class LoginUseCase implements Login {
       username: user.username,
     });
 
-    // TODO: Implementar UserDTO mapping
-    const userDTO: UserDTO = {
-      id: user.id!,
-      name: user.name,
-      username: user.username,
-      role: user.role,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt
-    };
+    const userDTO = this.mapper.toDto(user);
 
     return {
       accessToken,
