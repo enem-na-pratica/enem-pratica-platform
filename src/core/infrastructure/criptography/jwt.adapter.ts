@@ -1,9 +1,15 @@
-import { sign, verify } from "jsonwebtoken";
-import { TokenGenerator, TokenValidator } from "@/src/core/domain/auth";
+import {
+  sign,
+  verify,
+  JsonWebTokenError as JwtLibError,
+  TokenExpiredError as JwtLibExpiredError,
+} from "jsonwebtoken";
+import { TokenGenerator, TokenVerifier } from "@/src/core/domain/auth";
 import { StringValue } from "ms";
+import { TokenExpiredError, InvalidTokenError } from "@/src/core/domain/errors";
 
 export class JwtTokenAdapter<T extends object>
-  implements TokenGenerator<T>, TokenValidator<T> {
+  implements TokenGenerator<T>, TokenVerifier<T> {
 
   constructor(
     private readonly secret: string,
@@ -18,12 +24,21 @@ export class JwtTokenAdapter<T extends object>
     );
   }
 
-  validate(token: string): T {
+  verify(token: string): T {
     try {
       return verify(token, this.secret) as T;
-    } catch {
-      // TODO: Implementar erro personalizado
-      throw new Error("InvalidTokenError");
+    } catch (err: unknown) {
+      const error = err as Error;
+
+      if (error instanceof JwtLibExpiredError) {
+        throw new TokenExpiredError();
+      }
+
+      if (error instanceof JwtLibError) {
+        throw new InvalidTokenError(error.message);
+      }
+
+      throw error;
     }
   }
 }

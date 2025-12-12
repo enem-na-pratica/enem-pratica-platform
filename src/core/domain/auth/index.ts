@@ -1,2 +1,2 @@
 export * from "./token-generator.interface";
-export * from "./token-validator.interface";
+export * from "./token-verifier.interface";

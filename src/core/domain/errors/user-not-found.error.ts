@@ -1,4 +1,4 @@
-import { NotFoundError } from '@/src/core/domain/errors/not-found.error';
+import { NotFoundError } from "./not-found.error";
 
 export class UserNotFoundError extends NotFoundError {
   constructor(
