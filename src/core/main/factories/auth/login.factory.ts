@@ -12,7 +12,7 @@ import { UserDtoMapper } from '@/src/core/application/mapper/user-dto.mapper';
 
 export function makeLoginController(): Controller {
   const SALT = 12;
-  const SECRET = process.env.JWT_SECRET || "NODE_ENV";
+  const SECRET = process.env.JWT_SECRET || "fallback_secret";
 
   const userPrismaMapper = new UserPrismaMapper();
   const userRepository = new UserPrismaRepository({
