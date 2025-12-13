@@ -3,6 +3,10 @@ import { authenticate, authorizeByRole } from "@/src/proxy-utils";
 
 const PUBLIC_API_ROUTES = ["/api/auth/login"];
 const PUBLIC_PAGES_ROUTES = ["/login"];
+const UNAUTHENTICATED_ONLY_PAGES = [
+  "/login",
+  // "/register", "/forgot-password", etc.
+];
 
 export const config = {
   matcher: [
@@ -10,8 +14,25 @@ export const config = {
   ],
 };
 
+/*
+ * TODO: Refactor this proxy.
+ * Reason: new functionalities were added and the code is becoming large
+ * and hard to maintain. Separating responsibilities.
+ */
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const url = request.nextUrl.clone();
+
+  const authResult = authenticate(request);
+  const isAuthenticated = !('response' in authResult);
+
+  if (
+    isAuthenticated &&
+    UNAUTHENTICATED_ONLY_PAGES.includes(pathname)
+  ) {
+    url.pathname = '/';
+    return NextResponse.redirect(url);
+  }
 
   const isPublicPath =
     PUBLIC_PAGES_ROUTES.includes(pathname) ||
@@ -21,8 +42,7 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const authResult = authenticate(request);
-  if ('response' in authResult) {
+  if (!isAuthenticated) {
     return authResult.response;
   }
 
