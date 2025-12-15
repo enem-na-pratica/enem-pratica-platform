@@ -1,12 +1,6 @@
 import { NextResponse } from "next/server";
 import { Role, hasAtLeastRole, ROLES } from "@/src/core/domain/auth/roles";
-
-// It repeats, center it.
-interface TokenPayload {
-  id: string;
-  username: string;
-  role: Role;
-}
+import { TokenPayload } from "@/src/core/domain/shared/interfaces";
 
 const ROLE_PROTECTED_ROUTES: { path: string; minRole: Role }[] = [
   { path: "/api/admin/users", minRole: ROLES.ADMIN },

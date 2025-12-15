@@ -4,24 +4,18 @@ import { LoginInputDTO } from "@/src/core/application/dtos/auth";
 import { UserNotFoundError, IncorrectPasswordError } from "@/src/core/domain/errors";
 import { HashComparer } from "@/src/core/domain/secure";
 import { TokenGenerator } from "@/src/core/domain/auth";
-
-export type AuthPayload = {
-  id: string;
-  username: string;
-  role: string;
-};
-
+import { TokenPayload } from "@/src/core/domain/shared/interfaces"
 
 export type LoginUseCaseDep = {
   userRepository: UserRepository;
   hashComparer: HashComparer;
-  tokenGenerator: TokenGenerator<AuthPayload>;
+  tokenGenerator: TokenGenerator<TokenPayload>;
 }
 
 export class LoginUseCase implements Login {
   private readonly userRepository: UserRepository;
   private readonly hashComparer: HashComparer;
-  private readonly tokenGenerator: TokenGenerator<AuthPayload>;
+  private readonly tokenGenerator: TokenGenerator<TokenPayload>;
 
   constructor(deps: LoginUseCaseDep) {
     this.userRepository = deps.userRepository;

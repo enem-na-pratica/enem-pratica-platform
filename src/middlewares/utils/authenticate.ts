@@ -1,16 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Role } from "@/src/core/domain/auth/roles";
 import { JwtTokenAdapter } from "@/src/core/infrastructure/criptography/jwt.adapter";
+import { TokenPayload } from "@/src/core/domain/shared/interfaces";
 
 const LOGIN_PATH = "/login";
 const AUTH_COOKIE_NAME = "auth_token";
-
-// It repeats, center it.
-interface TokenPayload {
-  id: string;
-  username: string;
-  role: Role;
-}
 
 const jwtAdapter = new JwtTokenAdapter<TokenPayload>(
   process.env.JWT_SECRET || "fallback_secret",
