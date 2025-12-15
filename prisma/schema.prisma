@@ -1,0 +1,30 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Modelo de Dados
+
+model User {
+  id           String   @id @default(uuid())
+  name         String
+  username     String   @unique
+  passwordHash String
+  role         Role
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([username])
+  @@map("users") // Garante que o nome da tabela no BD seja 'users' (plural snake_case)
+}
+
+enum Role {
+  STUDENT
+  TEACHER
+  ADMIN
+  SUPERADMIN
+}
