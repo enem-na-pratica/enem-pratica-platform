@@ -1,5 +1,4 @@
 import { LoginInputDTO } from '@/src/core/application/dtos/auth';
-import { UserDTO } from "@/src/core/application/dtos/user";
 import { Login } from '@/src/core/application/interfaces/auth/login-use-case.interface';
 import { IncorrectPasswordError, NotFoundError } from '@/src/core/domain/errors';
 import { ValidationError } from '@/src/core/domain/errors/validation.error';
@@ -41,17 +40,17 @@ export class LoginController implements Controller {
 
       this.loginValidator.validate(request.body);
 
-      const result = await this.loginUseCase.execute({ username, password });
+      const accessToken = await this.loginUseCase.execute({ username, password });
 
       return {
-        statusCode: 200,
-        body: result.user,
+        statusCode: 204,
+        body: null,
         cookies: [{
           name: "auth_token",
-          value: result.accessToken,
+          value: accessToken,
           options: COOKIE_OPTIONS,
         }]
-      } as HttpResponse<UserDTO>;
+      } as HttpResponse<null>;
     } catch (err: unknown) {
       if (err instanceof ValidationError) {
         return {

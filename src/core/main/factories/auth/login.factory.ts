@@ -8,7 +8,6 @@ import { JwtTokenAdapter } from '@/src/core/infrastructure/criptography/jwt.adap
 import { UserPrismaRepository } from '@/src/core/infrastructure/repositories/prisma/user-prisma.repository';
 import { prisma } from '@/src/core/infrastructure/databases/prisma/prisma';
 import { UserPrismaMapper } from '@/src/core/infrastructure/mapper/user-prisma.mapper';
-import { UserDtoMapper } from '@/src/core/application/mapper/user-dto.mapper';
 
 export function makeLoginController(): Controller {
   const SALT = 12;
@@ -21,12 +20,10 @@ export function makeLoginController(): Controller {
   });
   const bcryptAdapter = new BcryptAdapter(SALT);
   const jwtTokenAdapter = new JwtTokenAdapter(SECRET, "7D");
-  const userDtoMapper = new UserDtoMapper();
   const loginUseCase = new LoginUseCase({
     hashComparer: bcryptAdapter,
     userRepository,
-    tokenGenerator: jwtTokenAdapter,
-    mapper: userDtoMapper
+    tokenGenerator: jwtTokenAdapter
   });
   const loginValidator = new ZodValidation(loginSchema);
   return new LoginController({ loginUseCase, loginValidator });

@@ -1,5 +1,5 @@
-import { LoginInputDTO, LoginOutputDTO } from "@/src/core/application/dtos/auth";
+import { LoginInputDTO } from "@/src/core/application/dtos/auth";
 
 export interface Login {
-  execute(credentials: LoginInputDTO): Promise<LoginOutputDTO>;
+  execute(credentials: LoginInputDTO): Promise<string>;
 }
