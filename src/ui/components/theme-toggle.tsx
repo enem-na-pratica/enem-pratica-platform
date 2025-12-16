@@ -12,7 +12,7 @@ export function ThemeToggle() {
     <button
       onClick={toggleTheme}
       aria-label={`Mudar para modo ${theme === "light" ? "escuro" : "claro"}`}
-      className="fixed top-4 right-4 p-2 rounded-full shadow-lg transition-colors duration-500"
+      className="fixed top-4 right-4 p-2 rounded-full shadow-lg transition-colors duration-500 cursor-pointer"
       style={{
         backgroundColor:
           theme === "light"

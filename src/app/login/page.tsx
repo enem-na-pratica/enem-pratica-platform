@@ -22,7 +22,9 @@ export default function Login() {
 
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || "Falha no login");
+        throw new Error(
+          data.error || "Credenciais inválidas. Tente novamente."
+        );
       }
 
       router.push("/dashboard");
@@ -33,36 +35,55 @@ export default function Login() {
   };
 
   return (
-    <main className="container-center">
+    <main className={`container-center font-sans`}>
       <div className="card">
-        <h1 className="text-xl font-bold mb-4 text-center">Login DDD</h1>
+        <h1 className="text-3xl font-extrabold mb-8 text-center text-foreground">
+          Acesso
+          <br />
+          ENEM na Prática
+        </h1>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-5">
           <div className="flex flex-col gap-1">
-            <label className="font-medium">Username (your_name)</label>
+            <label htmlFor="username" className="font-medium text-foreground">
+              Username (your_name)
+            </label>
             <input
+              id="username"
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
               className="input"
+              autoComplete="username"
             />
           </div>
 
           <div className="flex flex-col gap-1">
-            <label className="font-medium">Senha (123456)</label>
+            <label htmlFor="password" className="font-medium text-foreground">
+              Senha (123456)
+            </label>
             <input
+              id="password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
               className="input"
+              autoComplete="current-password"
             />
           </div>
 
-          {error && <p className="text-red-500 text-sm">{error}</p>}
+          {error && (
+            <p
+              className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative text-sm font-semibold"
+              role="alert"
+            >
+              {error}
+            </p>
+          )}
 
-          <button type="submit" className="button-primary w-full">
+          <button type="submit" className="button-primary w-full mt-2">
             Entrar
           </button>
         </form>
