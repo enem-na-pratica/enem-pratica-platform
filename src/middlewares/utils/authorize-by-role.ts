@@ -1,24 +1,32 @@
 import { NextRequest } from "next/server";
 import { Role, hasAtLeastRole, ROLES } from "@/src/core/domain/auth/roles";
 
-const ROLE_PROTECTED_ROUTES: { path: string; minRole: Role }[] = [
-  { path: "/api/admin/users", minRole: ROLES.ADMIN },
-  { path: "/dashboard/grades", minRole: ROLES.TEACHER },
-];
+// Fictitious routes; implement real routes as they are developed.
+const PROTECTED_ROUTES_MAP: Record<string, Role> = {
+  "/api/admin": ROLES.ADMIN,
+  "/api/admin/users": ROLES.ADMIN,
+  "/api/admin/users/config": ROLES.SUPERADMIN,
+  "/dashboard/grades": ROLES.TEACHER,
+};
+
+const RULES = Object.entries(PROTECTED_ROUTES_MAP).sort(
+  ([pathA], [pathB]) => pathB.length - pathA.length
+);
 
 export function isAuthorizedByRole(request: NextRequest): boolean {
   const pathname = request.nextUrl.pathname;
   const userRole = request.headers.get("x-user-role") as Role;
 
-  const protectedRoute = ROLE_PROTECTED_ROUTES.find((route) =>
-    pathname.startsWith(route.path)
-  );
+  const directMatchRole = PROTECTED_ROUTES_MAP[pathname];
+  if (directMatchRole) {
+    return hasAtLeastRole(directMatchRole, userRole);
+  }
 
-  if (protectedRoute) {
-    const requiredRole = protectedRoute.minRole;
-    if (!hasAtLeastRole(requiredRole, userRole)) {
-      return false;
-    }
+  const rule = RULES.find(([path]) => pathname.startsWith(path));
+
+  if (rule) {
+    const [, minRole] = rule;
+    return hasAtLeastRole(minRole, userRole);
   }
 
   return true;
