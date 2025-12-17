@@ -2,9 +2,6 @@ import { NextResponse } from "next/server";
 import { authenticate } from "@/src/middlewares/utils";
 import { Middleware } from "@/src/middlewares/middleware.interface";
 
-const PUBLIC_API_ROUTES = ["/api/auth/login"];
-const PUBLIC_PAGES_ROUTES = ["/", "/login"];
-
 const UNAUTHENTICATED_ONLY_PAGES = [
   "/login",
   // "/register", "/forgot-password", etc.
@@ -22,13 +19,6 @@ export const AuthMiddleware: Middleware = async (request) => {
     const newUrl = request.nextUrl.clone();
     newUrl.pathname = '/dashboard';
     return NextResponse.redirect(newUrl);
-  }
-
-  const isPublicPath =
-    PUBLIC_PAGES_ROUTES.includes(pathname) ||
-    PUBLIC_API_ROUTES.includes(pathname)
-  if (isPublicPath) {
-    return NextResponse.next();
   }
 
   if (!isAuthenticated) {

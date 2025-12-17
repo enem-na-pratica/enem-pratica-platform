@@ -5,7 +5,7 @@ import { RoleMiddleware } from "./middlewares/role.middleware";
 
 export const config = {
   matcher: [
-    "/((?!_next|static|favicon.ico|access-denied).*)",
+    "/((?!^$|_next/static|_next/image|favicon.ico|access-denied|api/auth/login|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)"
   ],
 };
 
