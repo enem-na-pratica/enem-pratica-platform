@@ -5,7 +5,7 @@ import { UserDTO } from "@/src/core/application/dtos/user";
 export class UserDtoMapper implements ToDtoMapper<User, UserDTO> {
   toDto(input: User): UserDTO {
     return {
-      id: input.id,
+      id: input.id!,
       name: input.name,
       username: input.username,
       role: input.role,
