@@ -40,5 +40,9 @@ export async function proxy(request: NextRequest) {
     return response;
   }
 
-  return NextResponse.next();
+  return NextResponse.next({
+    request: {
+      headers: request.headers,
+    }
+  });
 }
