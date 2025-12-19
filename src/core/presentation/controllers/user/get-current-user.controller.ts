@@ -1,4 +1,9 @@
-import { Controller, HttpRequest, HttpResponse } from '@/src/core/presentation/interfaces';
+import {
+  Controller,
+  ErrorResponse,
+  HttpRequest,
+  HttpResponse
+} from '@/src/core/presentation/interfaces';
 import { GetCurrentUser } from "@/src/core/application/interfaces/user/get-current-user-use-case.interface";
 import { UserDTO } from '@/src/core/application/dtos/user';
 import { UserNotFoundError } from '@/src/core/domain/errors';
@@ -7,14 +12,17 @@ export type GetCurrentUserDep = {
   getCurrentUserUseCase: GetCurrentUser;
 }
 
-export class GetCurrentUserController implements Controller {
+export class GetCurrentUserController
+  implements Controller<{ username: string }, UserDTO> {
   private readonly getCurrentUserUseCase: GetCurrentUser;
 
   constructor(deps: GetCurrentUserDep) {
     this.getCurrentUserUseCase = deps.getCurrentUserUseCase;
   }
 
-  async handle(request: HttpRequest<{ username: string }>): Promise<HttpResponse> {
+  async handle(
+    request: HttpRequest<{ username: string }>
+  ): Promise<HttpResponse<UserDTO | ErrorResponse>> {
     const { username } = request.body;
 
     try {
@@ -28,14 +36,14 @@ export class GetCurrentUserController implements Controller {
       if (err instanceof UserNotFoundError) {
         return {
           statusCode: 404,
-          body: err.message,
+          body: { message: err.message },
         };
       }
 
       const error = err as Error;
       return {
         statusCode: 500,
-        body: { error: error.message || "Erro inesperado." },
+        body: { message: error.message || "Erro inesperado." },
       };
     }
   }

@@ -1,6 +1,10 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-export interface HttpRequest<T = any> {
+export interface HttpRequest<T = unknown> {
   body: T;
+}
+
+export interface ErrorResponse<T = unknown> {
+  message: string;
+  details?: T;
 }
 
 export type CookieOptions = {
@@ -17,7 +21,7 @@ export type CookieData = {
   options: CookieOptions;
 }
 
-export interface HttpResponse<T = any> {
+export interface HttpResponse<T = unknown> {
   statusCode: number;
   body: T;
   cookies?: CookieData[];

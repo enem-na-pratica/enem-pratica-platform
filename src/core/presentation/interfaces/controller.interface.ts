@@ -1,5 +1,7 @@
-import { HttpRequest, HttpResponse } from './http.interface';
+import { ErrorResponse, HttpRequest, HttpResponse } from './http.interface';
 
-export interface Controller {
-  handle(request: HttpRequest): Promise<HttpResponse>;
+export interface Controller<TReq = unknown, TRes = unknown> {
+  handle(
+    request: HttpRequest<TReq>
+  ): Promise<HttpResponse<TRes | ErrorResponse>>;
 }
