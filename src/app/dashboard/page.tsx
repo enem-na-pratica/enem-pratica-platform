@@ -1,21 +1,13 @@
-import { JSX } from "react";
 import { cookies } from "next/headers";
-import dynamic from "next/dynamic";
 import { Role } from "@/src/core/domain/auth/roles";
 import { LogoutButton } from "@/src/ui/components/logout-button";
-
-const StudentDashboard = dynamic(() =>
-  import("@/src/ui/pages/dashboard").then((mod) => mod.StudentDashboard)
-);
-const TeacherDashboard = dynamic(() =>
-  import("@/src/ui/pages/dashboard").then((mod) => mod.TeacherDashboard)
-);
-const AdminDashboard = dynamic(() =>
-  import("@/src/ui/pages/dashboard").then((mod) => mod.AdminDashboard)
-);
-const SuperAdminDashboard = dynamic(() =>
-  import("@/src/ui/pages/dashboard").then((mod) => mod.SuperAdminDashboard)
-);
+import { redirect } from "next/navigation";
+import {
+  AdminDashboard,
+  StudentDashboard,
+  SuperAdminDashboard,
+  TeacherDashboard,
+} from "@/src/ui/pages/dashboard";
 
 type UserDTO = {
   id: string;
@@ -44,16 +36,25 @@ async function getUser(token: string) {
 
 export default async function Dashboard() {
   const cookieStore = await cookies();
-  const token = cookieStore.get("auth_token")!.value;
-  const user = (await getUser(token)) as UserDTO;
-  console.log(user);
-  
+  const token = cookieStore.get("auth_token");
 
-  const dashboards: Record<Role, JSX.Element> = {
-    STUDENT: <StudentDashboard user={user} />,
-    TEACHER: <TeacherDashboard user={user} />,
-    ADMIN: <AdminDashboard user={user} />,
-    SUPERADMIN: <SuperAdminDashboard user={user} />,
+  if (!token) redirect("/login"); // This should never need to run.
+
+  const user = (await getUser(token.value)) as UserDTO;
+
+  const renderDashboard = () => {
+    switch (user.role) {
+      case "STUDENT":
+        return <StudentDashboard user={user} />;
+      case "TEACHER":
+        return <TeacherDashboard user={user} />;
+      case "ADMIN":
+        return <AdminDashboard user={user} />;
+      case "SUPERADMIN":
+        return <SuperAdminDashboard user={user} />;
+      default:
+        return redirect("/access-denied");
+    }
   };
 
   return (
@@ -62,8 +63,7 @@ export default async function Dashboard() {
         <h1>Bem-vindo, {user.name}</h1>
         <LogoutButton />
       </header>
-
-      <div className="mt-4">{dashboards[user.role]}</div>
+      <div className="mt-4">{renderDashboard()}</div>
     </main>
   );
 }
