@@ -29,7 +29,7 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <Providers>
           <ThemeToggle />
-          <div className="container-center">{children}</div>
+          {children}
         </Providers>
       </body>
     </html>

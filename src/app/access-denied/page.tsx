@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function AccessDenied() {
   return (
-    <main className="text-center space-y-6">
+    <main className="container-center text-center space-y-6">
       {/* Visual Alert Icon */}
       <div className="flex justify-center">
         <div className="bg-red-100 dark:bg-red-900/30 p-4 rounded-full">

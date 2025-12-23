@@ -13,10 +13,9 @@ export default async function Dashboard() {
   const cookieStore = await cookies();
   const token = cookieStore.get("auth_token");
 
-  if (!token) redirect("/login"); // This should never need to run.
+  if (!token) redirect("/login");
 
   const user = await makeGetUser().getUser(token.value);
-
   if (!user) redirect("/login");
 
   const renderDashboard = () => {
@@ -35,12 +34,17 @@ export default async function Dashboard() {
   };
 
   return (
-    <main className="container-center">
-      <header className="w-full flex justify-between items-center p-4 border-b">
-        <h1>Bem-vindo, {user.name}</h1>
-        <LogoutButton />
+    <main className="min-h-screen w-full pb-20">
+      <header className="w-full bg-(--card-background) shadow-sm">
+        <div className="max-w-7xl mx-auto flex justify-between items-center p-4">
+          <h1 className="text-xl font-bold tracking-tight text-(--accent)">
+            ENEM <span className="text-(--foreground)">na Prática</span>
+          </h1>
+          <LogoutButton />
+        </div>
       </header>
-      <div className="mt-4">{renderDashboard()}</div>
+
+      <div className="max-w-7xl mx-auto px-4">{renderDashboard()}</div>
     </main>
   );
 }
