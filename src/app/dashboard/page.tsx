@@ -1,5 +1,4 @@
 import { cookies } from "next/headers";
-import { Role } from "@/src/core/domain/auth/roles";
 import { LogoutButton } from "@/src/ui/components/logout-button";
 import { redirect } from "next/navigation";
 import {
@@ -8,31 +7,7 @@ import {
   SuperAdminDashboard,
   TeacherDashboard,
 } from "@/src/ui/pages/dashboard";
-
-type UserDTO = {
-  id: string;
-  name: string;
-  username: string;
-  role: Role;
-  createdAt: string;
-  updatedAt: string;
-};
-
-async function getUser(token: string) {
-  const response = await fetch("http://localhost:3000/api/user/me", {
-    method: "GET",
-    cache: "no-store",
-    headers: {
-      Cookie: `auth_token=${token}`,
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error("Falha ao carregar usuário");
-  }
-
-  return response.json();
-}
+import { makeGetUser } from "@/src/ui/application/fatories/user/get-user.factory";
 
 export default async function Dashboard() {
   const cookieStore = await cookies();
@@ -40,7 +15,9 @@ export default async function Dashboard() {
 
   if (!token) redirect("/login"); // This should never need to run.
 
-  const user = (await getUser(token.value)) as UserDTO;
+  const user = await makeGetUser().getUser(token.value);
+
+  if (!user) redirect("/login");
 
   const renderDashboard = () => {
     switch (user.role) {

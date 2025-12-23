@@ -1,13 +1,6 @@
-type UserDTO = {
-  id: string;
-  name: string;
-  username: string;
-  role: string;
-  createdAt: string;
-  updatedAt: string;
-};
+import { UserModel } from "@/src/ui/application/models";
 
-export function StudentDashboard({ user }: { user: UserDTO }) {
+export function StudentDashboard({ user }: { user: UserModel }) {
   return (
     <main className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-md">
@@ -30,11 +23,11 @@ export function StudentDashboard({ user }: { user: UserDTO }) {
           </p>
           <p>
             <span className="font-medium">Criado em:</span>{" "}
-            {new Date(user.createdAt).toLocaleDateString()}
+            {user.createdAt.toLocaleDateString()}
           </p>
           <p>
             <span className="font-medium">Atualizado em:</span>{" "}
-            {new Date(user.updatedAt).toLocaleDateString()}
+            {user.updatedAt.toLocaleDateString()}
           </p>
         </div>
       </div>
