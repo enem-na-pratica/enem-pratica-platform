@@ -1,11 +1,11 @@
 import { UserModel } from "@/src/ui/application/models";
 import Link from "next/link";
 import {
-  STUDENT_ACTIONS,
+  USER_ACTIONS,
   PERSONAL_MENU,
   PersonalMenuType,
 } from "@/src/ui/constants";
-import { StudentCard } from "@/src/ui/components/student-card";
+import { UserCard as StudentCard } from "@/src/ui/components/user-card";
 
 const MOCK_STUDENTS: UserModel[] = [
   {
@@ -110,8 +110,8 @@ export function TeacherDashboard({ user }: { user: UserModel }) {
             {students.map((student) => (
               <StudentCard
                 key={student.id}
-                student={student}
-                actions={STUDENT_ACTIONS}
+                user={student}
+                actions={USER_ACTIONS}
               />
             ))}
           </div>

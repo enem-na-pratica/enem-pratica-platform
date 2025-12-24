@@ -1,20 +1,20 @@
 import { UserModel } from "@/src/ui/application/models";
 import Link from "next/link";
-import { StudentActionsType } from "@/src/ui/constants";
+import { UserActionType } from "@/src/ui/constants";
 
-export function StudentCard({
-  student,
+export function UserCard({
+  user,
   actions,
 }: {
-  student: UserModel;
-  actions: StudentActionsType[];
+  user: UserModel;
+  actions: UserActionType[];
 }) {
   return (
     <div className="card w-full max-w-none p-0 flex flex-col border-2 border-transparent hover:border-(--accent)/50 transition-all duration-300 group overflow-hidden">
       {/* Card Header */}
       <div className="p-6 flex items-center gap-4 bg-(--foreground)/5">
         <div className="h-14 w-14 rounded-2xl bg-(--accent) flex items-center justify-center font-black text-xl text-(--foreground) shadow-lg transform -rotate-3 group-hover:rotate-0 transition-transform">
-          {student.name
+          {user.name
             .split(" ")
             .map((n) => n[0])
             .join("")
@@ -22,8 +22,8 @@ export function StudentCard({
             .toUpperCase()}
         </div>
         <div>
-          <h3 className="text-lg font-bold leading-tight">{student.name}</h3>
-          <p className="text-sm opacity-50 font-mono">@{student.username}</p>
+          <h3 className="text-lg font-bold leading-tight">{user.name}</h3>
+          <p className="text-sm opacity-50 font-mono">@{user.username}</p>
         </div>
       </div>
 
@@ -32,7 +32,7 @@ export function StudentCard({
         {actions.map((action) => (
           <Link
             key={action.slug}
-            href={`/dashboard/student/${student.id}/${action.slug}`}
+            href={`/dashboard/student/${user.id}/${action.slug}`}
             title={action.label}
             className="flex flex-col items-center justify-center p-3 rounded-xl bg-(--background)/40 hover:bg-(--accent) hover:text-(--foreground) border border-(--foreground)/5 transition-all group/item"
           >
@@ -47,7 +47,7 @@ export function StudentCard({
 
         {/* Full Profile Button */}
         <Link
-          href={`/dashboard/student/${student.id}`}
+          href={`/dashboard/student/${user.id}`}
           className="col-span-3 mt-2 flex items-center justify-center gap-2 py-2 rounded-lg bg-(--foreground) text-(--background) text-xs font-bold uppercase tracking-widest hover:opacity-80 transition-opacity"
         >
           Ver Perfil Completo

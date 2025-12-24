@@ -1,4 +1,4 @@
-export const STUDENT_ACTIONS = [
+export const USER_ACTIONS = [
   { label: "Conteúdos", slug: "content", icon: "📚" },
   { label: "Pendências", slug: "to-be-reviewed", icon: "⏳" },
   { label: "Revisão", slug: "review", icon: "🔄" },
@@ -6,4 +6,4 @@ export const STUDENT_ACTIONS = [
   { label: "Redações", slug: "essays", icon: "✍️" },
 ];
 
-export type StudentActionsType = (typeof STUDENT_ACTIONS)[number];
+export type UserActionType = (typeof USER_ACTIONS)[number];
