@@ -8,6 +8,7 @@ import {
   TeacherDashboard,
 } from "@/src/ui/pages/dashboard";
 import { makeGetUser } from "@/src/ui/application/fatories/user/get-user.factory";
+import { UserModel } from "@/src/ui/application/models";
 
 export default async function Dashboard() {
   const cookieStore = await cookies();
@@ -15,7 +16,20 @@ export default async function Dashboard() {
 
   if (!token) redirect("/login");
 
-  const user = await makeGetUser().getUser(token.value);
+  let user: UserModel | null;
+  try {
+    user = await makeGetUser().getUser(token.value);
+  } catch {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <h1 className="text-xl">
+          O sistema está temporariamente indisponível. Por favor, tente mais
+          tarde.
+        </h1>
+      </div>
+    );
+  }
+
   if (!user) redirect("/login");
 
   const renderDashboard = () => {

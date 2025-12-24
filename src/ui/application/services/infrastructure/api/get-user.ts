@@ -19,21 +19,21 @@ export class UserService {
   }
 
   async getUser(token: string): Promise<UserModel | null> {
-    try {
-      const response = await fetch(`${this.baseUrl}/user/me`, {
-        method: "GET",
-        cache: "no-store",
-        headers: {
-          Cookie: `auth_token=${token}`,
-        },
-      });
+    const response = await fetch(`${this.baseUrl}/user/me`, {
+      method: "GET",
+      cache: "no-store",
+      headers: {
+        Cookie: `auth_token=${token}`,
+      },
+    });
 
-      if (!response.ok) return null;
-
-      const data = await response.json();
-      return this.mapper.toModel(data);
-    } catch {
-      return null;
+    if (response.status === 500) {
+      throw new Error("SERVER_ERROR"); // TODO: Create a custom error
     }
+
+    if (!response.ok) return null;
+
+    const data = await response.json();
+    return this.mapper.toModel(data);
   }
 }
