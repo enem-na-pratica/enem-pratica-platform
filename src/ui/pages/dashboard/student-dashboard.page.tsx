@@ -1,40 +1,8 @@
 import { UserModel } from "@/src/ui/application/models";
 import Link from "next/link";
+import { STUDENT_MENU, StudentMenuType } from "@/src/ui/constants";
 
 export function StudentDashboard({ user }: { user: UserModel }) {
-  const menuItems = [
-    {
-      title: "Conteúdos",
-      slug: "content",
-      icon: "📚",
-      desc: "Material de estudo",
-    },
-    {
-      title: "Para Revisar",
-      slug: "to-be-reviewed",
-      icon: "⏳",
-      desc: "Tópicos pendentes",
-    },
-    {
-      title: "Revisão",
-      slug: "review",
-      icon: "🔄",
-      desc: "Praticar o que aprendeu",
-    },
-    {
-      title: "Simulados",
-      slug: "simulations",
-      icon: "📝",
-      desc: "Treine com o tempo",
-    },
-    {
-      title: "Redações",
-      slug: "essays",
-      icon: "✍️",
-      desc: "Pratique sua escrita",
-    },
-  ];
-
   return (
     <div className="w-full max-w-5xl mx-auto py-8 space-y-8">
       {/* Welcome Header */}
@@ -45,7 +13,7 @@ export function StudentDashboard({ user }: { user: UserModel }) {
 
       {/* Main Navigation Grid */}
       <nav className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {menuItems.map((item) => (
+        {STUDENT_MENU.map((item: StudentMenuType) => (
           <Link
             key={item.slug}
             href={`/dashboard/${item.slug}`}
