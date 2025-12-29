@@ -11,12 +11,9 @@ export function ThemeToggle() {
   return (
     <button
       onClick={toggleTheme}
+      type="button"
       aria-label={`Mudar para modo ${theme === "light" ? "escuro" : "claro"}`}
-      className="absolute top-4 right-24 z-50 p-2 rounded-full shadow-lg transition-colors duration-500 cursor-pointer"
-      style={{
-        backgroundColor: "var(--card-background)",
-        color: "var(--foreground)",
-      }}
+      className="p-2 rounded-lg transition-all duration-300 cursor-pointer hover:bg-(--foreground)/10 flex items-center justify-center"
     >
       {theme === "light" ? <MoonIcon /> : <SunIcon />}
     </button>

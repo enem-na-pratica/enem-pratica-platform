@@ -6,6 +6,7 @@ import {
   PersonalMenuType,
 } from "@/src/ui/constants";
 import { UserCard as StudentCard } from "@/src/ui/components/user-card";
+import { Header } from "@/src/ui/components/headers";
 
 const MOCK_STUDENTS: UserModel[] = [
   {
@@ -46,77 +47,92 @@ export function TeacherDashboard({ user }: { user: UserModel }) {
   const students = MOCK_STUDENTS;
 
   return (
-    <div className="w-full max-w-7xl mx-auto py-10 space-y-16">
-      {/* Teacher's Panel */}
-      <section className="space-y-8">
-        <div className="flex flex-col gap-2">
-          <h2 className="text-3xl font-black tracking-tight">
-            Dashboard Docente
-          </h2>
-          <p className="text-lg opacity-60">
-            Seus materiais e ferramentas de gestão pessoal.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
-          {PERSONAL_MENU.map((item: PersonalMenuType) => (
-            <Link
-              key={item.slug}
-              href={`/dashboard/${item.slug}`}
-              className="card card-interactive p-6 flex flex-col items-center justify-center gap-4 border-2 border-transparent hover:border-(--accent) group"
-            >
-              <span className="text-4xl group-hover:scale-110 transition-transform">
-                {item.icon}
-              </span>
-              <span className="text-sm font-bold uppercase tracking-widest text-center">
-                {item.title}
-              </span>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      <hr className="border-(--card-background) opacity-30" />
-
-      {/* Student Management */}
-      <section className="space-y-8">
-        <div className="flex justify-between items-end">
-          <div className="space-y-1">
+    <>
+      <Header />
+      <main className="w-full max-w-7xl mx-auto py-10 space-y-16 px-4">
+        {/* Teacher's Panel */}
+        <section className="space-y-8">
+          <div className="flex flex-col gap-2">
             <h2 className="text-3xl font-black tracking-tight">
-              Gestão de Alunos
+              Dashboard Docente
             </h2>
-            <p className="opacity-60 text-lg">
-              Acompanhe o desempenho individual de cada estudante.
+            <p className="text-lg opacity-60">
+              Seus materiais e ferramentas de gestão pessoal.
             </p>
           </div>
-          <div className="flex items-center gap-3 bg-(--card-background) px-4 py-2 rounded-lg border border-(--foreground)/10">
-            <span className="text-sm font-bold opacity-60 uppercase">
-              Total:
-            </span>
-            <span className="text-2xl font-black text-(--accent)">
-              {students.length}
-            </span>
-          </div>
-        </div>
 
-        {students.length === 0 ? (
-          <div className="card w-full max-w-none text-center py-20 opacity-50 border-2 border-dashed border-(--foreground)/20 bg-transparent">
-            <p className="text-xl italic">
-              Nenhum aluno vinculado à sua conta ainda.
-            </p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {students.map((student) => (
-              <StudentCard
-                key={student.id}
-                user={student}
-                actions={USER_ACTIONS}
-              />
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
+            {PERSONAL_MENU.map((item: PersonalMenuType) => (
+              <Link
+                key={item.slug}
+                href={`/dashboard/${item.slug}`}
+                className="card card-interactive p-6 flex flex-col items-center justify-center gap-4 border-2 border-transparent hover:border-(--accent) group"
+              >
+                <span className="text-4xl group-hover:scale-110 transition-transform">
+                  {item.icon}
+                </span>
+                <span className="text-sm font-bold uppercase tracking-widest text-center">
+                  {item.title}
+                </span>
+              </Link>
             ))}
           </div>
-        )}
-      </section>
-    </div>
+        </section>
+
+        <hr className="border-(--card-background) opacity-30" />
+
+        {/* Student Management */}
+        <section className="space-y-8">
+          <div className="flex justify-between items-end">
+            <div className="space-y-1">
+              <h2 className="text-3xl font-black tracking-tight">
+                Gestão de Alunos
+              </h2>
+              <p className="opacity-60 text-lg">
+                Acompanhe o desempenho individual de cada estudante.
+              </p>
+            </div>
+            <div className="flex items-center gap-3 bg-(--card-background) px-4 py-2 rounded-lg border border-(--foreground)/10">
+              <span className="text-sm font-bold opacity-60 uppercase">
+                Total:
+              </span>
+              <span className="text-2xl font-black text-(--accent)">
+                {students.length}
+              </span>
+            </div>
+          </div>
+
+          {students.length === 0 ? (
+            <div className="card w-full max-w-none text-center py-20 opacity-50 border-2 border-dashed border-(--foreground)/20 bg-transparent">
+              <p className="text-xl italic">
+                Nenhum aluno vinculado à sua conta ainda.
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {students.map((student) => (
+                <StudentCard
+                  key={student.id}
+                  user={student}
+                  actions={USER_ACTIONS}
+                />
+              ))}
+            </div>
+          )}
+        </section>
+      </main>
+      <footer className="w-full border-t border-(--card-background) mt-auto">
+        <div className="max-w-7xl mx-auto px-4 py-8">
+          <div className="flex items-center gap-4 text-sm opacity-60">
+            <div className="h-2 w-2 rounded-full bg-(--success) animate-pulse" />
+            <span>
+              Logado como: <strong>{user.username}</strong>
+            </span>
+            <span>•</span>
+            <span>ID: {user.id}</span>
+          </div>
+        </div>
+      </footer>
+    </>
   );
 }
