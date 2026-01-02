@@ -74,7 +74,7 @@ export function AdminDashboard({ user }: { user: UserModel }) {
       <main className="flex-1 flex flex-col">
         <header className="h-16 border-b border-(--foreground)/10 flex items-center justify-between px-8 bg-(--card-background)/30 backdrop-blur-sm">
           <h2 className="font-semibold capitalize text-(--accent)">
-            {activeTab}
+            {MENU_ITEMS.find((item) => item.id === activeTab)!.label}
           </h2>
 
           <div className="flex items-center gap-6">
