@@ -14,6 +14,7 @@ export function ThemeToggle() {
       type="button"
       aria-label={`Mudar para modo ${theme === "light" ? "escuro" : "claro"}`}
       className="p-2 rounded-lg transition-all duration-300 cursor-pointer hover:bg-(--foreground)/10 flex items-center justify-center"
+      title={`Mudar para modo ${theme === "light" ? "escuro" : "claro"}`}
     >
       {theme === "light" ? <MoonIcon /> : <SunIcon />}
     </button>
