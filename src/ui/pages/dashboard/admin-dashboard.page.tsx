@@ -6,11 +6,18 @@ import { LogoutButton } from "@/src/ui/components/logout-button";
 import { ThemeToggle } from "@/src/ui/components/theme-toggle";
 import { SidebarItem } from "@/src/ui/components/sidebar-item";
 import { UsersView } from "@/src/ui/components/users-view";
+import { HomeView } from "@/src/ui/components/home-view";
 
 type Tab = "home" | "users" | "reports" | "settings";
 
+const MENU_ITEMS: { id: Tab; label: string; icon: string }[] = [
+  { id: "home", label: "Início", icon: "🏠" },
+  { id: "users", label: "Usuários", icon: "👥" },
+  { id: "settings", label: "Configurações", icon: "⚙️" },
+];
+
 export function AdminDashboard({ user }: { user: UserModel }) {
-  const [activeTab, setActiveTab] = useState<Tab>("users");
+  const [activeTab, setActiveTab] = useState<Tab>("home");
 
   // Mock de dados mantido
   const users: UserModel[] = [
@@ -31,13 +38,6 @@ export function AdminDashboard({ user }: { user: UserModel }) {
       createdAt: new Date(),
       updatedAt: new Date(),
     },
-  ];
-
-  const MENU_ITEMS: { id: Tab; label: string; icon: string }[] = [
-    { id: "home", label: "Início", icon: "🏠" },
-    { id: "users", label: "Usuários", icon: "👥" },
-    { id: "reports", label: "Relatórios", icon: "📄" },
-    { id: "settings", label: "Configurações", icon: "⚙️" },
   ];
 
   return (
@@ -89,9 +89,12 @@ export function AdminDashboard({ user }: { user: UserModel }) {
         </header>
 
         <section className="p-8">
-          {activeTab === "users" ? (
-            <UsersView users={users} />
-          ) : (
+          {/* TODO: Improve the logic for selecting screens. */}
+          {activeTab === "home" && <HomeView />}
+
+          {activeTab === "users" && <UsersView users={users} />}
+
+          {activeTab !== "home" && activeTab !== "users" && (
             <div className="card flex flex-col items-center justify-center h-64 border-2 border-dashed border-(--foreground)/10 bg-transparent text-(--foreground)/40">
               <span className="text-4xl mb-2">🚧</span>
               <p>Tela de {activeTab} em construção...</p>
