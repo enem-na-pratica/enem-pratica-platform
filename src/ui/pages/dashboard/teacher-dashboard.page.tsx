@@ -1,10 +1,6 @@
 import { UserModel } from "@/src/ui/application/models";
 import Link from "next/link";
-import {
-  USER_ACTIONS,
-  PERSONAL_MENU,
-  PersonalMenuType,
-} from "@/src/ui/constants";
+import { USER_ACTIONS, UserActionType } from "@/src/ui/constants";
 import { UserCard as StudentCard } from "@/src/ui/components/user-card";
 import { Header } from "@/src/ui/components/headers";
 
@@ -62,7 +58,7 @@ export function TeacherDashboard({ user }: { user: UserModel }) {
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
-            {PERSONAL_MENU.map((item: PersonalMenuType) => (
+            {USER_ACTIONS.map((item: UserActionType) => (
               <Link
                 key={item.slug}
                 href={`/dashboard/${item.slug}`}
@@ -72,7 +68,7 @@ export function TeacherDashboard({ user }: { user: UserModel }) {
                   {item.icon}
                 </span>
                 <span className="text-sm font-bold uppercase tracking-widest text-center">
-                  {item.title}
+                  {item.label}
                 </span>
               </Link>
             ))}
