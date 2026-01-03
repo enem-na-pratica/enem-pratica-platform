@@ -8,7 +8,7 @@ import { SidebarItem } from "@/src/ui/components/sidebar-item";
 import { UsersView } from "@/src/ui/components/users-view";
 import { HomeView } from "@/src/ui/components/home-view";
 
-type Tab = "home" | "users" | "reports" | "settings";
+type Tab = "home" | "users" | "settings";
 
 const MENU_ITEMS: { id: Tab; label: string; icon: string }[] = [
   { id: "home", label: "Início", icon: "🏠" },
@@ -39,6 +39,16 @@ export function AdminDashboard({ user }: { user: UserModel }) {
       updatedAt: new Date(),
     },
   ];
+
+  const renderView = () => {
+    const views: Record<Tab, React.ReactNode> = {
+      home: <HomeView />,
+      users: <UsersView users={users} />,
+      settings: <UnderConstruction title="configurações" />,
+    };
+
+    return views[activeTab] || <UnderConstruction title={activeTab} />;
+  };
 
   return (
     <div className="flex min-h-screen bg-(--background) text-(--foreground) transition-colors duration-500">
@@ -88,20 +98,17 @@ export function AdminDashboard({ user }: { user: UserModel }) {
           </div>
         </header>
 
-        <section className="p-8">
-          {/* TODO: Improve the logic for selecting screens. */}
-          {activeTab === "home" && <HomeView />}
-
-          {activeTab === "users" && <UsersView users={users} />}
-
-          {activeTab !== "home" && activeTab !== "users" && (
-            <div className="card flex flex-col items-center justify-center h-64 border-2 border-dashed border-(--foreground)/10 bg-transparent text-(--foreground)/40">
-              <span className="text-4xl mb-2">🚧</span>
-              <p>Tela de {activeTab} em construção...</p>
-            </div>
-          )}
-        </section>
+        <section className="p-8">{renderView()}</section>
       </main>
+    </div>
+  );
+}
+
+function UnderConstruction({ title }: { title: string }) {
+  return (
+    <div className="card flex flex-col items-center justify-center h-64 border-2 border-dashed border-(--foreground)/10 bg-transparent text-(--foreground)/40">
+      <span className="text-4xl mb-2">🚧</span>
+      <p>Tela de {title} em construção...</p>
     </div>
   );
 }
