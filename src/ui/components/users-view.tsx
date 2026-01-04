@@ -1,4 +1,5 @@
 import { UserModel } from "@/src/ui/application/models";
+import Link from "next/link";
 
 export function UsersView({ users }: { users: UserModel[] }) {
   return (
@@ -8,9 +9,9 @@ export function UsersView({ users }: { users: UserModel[] }) {
           <h1 className="text-2xl font-bold">Gestão de Usuários</h1>
         </div>
 
-        <button className="button-primary flex items-center gap-2">
+        <Link className="button-primary flex items-center gap-2" href="/user/new">
           <span>➕</span> Novo Usuário
-        </button>
+        </Link>
       </div>
 
       <div className="bg-(--card-background) rounded-xl shadow-sm overflow-hidden border border-(--foreground)/5">

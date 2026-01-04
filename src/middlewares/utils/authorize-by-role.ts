@@ -1,12 +1,8 @@
 import { NextRequest } from "next/server";
 import { Role, hasAtLeastRole, ROLES } from "@/src/core/domain/auth/roles";
 
-// Fictitious routes; implement real routes as they are developed.
 const PROTECTED_ROUTES_MAP: Record<string, Role> = {
-  "/api/admin": ROLES.ADMIN,
-  "/api/admin/users": ROLES.ADMIN,
-  "/api/admin/users/config": ROLES.SUPERADMIN,
-  "/dashboard/grades": ROLES.TEACHER,
+  "/user/new": ROLES.ADMIN,
 };
 
 const RULES = Object.entries(PROTECTED_ROUTES_MAP).sort(

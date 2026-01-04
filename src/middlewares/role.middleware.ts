@@ -16,7 +16,9 @@ export const RoleMiddleware: Middleware = async (request) => {
     }
 
     // If page
-    return NextResponse.redirect(new URL("/access-denied", pathname));
+    const url = request.nextUrl.clone();
+    url.pathname = "/access-denied";
+    return NextResponse.redirect(url);
   }
 
   return null;
