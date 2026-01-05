@@ -32,7 +32,7 @@ export function UserCard({
         {actions.map((action) => (
           <Link
             key={action.slug}
-            href={`/dashboard/student/${user.id}/${action.slug}`}
+            href={`/dashboard/${action.slug}/${user.username}`}
             title={action.label}
             className="flex flex-col items-center justify-center p-3 rounded-xl bg-(--background)/40 hover:bg-(--accent) hover:text-(--foreground) border border-(--foreground)/5 transition-all group/item"
           >
