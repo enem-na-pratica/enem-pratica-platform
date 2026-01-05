@@ -1,4 +1,4 @@
-import { Role } from "@/src/core/domain/auth/roles";
+import { Role } from "@/src/ui/constants";
 
 export type UserModel = {
   id: string;
