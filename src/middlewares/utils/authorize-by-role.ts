@@ -4,6 +4,7 @@ import { Role, hasAtLeastRole, ROLES } from "@/src/core/domain/auth/roles";
 const PROTECTED_ROUTES_MAP: Record<string, Role> = {
   "/user/new": ROLES.ADMIN,
   "/dashboard/content/": ROLES.TEACHER,
+  "/dashboard/to-be-reviewed/": ROLES.TEACHER,
 };
 
 const RULES = Object.entries(PROTECTED_ROUTES_MAP).sort(
