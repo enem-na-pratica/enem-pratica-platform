@@ -146,7 +146,7 @@ export function NewUserForm({ teachers, currentUserRole }: NewUserFormProps) {
         </select>
       </div>
 
-      {formData.role === "STUDENT" && (
+      {formData.role === ROLES.STUDENT && (
         <div className="flex flex-col gap-1.5 animate-in slide-in-from-top-4 duration-500">
           <label className="text-[10px] font-black uppercase tracking-wider text-(--accent) ml-1">
             Vincular ao Professor

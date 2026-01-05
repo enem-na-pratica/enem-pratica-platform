@@ -3,13 +3,14 @@ import Link from "next/link";
 import { USER_ACTIONS, UserActionType } from "@/src/ui/constants";
 import { UserCard as StudentCard } from "@/src/ui/components/user-card";
 import { Header } from "@/src/ui/components/headers";
+import { ROLES } from "@/src/ui/constants";
 
 const MOCK_STUDENTS: UserModel[] = [
   {
     id: "1",
     name: "Ana Silva",
     username: "ana.silva",
-    role: "STUDENT",
+    role: ROLES.STUDENT,
     createdAt: new Date("2024-01-10T10:30:00"),
     updatedAt: new Date("2024-06-01T14:20:00"),
   },
@@ -17,7 +18,7 @@ const MOCK_STUDENTS: UserModel[] = [
     id: "2",
     name: "Bruno Santos",
     username: "bruno.santos",
-    role: "STUDENT",
+    role: ROLES.STUDENT,
     createdAt: new Date("2024-02-05T09:15:00"),
     updatedAt: new Date("2024-06-10T11:45:00"),
   },
@@ -25,7 +26,7 @@ const MOCK_STUDENTS: UserModel[] = [
     id: "3",
     name: "Carla Oliveira",
     username: "carla.oliveira",
-    role: "STUDENT",
+    role: ROLES.STUDENT,
     createdAt: new Date("2024-03-12T16:00:00"),
     updatedAt: new Date("2024-06-15T18:10:00"),
   },
@@ -33,7 +34,7 @@ const MOCK_STUDENTS: UserModel[] = [
     id: "4",
     name: "Diego Pereira",
     username: "diego.pereira",
-    role: "STUDENT",
+    role: ROLES.STUDENT,
     createdAt: new Date("2024-04-01T08:40:00"),
     updatedAt: new Date("2024-06-20T09:30:00"),
   },

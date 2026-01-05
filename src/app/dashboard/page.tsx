@@ -8,6 +8,7 @@ import {
 } from "@/src/ui/pages/dashboard";
 import { makeGetUser } from "@/src/ui/application/fatories/user/get-user.factory";
 import { UserModel } from "@/src/ui/application/models";
+import { ROLES } from "@/src/ui/constants";
 
 export default async function Dashboard() {
   const cookieStore = await cookies();
@@ -32,13 +33,13 @@ export default async function Dashboard() {
   if (!user) redirect("/login");
 
   switch (user.role) {
-    case "STUDENT":
+    case ROLES.STUDENT:
       return <StudentDashboard user={user} />;
-    case "TEACHER":
+    case ROLES.TEACHER:
       return <TeacherDashboard user={user} />;
-    case "ADMIN":
+    case ROLES.ADMIN:
       return <AdminDashboard user={user} />;
-    case "SUPERADMIN":
+    case ROLES.SUPERADMIN:
       return <SuperAdminDashboard user={user} />;
     default:
       redirect("/access-denied");
