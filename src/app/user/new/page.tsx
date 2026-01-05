@@ -2,6 +2,8 @@ import { NewUserForm } from "./_components/new-user-form";
 import { ROLES } from "@/src/ui/constants";
 import { UserModel } from "@/src/ui/application/models";
 import Link from "next/link";
+import { headers } from "next/headers";
+import { getRoleFromHeaders } from "@/src/ui/helpers";
 
 const teachersMock: UserModel[] = [
   {
@@ -30,7 +32,12 @@ const teachersMock: UserModel[] = [
   },
 ];
 
-export default function NewUserPage() {
+type UserCreatorRole = typeof ROLES.ADMIN | typeof ROLES.SUPERADMIN;
+
+export default async function NewUserPage() {
+  const headersList = await headers();
+  const role = getRoleFromHeaders(headersList) as UserCreatorRole;
+
   return (
     <div className="w-full flex items-center justify-center bg-(--background) p-1.5">
       <div className="card w-full max-w-lg border border-(--foreground)/10 animate-in fade-in zoom-in duration-300 shadow-2xl">
@@ -47,7 +54,7 @@ export default function NewUserPage() {
           </p>
         </header>
 
-        <NewUserForm teachers={teachersMock} currentUserRole={ROLES.ADMIN} />
+        <NewUserForm teachers={teachersMock} currentUserRole={role} />
       </div>
     </div>
   );
