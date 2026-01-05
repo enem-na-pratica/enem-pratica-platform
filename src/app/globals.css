@@ -1,43 +1,50 @@
 @import "tailwindcss";
 
-
 :root {
-  --background: #f5f5f5;
-  --foreground: #222222;
+  --background: #FFFFFF;
+  --foreground: #050A32;
+  --accent: #FFC300;
+  --card-background: #BFC3D4;
+  --success: #4CAF50;
+  --error: #FF5252;
 }
 
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0d0d0d;
-    --foreground: #e5e5e5;
-  }
+.dark {
+  --background: #050A32;
+  --foreground: #FFFFFF;
+  --accent: #2AEEB9;
+  --card-background: #0B1347;
 }
-
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-geist-sans), sans-serif;
+  overflow-x: hidden;
+  @apply antialiased transition-colors duration-500;
 }
 
-
-/* Simple utility overrides */
 .container-center {
   @apply flex flex-col items-center justify-center min-h-screen px-4;
 }
 
-
 .card {
-  @apply bg-white dark:bg-neutral-900 p-6 rounded-xl shadow-md w-full max-w-sm;
+  background-color: var(--card-background); 
+  @apply p-6 rounded-xl shadow-md w-full max-w-sm;
 }
 
+.card-interactive {
+  @apply transition-transform duration-300 hover:scale-[1.02];
+}
 
 .input {
-  @apply w-full p-2 border border-neutral-300 dark:border-neutral-700 rounded-md;
+  border-color: var(--foreground); 
+  background-color: var(--background);
+  @apply w-full p-2 rounded-md;
 }
 
-
 .button-primary {
-  @apply bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md transition;
+  background-color: var(--accent);
+  color: var(--foreground); 
+  @apply font-semibold py-2 px-4 rounded-md transition hover:opacity-70 cursor-pointer;
 }

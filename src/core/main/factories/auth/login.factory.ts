@@ -9,7 +9,7 @@ import { UserPrismaRepository } from '@/src/core/infrastructure/repositories/pri
 import { prisma } from '@/src/core/infrastructure/databases/prisma/prisma';
 import { UserPrismaMapper } from '@/src/core/infrastructure/mapper/user-prisma.mapper';
 
-export function makeLoginController(): Controller {
+export function makeLoginController() {
   const SALT = 12;
   const SECRET = process.env.JWT_SECRET || "fallback_secret";
 

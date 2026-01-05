@@ -7,7 +7,8 @@ import {
   Controller,
   HttpRequest,
   HttpResponse,
-  CookieOptions
+  CookieOptions,
+  ErrorResponse
 } from '@/src/core/presentation/interfaces';
 
 const COOKIE_OPTIONS: CookieOptions = {
@@ -23,7 +24,8 @@ export type LoginDep = {
   loginValidator: Validation<LoginInputDTO>;
 }
 
-export class LoginController implements Controller {
+export class LoginController
+  implements Controller<LoginInputDTO, null> {
   private readonly loginUseCase: Login;
   private readonly loginValidator: Validation<LoginInputDTO>;
 
@@ -34,7 +36,7 @@ export class LoginController implements Controller {
 
   async handle(
     request: HttpRequest<LoginInputDTO>
-  ): Promise<HttpResponse> {
+  ): Promise<HttpResponse<null | ErrorResponse>> {
     try {
       const { username, password } = request.body;
 
@@ -50,33 +52,33 @@ export class LoginController implements Controller {
           value: accessToken,
           options: COOKIE_OPTIONS,
         }]
-      } as HttpResponse<null>;
+      };
     } catch (err: unknown) {
       if (err instanceof ValidationError) {
         return {
           statusCode: 400,
-          body: err.details,
+          body: { message: err.message, details: err.details },
         };
       }
 
       if (err instanceof IncorrectPasswordError) {
         return {
           statusCode: 403,
-          body: err.message,
+          body: { message: err.message },
         };
       }
 
       if (err instanceof NotFoundError) {
         return {
           statusCode: 404,
-          body: err.message,
+          body: { message: err.message },
         };
       }
 
       const error = err as Error;
       return {
         statusCode: 500,
-        body: { error: error.message || "Erro inesperado." },
+        body: { message: error.message || "Erro inesperado." },
       };
     }
   }

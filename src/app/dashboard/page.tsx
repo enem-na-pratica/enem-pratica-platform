@@ -1,41 +1,47 @@
-"use client";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import {
+  AdminDashboard,
+  StudentDashboard,
+  TeacherDashboard,
+  SuperAdminDashboard,
+} from "@/src/ui/pages/dashboard";
+import { makeGetUser } from "@/src/ui/application/fatories/user/get-user.factory";
+import { UserModel } from "@/src/ui/application/models";
+import { ROLES } from "@/src/ui/constants";
 
-import { useRouter } from "next/navigation";
+export default async function Dashboard() {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("auth_token");
 
-export default function Dashboard() {
-  const router = useRouter();
+  if (!token) redirect("/login");
 
-  const handleLogout = async () => {
-    try {
-      const response = await fetch("/api/auth/logout", {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (response.ok) {
-        router.push("/login");
-      } else {
-        alert("Falha ao fazer logout. Tente novamente.");
-      }
-    } catch {
-      alert("Ocorreu um erro. Verifique sua conexão ou tente novamente.");
-    }
-  };
-
-  return (
-    <main className="container-center">
-      <div className="card text-center">
-        <h1 className="text-2xl font-bold mb-4">Bem-vindo</h1>
-        <p className="mb-6">Sistema de Login com DDD + Next.js</p>
-        <button
-          onClick={handleLogout}
-          className="button-primary w-full"
-        >
-          Logout
-        </button>
+  let user: UserModel | null;
+  try {
+    user = await makeGetUser().getUser(token.value);
+  } catch {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <h1 className="text-xl">
+          O sistema está temporariamente indisponível. Por favor, tente mais
+          tarde.
+        </h1>
       </div>
-    </main>
-  );
+    );
+  }
+
+  if (!user) redirect("/login");
+
+  switch (user.role) {
+    case ROLES.STUDENT:
+      return <StudentDashboard user={user} />;
+    case ROLES.TEACHER:
+      return <TeacherDashboard user={user} />;
+    case ROLES.ADMIN:
+      return <AdminDashboard user={user} />;
+    case ROLES.SUPERADMIN:
+      return <SuperAdminDashboard user={user} />;
+    default:
+      redirect("/access-denied");
+  }
 }

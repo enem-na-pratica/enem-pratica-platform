@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
   }
 
   const response = new NextResponse(
-    loginController.body,
+    null,
     { status: loginController.statusCode }
   );
 

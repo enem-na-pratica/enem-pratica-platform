@@ -1,41 +1,55 @@
 import { NextResponse } from "next/server";
 import { authenticate } from "@/src/middlewares/utils";
 import { Middleware } from "@/src/middlewares/middleware.interface";
+import { TokenPayload } from "../core/domain/shared/interfaces";
 
-const PUBLIC_API_ROUTES = ["/api/auth/login"];
-const PUBLIC_PAGES_ROUTES = ["/", "/login"];
-
-const UNAUTHENTICATED_ONLY_PAGES = [
+const GUEST_ONLY_PAGES = [
   "/login",
-  // "/register", "/forgot-password", etc.
+  "/register"
+];
+
+const PUBLIC_PAGES = [
+  "/",
+  "/about",
+  "/contact"
 ];
 
 export const AuthMiddleware: Middleware = async (request) => {
   const { pathname } = request.nextUrl;
+
+  const isGuestPage = GUEST_ONLY_PAGES.includes(pathname);
+  const isPublicPage = PUBLIC_PAGES.includes(pathname);
+
   const authResult = authenticate(request);
   const isAuthenticated = !('response' in authResult);
 
-  if (
-    isAuthenticated &&
-    UNAUTHENTICATED_ONLY_PAGES.includes(pathname)
-  ) {
+  if (isPublicPage) {
+    // This is a public page, but we inject logged-in user data for personalization.
+    if (isAuthenticated) {
+      const { user } = authResult as { user: TokenPayload };
+      request.headers.set("x-user-id", user.id);
+      request.headers.set("x-user-role", user.role);
+      request.headers.set("x-user-username", user.username);
+    }
+    return null;
+  }
+
+  if (isAuthenticated && isGuestPage) {
     const newUrl = request.nextUrl.clone();
     newUrl.pathname = '/dashboard';
     return NextResponse.redirect(newUrl);
   }
 
-  const isPublicPath =
-    PUBLIC_PAGES_ROUTES.includes(pathname) ||
-    PUBLIC_API_ROUTES.includes(pathname)
-  if (isPublicPath) {
-    return NextResponse.next();
-  }
-
-  if (!isAuthenticated) {
+  if (!isAuthenticated && !isGuestPage) {
     return authResult.response;
   }
 
-  const { user } = authResult;
+  if (!isAuthenticated && isGuestPage) {
+    return null;
+  }
+
+  // Default case: Logged-in user accessing a protected route.
+  const { user } = authResult as { user: TokenPayload };
   request.headers.set("x-user-id", user.id);
   request.headers.set("x-user-role", user.role);
   request.headers.set("x-user-username", user.username);

@@ -1,37 +1,34 @@
-import { NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { Role, hasAtLeastRole, ROLES } from "@/src/core/domain/auth/roles";
-import { TokenPayload } from "@/src/core/domain/shared/interfaces";
 
-const ROLE_PROTECTED_ROUTES: { path: string; minRole: Role }[] = [
-  { path: "/api/admin/users", minRole: ROLES.ADMIN },
-  { path: "/dashboard/grades", minRole: ROLES.TEACHER },
-];
+const PROTECTED_ROUTES_MAP: Record<string, Role> = {
+  "/user/new": ROLES.ADMIN,
+  "/dashboard/content/": ROLES.TEACHER,
+  "/dashboard/to-be-reviewed/": ROLES.TEACHER,
+  "/dashboard/review/": ROLES.TEACHER,
+  "/dashboard/simulations/": ROLES.TEACHER,
+  "/dashboard/essays/": ROLES.TEACHER,
+};
 
-export function authorizeByRole(
-  pathname: string,
-  userPayload: TokenPayload,
-): NextResponse | null {
-  const protectedRoute = ROLE_PROTECTED_ROUTES.find((route) =>
-    pathname.startsWith(route.path)
-  );
+const RULES = Object.entries(PROTECTED_ROUTES_MAP).sort(
+  ([pathA], [pathB]) => pathB.length - pathA.length
+);
 
-  if (protectedRoute) {
-    const requiredRole = protectedRoute.minRole;
-    const userRole = userPayload.role;
+export function isAuthorizedByRole(request: NextRequest): boolean {
+  const pathname = request.nextUrl.pathname;
+  const userRole = request.headers.get("x-user-role") as Role;
 
-    if (!hasAtLeastRole(requiredRole, userRole)) {
-      // If API
-      if (pathname.startsWith("/api/")) {
-        return NextResponse.json(
-          { error: `Forbidden: Requires minimum role of ${requiredRole}.`, },
-          { status: 403 }
-        );
-      }
-
-      // If page
-      return NextResponse.redirect(new URL("/access-denied", pathname));
-    }
+  const directMatchRole = PROTECTED_ROUTES_MAP[pathname];
+  if (directMatchRole) {
+    return hasAtLeastRole(directMatchRole, userRole);
   }
 
-  return null; // Access permitted
+  const rule = RULES.find(([path]) => pathname.startsWith(path));
+
+  if (rule) {
+    const [, minRole] = rule;
+    return hasAtLeastRole(minRole, userRole);
+  }
+
+  return true;
 }

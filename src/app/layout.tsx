@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { Providers } from "@/src/ui/providers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Login DDD",
-  description: "Sistema simples com estilo minimalista",
+  title: "ENEM na Prática",
+  description: "Assessoria de Estudos",
 };
 
 export default function RootLayout({
@@ -24,12 +25,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt-br">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
-      >
-        <div className="min-h-screen flex items-center justify-center p-4">
+      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+        <Providers>
           {children}
-        </div>
+        </Providers>
       </body>
     </html>
   );
