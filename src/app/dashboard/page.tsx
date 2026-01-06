@@ -18,7 +18,7 @@ export default async function Dashboard() {
 
   let user: UserModel | null;
   try {
-    user = await makeUserService().getUser(token.value);
+    user = await makeUserService().getMe(token.value);
   } catch {
     return (
       <div className="flex h-screen items-center justify-center">
