@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Role, ROLES } from "@/src/ui/constants";
-import { UserModel } from "@/src/ui/application/models";
+import { Role, ROLES, ROLE_LABELS } from "@/src/ui/constants";
+import { TeachingStaffModel } from "@/src/ui/application/models";
 import { useRouter } from "next/navigation";
 
 type NewUserFormData = {
@@ -20,19 +20,15 @@ const ROLE_CREATION_PERMISSIONS: Record<UserCreatorRole, Role[]> = {
   [ROLES.ADMIN]: [ROLES.STUDENT, ROLES.TEACHER],
 };
 
-export const ROLE_LABELS: Record<Role, string> = {
-  [ROLES.STUDENT]: "Estudante",
-  [ROLES.TEACHER]: "Professor",
-  [ROLES.ADMIN]: "Administrador",
-  [ROLES.SUPERADMIN]: "Super Administrador",
-};
-
 type NewUserFormProps = {
-  teachers: UserModel[];
+  teachingStaff: TeachingStaffModel[];
   currentUserRole: UserCreatorRole;
 };
 
-export function NewUserForm({ teachers, currentUserRole }: NewUserFormProps) {
+export function NewUserForm({
+  teachingStaff,
+  currentUserRole,
+}: NewUserFormProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<NewUserFormData>({
@@ -159,9 +155,10 @@ export function NewUserForm({ teachers, currentUserRole }: NewUserFormProps) {
             onChange={handleChange}
           >
             <option value="">Escolha um professor disponível...</option>
-            {teachers.map((teacher) => (
-              <option key={teacher.id} value={teacher.id}>
-                {teacher.name}
+            {teachingStaff.map(({ user, studentsCount }) => (
+              <option key={user.id} value={user.id}>
+                {user.name} | {ROLE_LABELS[user.role]} ({studentsCount}{" "}
+                {studentsCount === 1 ? "aluno" : "alunos"})
               </option>
             ))}
           </select>
