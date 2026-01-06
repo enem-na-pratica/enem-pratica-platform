@@ -18,7 +18,7 @@ export class UserService {
     this.mapper = deps.mapper;
   }
 
-  async getUser(token: string): Promise<UserModel | null> {
+  async getMe(token: string): Promise<UserModel | null> {
     const response = await fetch(`${this.baseUrl}/user/me`, {
       method: "GET",
       cache: "no-store",
