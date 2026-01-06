@@ -6,7 +6,7 @@ import {
   TeacherDashboard,
   SuperAdminDashboard,
 } from "@/src/ui/pages/dashboard";
-import { makeGetUser } from "@/src/ui/application/fatories/user/get-user.factory";
+import { makeUserService } from "@/src/ui/application/fatories/user/user-service.factory";
 import { UserModel } from "@/src/ui/application/models";
 import { ROLES } from "@/src/ui/constants";
 
@@ -18,7 +18,7 @@ export default async function Dashboard() {
 
   let user: UserModel | null;
   try {
-    user = await makeGetUser().getUser(token.value);
+    user = await makeUserService().getUser(token.value);
   } catch {
     return (
       <div className="flex h-screen items-center justify-center">
