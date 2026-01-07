@@ -6,7 +6,7 @@ import { getRoleFromHeaders } from "@/src/ui/helpers";
 import { makeGetTeachingStaff } from "@/src/ui/application/fatories/queries/get-teaching-staff.factory";
 import { cookies } from "next/headers";
 
-type UserCreatorRole = typeof ROLES.ADMIN | typeof ROLES.SUPERADMIN;
+type UserCreatorRole = typeof ROLES.ADMIN | typeof ROLES.SUPER_ADMIN;
 
 export default async function NewUserPage() {
   const headersList = await headers();

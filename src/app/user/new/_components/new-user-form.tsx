@@ -19,10 +19,10 @@ type NewUserFormData = {
   teacherId: string;
 };
 
-type UserCreatorRole = typeof ROLES.ADMIN | typeof ROLES.SUPERADMIN;
+type UserCreatorRole = typeof ROLES.ADMIN | typeof ROLES.SUPER_ADMIN;
 
 const ROLE_CREATION_PERMISSIONS: Record<UserCreatorRole, Role[]> = {
-  [ROLES.SUPERADMIN]: Object.values(ROLES),
+  [ROLES.SUPER_ADMIN]: Object.values(ROLES),
   [ROLES.ADMIN]: [ROLES.STUDENT, ROLES.TEACHER],
 };
 
