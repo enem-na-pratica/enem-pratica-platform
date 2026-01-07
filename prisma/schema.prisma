@@ -41,5 +41,5 @@ enum Role {
   STUDENT
   TEACHER
   ADMIN
-  SUPERADMIN
+  SUPER_ADMIN
 }
