@@ -5,5 +5,5 @@ export const ROLE_LEVELS: Record<Role, number> = {
   [ROLES.STUDENT]: 1,
   [ROLES.TEACHER]: 2,
   [ROLES.ADMIN]: 3,
-  [ROLES.SUPERADMIN]: 4,
+  [ROLES.SUPER_ADMIN]: 4,
 };

@@ -39,7 +39,7 @@ export default async function Dashboard() {
       return <TeacherDashboard user={user} />;
     case ROLES.ADMIN:
       return <AdminDashboard user={user} />;
-    case ROLES.SUPERADMIN:
+    case ROLES.SUPER_ADMIN:
       return <SuperAdminDashboard user={user} />;
     default:
       redirect("/access-denied");
