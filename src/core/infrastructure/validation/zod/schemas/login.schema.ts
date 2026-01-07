@@ -1,24 +1,28 @@
 import { z } from 'zod';
 
-const ALLOWED_CHARS_REGEX = /^[a-z0-9._-]+$/;
-const STARTS_OR_ENDS_WITH_SYMBOL = /^[._-]|[._-]$/;
-const SEQUENTIAL_SYMBOLS = /[._-]{2,}/;
+const USERNAME_CONFIG = {
+  MIN: 3,
+  MAX: 30,
+};
 
-const USERNAME_MIN_LENGTH = 3;
-const USERNAME_MAX_LENGTH = 30;
+const USERNAME_REGEX = {
+  ALLOWED: /^[a-z0-9._-]+$/,
+  BOUNDARIES: /^[._-]|[._-]$/,
+  SEQUENTIAL: /[._-]{2,}/,
+};
 
 export const loginSchema = z.object({
   username: z.string()
     .trim()
-    .min(USERNAME_MIN_LENGTH, `Username must be at least ${USERNAME_MIN_LENGTH} characters long`)
-    .max(USERNAME_MAX_LENGTH, `Username must be at most ${USERNAME_MAX_LENGTH} characters long`)
-    .regex(ALLOWED_CHARS_REGEX, {
+    .min(USERNAME_CONFIG.MIN, `Username must be at least ${USERNAME_CONFIG.MIN} characters long`)
+    .max(USERNAME_CONFIG.MAX, `Username must be at most ${USERNAME_CONFIG.MAX} characters long`)
+    .regex(USERNAME_REGEX.ALLOWED, {
       message: "Use only lowercase letters, numbers, dots, hyphens, or underscores",
     })
-    .regex(STARTS_OR_ENDS_WITH_SYMBOL, {
+    .regex(USERNAME_REGEX.BOUNDARIES, {
       message: "Username cannot start or end with symbols",
     })
-    .regex(SEQUENTIAL_SYMBOLS, {
+    .regex(USERNAME_REGEX.SEQUENTIAL, {
       message: "Username cannot contain sequential symbols (e.g., '..', '--')",
     }),
 

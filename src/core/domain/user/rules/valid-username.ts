@@ -1,9 +1,13 @@
-const ALLOWED_CHARS_REGEX = /^[a-z0-9._-]+$/;
-const STARTS_OR_ENDS_WITH_SYMBOL = /^[._-]|[._-]$/;
-const SEQUENTIAL_SYMBOLS = /[._-]{2,}/;
+const USERNAME_CONFIG = {
+  MIN: 3,
+  MAX: 30,
+};
 
-const USERNAME_MIN_LENGTH = 3;
-const USERNAME_MAX_LENGTH = 30;
+const USERNAME_REGEX = {
+  ALLOWED: /^[a-z0-9._-]+$/,
+  BOUNDARIES: /^[._-]|[._-]$/,
+  SEQUENTIAL: /[._-]{2,}/,
+};
 
 export function validUsername(username: string): void {
   // TODO: Implement custom errors
@@ -11,21 +15,21 @@ export function validUsername(username: string): void {
     throw new Error("The username must be a string.");
   }
 
-  if (username.length < USERNAME_MIN_LENGTH || username.length > USERNAME_MAX_LENGTH) {
+  if (username.length < USERNAME_CONFIG.MIN || username.length > USERNAME_CONFIG.MAX) {
     throw new Error(
-      `The username must be between ${USERNAME_MIN_LENGTH} and ${USERNAME_MAX_LENGTH} characters long.`
+      `The username must be between ${USERNAME_CONFIG.MIN} and ${USERNAME_CONFIG.MAX} characters long.`
     );
   }
 
-  if (!ALLOWED_CHARS_REGEX.test(username)) {
+  if (!USERNAME_REGEX.ALLOWED.test(username)) {
     throw new Error("Use only lowercase letters, numbers, dots, hyphens, or underscores.");
   }
 
-  if (STARTS_OR_ENDS_WITH_SYMBOL.test(username)) {
+  if (USERNAME_REGEX.BOUNDARIES.test(username)) {
     throw new Error("The username cannot start or end with symbols.");
   }
 
-  if (SEQUENTIAL_SYMBOLS.test(username)) {
+  if (USERNAME_REGEX.SEQUENTIAL.test(username)) {
     throw new Error("The username cannot contain sequential symbols (e.g., '..', '--').");
   }
 }
