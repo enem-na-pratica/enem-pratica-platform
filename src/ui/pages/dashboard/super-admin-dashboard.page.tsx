@@ -1,8 +1,10 @@
 import { UserModel } from "@/src/ui/application/models";
+import { LogoutButton } from "@/src/ui/components/logout-button";
 
 export function SuperAdminDashboard({ user }: { user: UserModel }) {
   return (
     <main className="min-h-screen flex items-center justify-center bg-gray-100">
+      <LogoutButton />
       <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-md">
         <h1 className="mb-4 text-xl font-semibold text-gray-800">
           Dados do Usuário
