@@ -1,9 +1,10 @@
 export function validName(name: string): void {
-  // TODO: Implementar erros personalizados
+  // TODO: Implement custom errors
   if (typeof name !== "string") {
-    throw new Error("O valor deve ser uma string.");
+    throw new Error("The name must be a string.");
   }
-  if (name.trim().length < 3) {
-    throw new Error("O nome deve ter pelo menos 3 caracteres.");
+
+  if (name.length < 3 || name.length > 30) {
+    throw new Error("The name must be between 3 and 30 characters long.");
   }
 }
