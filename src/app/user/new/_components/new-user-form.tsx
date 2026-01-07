@@ -4,6 +4,12 @@ import { useState } from "react";
 import { Role, ROLES, ROLE_LABELS } from "@/src/ui/constants";
 import { TeachingStaffModel } from "@/src/ui/application/models";
 import { useRouter } from "next/navigation";
+import { useValidation } from "@/src/ui/hooks";
+import { ZodValidation } from "@/src/ui/application/services/infrastructure/validation/zod/zod-validation";
+import {
+  newUserSchema,
+  NewUserSchema,
+} from "@/src/ui/application/services/infrastructure/validation/zod/schemas/new-user.schema";
 
 type NewUserFormData = {
   name: string;
@@ -25,6 +31,8 @@ type NewUserFormProps = {
   currentUserRole: UserCreatorRole;
 };
 
+const newUserValidator = new ZodValidation(newUserSchema);
+
 export function NewUserForm({
   teachingStaff,
   currentUserRole,
@@ -38,6 +46,7 @@ export function NewUserForm({
     role: "",
     teacherId: "",
   });
+  const { errors, validate } = useValidation(newUserValidator);
 
   const getAvailableRoles = (): Role[] => {
     return ROLE_CREATION_PERMISSIONS[currentUserRole];
@@ -61,17 +70,21 @@ export function NewUserForm({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    setIsLoading(true);
+    const isValid = validate(formData as unknown as NewUserSchema);
 
-    // TODO: Implement API call for user creation.
-    try {
-      console.log("Dados para envio:", formData);
-      router.replace("/dashboard");
-      router.refresh();
-    } catch {
-      alert("Erro ao cadastrar usuário.");
-    } finally {
-      setIsLoading(false);
+    if (isValid) {
+      setIsLoading(true);
+
+      // TODO: Implement API call for user creation.
+      try {
+        console.log("Dados para envio:", formData);
+        router.replace("/dashboard");
+        router.refresh();
+      } catch {
+        alert("Erro ao cadastrar usuário.");
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -90,6 +103,12 @@ export function NewUserForm({
           value={formData.name}
           onChange={handleChange}
         />
+        {errors.name &&
+          errors.name.map((msg, i) => (
+            <p key={i} className="text-(--error) text-sm">
+              {msg}
+            </p>
+          ))}
       </div>
 
       <div className="flex flex-col gap-1.5">
@@ -105,6 +124,12 @@ export function NewUserForm({
           value={formData.username}
           onChange={handleChange}
         />
+        {errors.username &&
+          errors.username.map((msg, i) => (
+            <p key={i} className="text-(--error) text-sm">
+              {msg}
+            </p>
+          ))}
       </div>
 
       <div className="flex flex-col gap-1.5">
@@ -120,6 +145,12 @@ export function NewUserForm({
           value={formData.password}
           onChange={handleChange}
         />
+        {errors.password &&
+          errors.password.map((msg, i) => (
+            <p key={i} className="text-(--error) text-sm">
+              {msg}
+            </p>
+          ))}
       </div>
 
       <div className="flex flex-col gap-1.5">
@@ -140,6 +171,12 @@ export function NewUserForm({
             </option>
           ))}
         </select>
+        {errors.role &&
+          errors.role.map((msg, i) => (
+            <p key={i} className="text-(--error) text-sm">
+              {msg}
+            </p>
+          ))}
       </div>
 
       {formData.role === ROLES.STUDENT && (
@@ -162,6 +199,12 @@ export function NewUserForm({
               </option>
             ))}
           </select>
+          {errors.teacherId &&
+            errors.teacherId.map((msg, i) => (
+              <p key={i} className="text-(--error) text-sm">
+                {msg}
+              </p>
+            ))}
         </div>
       )}
 
