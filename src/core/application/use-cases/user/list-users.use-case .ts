@@ -1,0 +1,47 @@
+import { UserRepository } from "@/src/core/domain/user/user.repository.interface";
+import { UserDTO } from "@/src/core/application/dtos/user";
+import { ToDtoMapper } from "@/src/core/domain/mapper";
+import { User } from "@/src/core/domain/user/user.entity";
+import { ListUsers } from "@/src/core/application/interfaces/user/list-users-use-case.interface";
+import { Role, ROLES } from "@/src/core/domain/auth/roles";
+import {
+  FindUsersByRolesService
+} from "@/src/core/application/queries/interfaces";
+
+export type ListUsersUseCaseDeps = {
+  userRepository: UserRepository;
+  userQuery: FindUsersByRolesService;
+  mapper: ToDtoMapper<User, UserDTO>
+}
+
+export class ListUsersUseCase implements ListUsers {
+  private readonly userRepository: UserRepository;
+  private readonly userQuery: FindUsersByRolesService;
+  private readonly mapper: ToDtoMapper<User, UserDTO>;
+
+  constructor(deps: ListUsersUseCaseDeps) {
+    this.userRepository = deps.userRepository;
+    this.userQuery = deps.userQuery
+    this.mapper = deps.mapper;
+  }
+
+  async execute(role: Role): Promise<UserDTO[]> {
+    if (role === ROLES.ADMIN) {
+      const users = await this.userQuery.findUsersByRoles([
+        ROLES.STUDENT,
+        ROLES.TEACHER
+      ]);
+
+      return users.map((user) => this.mapper.toDto(user));
+    }
+
+    if (role === ROLES.SUPER_ADMIN) {
+      const users = await this.userRepository.findAll();
+
+      return users.map((user) => this.mapper.toDto(user));
+    }
+
+    // TODO: Implementar Unauthorized Erro, code 401
+    throw new Error("This role does not have permission to list users.");
+  }
+}
