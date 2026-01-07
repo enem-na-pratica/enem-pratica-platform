@@ -1,5 +1,5 @@
 import { Role } from '@/src/core/domain/auth/roles';
-import { validName } from '@/src/core/domain/user/rules';
+import { validName, validUsername } from '@/src/core/domain/user/rules';
 
 interface UserProps {
   id?: string; // Opcional ao criar a entidade, obrigatório ao carregar
@@ -34,7 +34,7 @@ export class User {
 
   public static create(props: Omit<UserProps, "id" | "createdAt" | "updatedAt">): User {
     validName(props.name);
-    validName(props.username);
+    validUsername(props.username);
 
     return new User({
       ...props,
@@ -43,6 +43,7 @@ export class User {
 
   public static load(props: UserProps): User {
     if (!props.id) {
+      // TODO: Implement custom errors
       throw new Error('User ID is required for loading a persisted entity.');
     }
     return new User(props);
@@ -85,7 +86,7 @@ export class User {
   }
 
   public changeUsername(newUsername: string): void {
-    validName(newUsername);
+    validUsername(newUsername);
     this._username = newUsername;
     this.updateTimestamp();
   }
