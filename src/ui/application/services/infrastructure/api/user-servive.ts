@@ -19,7 +19,7 @@ export class UserService {
   }
 
   async getMe(token: string): Promise<UserModel | null> {
-    const response = await fetch(`${this.baseUrl}/user/me`, {
+    const response = await fetch(`${this.baseUrl}/users/me`, {
       method: "GET",
       cache: "no-store",
       headers: {
