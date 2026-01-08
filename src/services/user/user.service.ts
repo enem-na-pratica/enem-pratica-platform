@@ -18,6 +18,13 @@ export class UserService implements UserServiceHttp {
     this.mapper = deps.mapper;
   }
 
+  async login(params: { username: string, password: string }): Promise<void> {
+    await this.httpClient.post<UserResponseDto>(
+      "/auth/login",
+      { data: params }
+    );
+  }
+
   async getMe(): Promise<UserModel> {
     const data = await this.httpClient.get<UserResponseDto>("/users/me");
 

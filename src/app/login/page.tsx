@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { makeUserService } from "@/src/services/factories";
 
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -14,18 +15,7 @@ export default function Login() {
     setError("");
 
     try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
-      });
-
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(
-          data.error || "Credenciais inválidas. Tente novamente."
-        );
-      }
+      await makeUserService().login({ username, password });
 
       router.push("/dashboard");
     } catch (err: unknown) {
