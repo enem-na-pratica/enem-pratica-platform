@@ -1,4 +1,3 @@
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import {
   AdminDashboard,
@@ -6,19 +5,14 @@ import {
   TeacherDashboard,
   SuperAdminDashboard,
 } from "@/src/ui/pages/dashboard";
-import { makeUserService } from "@/src/ui/application/fatories/user/user-service.factory";
 import { UserModel } from "@/src/ui/application/models";
 import { ROLES } from "@/src/ui/constants";
+import { makeUserService } from "@/src/services/factories";
 
 export default async function Dashboard() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("auth_token");
-
-  if (!token) redirect("/login");
-
-  let user: UserModel | null;
+  let user: UserModel;
   try {
-    user = await makeUserService().getMe(token.value);
+    user = await makeUserService().getMe();
   } catch {
     return (
       <div className="flex h-screen items-center justify-center">
@@ -29,8 +23,6 @@ export default async function Dashboard() {
       </div>
     );
   }
-
-  if (!user) redirect("/login");
 
   switch (user.role) {
     case ROLES.STUDENT:
