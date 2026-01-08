@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { makeUserService } from "@/src/services/factories";
+import { makeAuthService } from "@/src/services/factories";
 
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -15,7 +15,7 @@ export default function Login() {
     setError("");
 
     try {
-      await makeUserService().login({ username, password });
+      await makeAuthService().login({ username, password });
 
       router.push("/dashboard");
     } catch (err: unknown) {

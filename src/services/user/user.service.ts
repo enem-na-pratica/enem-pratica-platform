@@ -1,6 +1,6 @@
 import { UserServiceHttp } from '@/src/services/user/user.service.interface';
 import { HttpClient } from '@/src/services/common/http/http-client.interface';
-import { Mapper } from "@/src/services/common/interfaces/mapper.interface"
+import { Mapper } from "@/src/services/common/interfaces/mapper.interface";
 import { UserResponseDto } from '@/src/services/dtos';
 import { UserModel } from "@/src/services/models"
 
@@ -16,13 +16,6 @@ export class UserService implements UserServiceHttp {
   constructor(deps: UserServiceDeps) {
     this.httpClient = deps.httpClient;
     this.mapper = deps.mapper;
-  }
-
-  async login(params: { username: string, password: string }): Promise<void> {
-    await this.httpClient.post<UserResponseDto>(
-      "/auth/login",
-      { data: params }
-    );
   }
 
   async getMe(): Promise<UserModel> {
