@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { UserModel } from "@/src/ui/application/models";
 import { LogoutButton } from "@/src/ui/components/logout-button";
 import { ThemeToggle } from "@/src/ui/components/theme-toggle";
@@ -19,26 +19,31 @@ const MENU_ITEMS: { id: Tab; label: string; icon: string }[] = [
 export function AdminDashboard({ user }: { user: UserModel }) {
   const [activeTab, setActiveTab] = useState<Tab>("home");
 
-  // Mock de dados mantido
-  const users: UserModel[] = [
-    user,
-    {
-      id: "2",
-      name: "João Silva",
-      username: "joao.prof",
-      role: "TEACHER",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    {
-      id: "3",
-      name: "Maria Aluna",
-      username: "maria.aluno",
-      role: "STUDENT",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-  ];
+  const [users, setUsers] = useState<UserModel[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch("/api/users");
+
+        if (!response.ok) {
+          throw new Error("Falha ao carregar usuários");
+        }
+
+        const data = await response.json();
+        setUsers(data);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Erro desconhecido");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchUsers();
+  }, []);
 
   const renderView = () => {
     const views: Record<Tab, React.ReactNode> = {
