@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { makeAuthService } from "@/src/services/factories";
 
 export function LogoutButton() {
   const router = useRouter();
@@ -12,20 +13,10 @@ export function LogoutButton() {
 
     setIsLoading(true);
     try {
-      const response = await fetch("/api/auth/logout", {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      await makeAuthService().logout();
 
-      if (response.ok) {
-        router.push("/login");
-        router.refresh();
-      } else {
-        console.error("Erro na resposta do servidor");
-        alert("Falha ao fazer logout. Tente novamente.");
-      }
+      router.push("/login");
+      router.refresh();
     } catch (error) {
       console.error("Erro ao desconectar:", error);
       alert("Ocorreu um erro. Verifique sua conexão ou tente novamente.");

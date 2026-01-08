@@ -19,4 +19,8 @@ export class AuthService implements AuthServiceHttp {
       { data: params }
     );
   }
+
+  async logout(): Promise<void> {
+    await this.httpClient.delete<UserResponseDto>("/auth/logout");
+  }
 }
