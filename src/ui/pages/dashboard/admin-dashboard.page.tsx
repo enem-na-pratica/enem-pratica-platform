@@ -56,7 +56,7 @@ export function AdminDashboard({ user }: { user: UserModel }) {
   };
 
   return (
-    <div className="flex min-h-screen bg-(--background) text-(--foreground) transition-colors duration-500">
+    <div className="flex h-screen overflow-hidden bg-(--background) text-(--foreground) transition-colors duration-500">
       {/* sidebar */}
       <aside className="w-64 bg-(--card-background) border-r border-(--foreground)/10 hidden md:flex flex-col">
         <div className="p-6 border-b border-(--foreground)/10">
@@ -68,7 +68,7 @@ export function AdminDashboard({ user }: { user: UserModel }) {
           </p>
         </div>
 
-        <nav className="flex-1 p-4 space-y-2">
+        <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
           {MENU_ITEMS.map((item) => (
             <SidebarItem
               key={item.id}
@@ -86,8 +86,8 @@ export function AdminDashboard({ user }: { user: UserModel }) {
       </aside>
 
       {/* main content */}
-      <main className="flex-1 flex flex-col">
-        <header className="h-16 border-b border-(--foreground)/10 flex items-center justify-between px-8 bg-(--card-background)/30 backdrop-blur-sm">
+      <main className="flex-1 flex flex-col min-w-0">
+        <header className="h-16 border-b border-(--foreground)/10 flex items-center justify-between px-8 bg-(--card-background)/30 backdrop-blur-sm shrink-0">
           <h2 className="font-semibold capitalize text-(--accent)">
             {MENU_ITEMS.find((item) => item.id === activeTab)!.label}
           </h2>
@@ -103,7 +103,7 @@ export function AdminDashboard({ user }: { user: UserModel }) {
           </div>
         </header>
 
-        <section className="p-8">{renderView()}</section>
+        <section className="flex-1 p-8 overflow-y-auto">{renderView()}</section>
       </main>
     </div>
   );
