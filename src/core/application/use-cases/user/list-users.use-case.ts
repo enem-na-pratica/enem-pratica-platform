@@ -7,7 +7,7 @@ import { Role, ROLES } from "@/src/core/domain/auth/roles";
 import {
   FindUsersByRolesService
 } from "@/src/core/application/queries/interfaces";
-import { UnauthorizedError } from "@/src/core/domain/errors";
+import { ForbiddenError } from "@/src/core/domain/errors";
 
 export type ListUsersUseCaseDeps = {
   userRepository: UserRepository;
@@ -42,6 +42,6 @@ export class ListUsersUseCase implements ListUsers {
       return users.map((user) => this.mapper.toDto(user));
     }
 
-    throw new UnauthorizedError();
+    throw new ForbiddenError();
   }
 }
