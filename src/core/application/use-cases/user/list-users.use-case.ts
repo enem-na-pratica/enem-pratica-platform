@@ -5,19 +5,19 @@ import { User } from "@/src/core/domain/user/user.entity";
 import { ListUsers } from "@/src/core/application/interfaces/user/list-users-use-case.interface";
 import { Role, ROLES } from "@/src/core/domain/auth/roles";
 import {
-  FindUsersByRolesService
+  UsersByRolesQuery
 } from "@/src/core/application/queries/interfaces";
 import { ForbiddenError } from "@/src/core/domain/errors";
 
 export type ListUsersUseCaseDeps = {
   userRepository: UserRepository;
-  userQuery: FindUsersByRolesService;
+  userQuery: UsersByRolesQuery;
   mapper: ToDtoMapper<User, UserDTO>
 }
 
 export class ListUsersUseCase implements ListUsers {
   private readonly userRepository: UserRepository;
-  private readonly userQuery: FindUsersByRolesService;
+  private readonly userQuery: UsersByRolesQuery;
   private readonly mapper: ToDtoMapper<User, UserDTO>;
 
   constructor(deps: ListUsersUseCaseDeps) {

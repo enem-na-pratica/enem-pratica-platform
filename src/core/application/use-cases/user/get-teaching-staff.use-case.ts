@@ -1,16 +1,16 @@
-import { GetTeachingStaffService } from "@/src/core/application/queries/interfaces/get-teaching-staff.query.interface";
+import { TeachingStaffQuery } from "@/src/core/application/queries/interfaces";
 import { TeachingStaffOptionDTO, UserDTO } from "@/src/core/application/dtos/user";
 import { ToDtoMapper } from "@/src/core/domain/mapper";
 import { User } from "@/src/core/domain/user/user.entity";
 import { GetTeachingStaff } from "@/src/core/application/interfaces/user/get-teaching-staff-use-case.interface";
 
 export type GetTeachingStaffUseCaseDep = {
-  userService: GetTeachingStaffService;
+  userService: TeachingStaffQuery;
   mapper: ToDtoMapper<User, UserDTO>
 }
 
 export class GetTeachingStaffUseCase implements GetTeachingStaff {
-  private readonly userService: GetTeachingStaffService;
+  private readonly userService: TeachingStaffQuery;
   private readonly mapper: ToDtoMapper<User, UserDTO>;
 
   constructor(deps: GetTeachingStaffUseCaseDep) {
@@ -19,7 +19,7 @@ export class GetTeachingStaffUseCase implements GetTeachingStaff {
   }
 
   async execute(): Promise<TeachingStaffOptionDTO[]> {
-    const teachingStaff = await this.userService.getTeachingStaff();
+    const teachingStaff = await this.userService.findTeachingStaff();
     const teachingStaffDtos: TeachingStaffOptionDTO[] = teachingStaff.map(
       (staff) => {
         return {

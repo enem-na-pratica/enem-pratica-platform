@@ -1,25 +1,24 @@
 import { User } from "@/src/core/domain/user/user.entity";
 import { PrismaClient, User as UserPrisma } from "@/src/generated/prisma/client";
 import { ToDomainMapper } from "@/src/core/domain/mapper";
-import { ROLES } from "@/src/core/domain/auth/roles";
+import { ROLES, Role } from "@/src/core/domain/auth/roles";
 import {
-  GetTeachingStaffService,
-  FindUsersByRolesService
+  TeachingStaffQuery,
+  UsersByRolesQuery
 } from "@/src/core/application/queries/interfaces";
 import { TeachingStaffReadModel } from "@/src/core/application/queries/read-model";
-import { Role } from "@/src/core/domain/auth/roles";
 
-export type UserPrismaServiceDep = {
+type PrismaUserQueryDeps = {
   prisma: PrismaClient;
   mapper: ToDomainMapper<UserPrisma, User>;
 }
 
-export class UserPrismaService
-  implements GetTeachingStaffService, FindUsersByRolesService {
+export class PrismaUserQuery
+  implements TeachingStaffQuery, UsersByRolesQuery {
   private readonly prisma: PrismaClient;
   private readonly mapper: ToDomainMapper<UserPrisma, User>;
 
-  constructor(deps: UserPrismaServiceDep) {
+  constructor(deps: PrismaUserQueryDeps) {
     this.prisma = deps.prisma;
     this.mapper = deps.mapper;
   }
@@ -32,10 +31,11 @@ export class UserPrismaService
         }
       }
     });
+
     return users.map(user => this.mapper.toDomain(user));
   }
 
-  async getTeachingStaff(): Promise<TeachingStaffReadModel[]> {
+  async findTeachingStaff(): Promise<TeachingStaffReadModel[]> {
     const teachers = await this.prisma.user.findMany({
       where: {
         role: {

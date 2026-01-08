@@ -1,2 +1,2 @@
-export * from "./get-teaching-staff.query.interface";
-export * from "./find-users-by-roles.query.interface";
+export * from "./teaching-staff.query.interface";
+export * from "./users-by-roles.query.interface";
