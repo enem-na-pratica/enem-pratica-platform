@@ -7,7 +7,7 @@ import {
   FindUsersByRolesService
 } from "@/src/core/application/queries/interfaces";
 import { TeachingStaffReadModel } from "@/src/core/application/queries/read-model";
-import { Role } from "@/src/ui/constants";
+import { Role } from "@/src/core/domain/auth/roles";
 
 export type UserPrismaServiceDep = {
   prisma: PrismaClient;
