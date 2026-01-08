@@ -7,6 +7,7 @@ import { Role, ROLES } from "@/src/core/domain/auth/roles";
 import {
   FindUsersByRolesService
 } from "@/src/core/application/queries/interfaces";
+import { UnauthorizedError } from "@/src/core/domain/errors";
 
 export type ListUsersUseCaseDeps = {
   userRepository: UserRepository;
@@ -41,7 +42,6 @@ export class ListUsersUseCase implements ListUsers {
       return users.map((user) => this.mapper.toDto(user));
     }
 
-    // TODO: Implementar Unauthorized Erro, code 401
-    throw new Error("This role does not have permission to list users.");
+    throw new UnauthorizedError();
   }
 }
