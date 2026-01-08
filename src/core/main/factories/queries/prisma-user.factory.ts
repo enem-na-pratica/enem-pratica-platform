@@ -1,10 +1,10 @@
 import { prisma } from '@/src/core/infrastructure/databases/prisma/prisma';
 import { UserPrismaMapper } from '@/src/core/infrastructure/mapper/user-prisma.mapper';
-import { UserPrismaService } from "@/src/core/infrastructure/queries/prisma/user-query.service";
+import { PrismaUserQuery } from "@/src/core/infrastructure/queries/prisma";
 
-export function makeUserPrismaService() {
+export function makePrismaUserQuery() {
   const userPrismaMapper = new UserPrismaMapper();
-  return new UserPrismaService({
+  return new PrismaUserQuery({
     prisma,
     mapper: userPrismaMapper
   });
