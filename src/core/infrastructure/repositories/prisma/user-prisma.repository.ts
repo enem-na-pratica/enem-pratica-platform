@@ -2,6 +2,7 @@ import { UserRepository } from "@/src/core/domain/user/user.repository.interface
 import { User } from "@/src/core/domain/user/user.entity";
 import { PrismaClient, User as UserPrisma } from "@/src/generated/prisma/client";
 import { ToDomainMapper } from "@/src/core/domain/mapper";
+import { UserNotFoundError } from "@/src/core/domain/errors";
 
 export type UserPrismaRepositoryDep = {
   prisma: PrismaClient;
@@ -28,6 +29,14 @@ export class UserPrismaRepository implements UserRepository {
     });
 
     return this.mapper.toDomain(newUser);
+  }
+
+  async getById(userId: string): Promise<User> {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+
+    if (!user) throw new UserNotFoundError("id", userId);
+
+    return this.mapper.toDomain(user);
   }
 
   async findByUsername(username: string): Promise<User | null> {
