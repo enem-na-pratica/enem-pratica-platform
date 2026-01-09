@@ -23,4 +23,10 @@ export class UserService implements UserServiceHttp {
 
     return this.mapper.toModel(data);
   }
+
+  async findAll(): Promise<UserModel[]> {
+    const data = await this.httpClient.get<UserResponseDto[]>("/users");
+
+    return data.map((user) => this.mapper.toModel(user));
+  }
 }

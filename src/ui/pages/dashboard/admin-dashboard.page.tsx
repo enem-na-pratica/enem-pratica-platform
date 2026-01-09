@@ -7,6 +7,7 @@ import { ThemeToggle } from "@/src/ui/components/theme-toggle";
 import { SidebarItem } from "@/src/ui/components/sidebar-item";
 import { UsersView } from "@/src/ui/components/users-view";
 import { HomeView } from "@/src/ui/components/home-view";
+import { makeUserService } from "@/src/services/factories";
 
 type Tab = "home" | "users" | "settings";
 
@@ -27,13 +28,7 @@ export function AdminDashboard({ user }: { user: UserModel }) {
     const fetchUsers = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch("/api/users");
-
-        if (!response.ok) {
-          throw new Error("Falha ao carregar usuários");
-        }
-
-        const data = await response.json();
+        const data = await makeUserService().findAll();
         setUsers(data);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Erro desconhecido");
