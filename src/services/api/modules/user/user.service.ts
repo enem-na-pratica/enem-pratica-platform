@@ -1,8 +1,8 @@
-import { UserServiceHttp } from '@/src/services/user/user.service.interface';
-import { HttpClient } from '@/src/services/common/http/http-client.interface';
-import { Mapper } from "@/src/services/common/interfaces/mapper.interface";
-import { UserResponseDto, TeachingStaffDto } from '@/src/services/dtos';
-import { TeachingStaffModel, UserModel } from "@/src/services/models"
+import { UserServiceHttp } from '@/src/services/api/modules/user/user.service.interface';
+import { HttpClient } from '@/src/services/api/common/http/http-client.interface';
+import { Mapper } from "@/src/services/api/common/interfaces/mapper.interface";
+import { UserResponseDto, TeachingStaffDto } from '@/src/services/api/dtos';
+import { TeachingStaffModel, UserModel } from "@/src/services/api/models"
 
 type UserServiceDeps = {
   httpClient: HttpClient,

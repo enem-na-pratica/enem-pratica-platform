@@ -5,9 +5,9 @@ import {
   TeacherDashboard,
   SuperAdminDashboard,
 } from "@/src/ui/pages/dashboard";
-import { UserModel } from "@/src/ui/application/models";
+import { UserModel } from "@/src/services/api/models";
 import { ROLES } from "@/src/ui/constants";
-import { makeUserService } from "@/src/services/factories";
+import { makeUserService } from "@/src/services/api/factories";
 
 export default async function Dashboard() {
   let user: UserModel;

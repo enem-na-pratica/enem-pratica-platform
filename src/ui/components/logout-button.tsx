@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { makeAuthService } from "@/src/services/factories";
+import { makeAuthService } from "@/src/services/api/factories";
 
 export function LogoutButton() {
   const router = useRouter();

@@ -1,6 +1,6 @@
-import { AuthServiceHttp } from '@/src/services/auth/auth.service.interface';
-import { HttpClient } from '@/src/services/common/http/http-client.interface';
-import { UserResponseDto } from '@/src/services/dtos';
+import { AuthServiceHttp } from '@/src/services/api/modules/auth/auth.service.interface';
+import { HttpClient } from '@/src/services/api/common/http/http-client.interface';
+import { UserResponseDto } from '@/src/services/api/dtos';
 
 type AuthServiceDeps = {
   httpClient: HttpClient,

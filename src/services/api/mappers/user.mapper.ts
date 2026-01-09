@@ -1,7 +1,7 @@
 import { Role } from "@/src/core/domain/auth/roles";
-import { UserResponseDto } from "@/src/services/dtos/";
-import { UserModel } from "@/src/services/models";
-import { Mapper } from "@/src/services/common/interfaces";
+import { UserResponseDto } from "@/src/services/api/dtos";
+import { UserModel } from "@/src/services/api/models";
+import { Mapper } from "@/src/services/api/common/interfaces";
 
 export class UserMapper implements Mapper<UserResponseDto, UserModel> {
   toModel(response: UserResponseDto): UserModel {
