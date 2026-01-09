@@ -5,7 +5,7 @@ import {
   HttpResponse
 } from '@/src/core/presentation/interfaces';
 import { GetCurrentUser } from "@/src/core/application/interfaces/user/get-current-user-use-case.interface";
-import { UserDTO } from '@/src/core/application/dtos/user';
+import { UserResDto } from '@/src/core/application/dtos/user';
 import { UserNotFoundError } from '@/src/core/domain/errors';
 
 export type GetCurrentUserDep = {
@@ -13,7 +13,7 @@ export type GetCurrentUserDep = {
 }
 
 export class GetCurrentUserController
-  implements Controller<{ username: string }, UserDTO> {
+  implements Controller<{ username: string }, UserResDto> {
   private readonly getCurrentUserUseCase: GetCurrentUser;
 
   constructor(deps: GetCurrentUserDep) {
@@ -22,7 +22,7 @@ export class GetCurrentUserController
 
   async handle(
     request: HttpRequest<{ username: string }>
-  ): Promise<HttpResponse<UserDTO | ErrorResponse>> {
+  ): Promise<HttpResponse<UserResDto | ErrorResponse>> {
     const { username } = request.body;
 
     try {
@@ -31,7 +31,7 @@ export class GetCurrentUserController
       return {
         statusCode: 200,
         body: user,
-      } as HttpResponse<UserDTO>;
+      } as HttpResponse<UserResDto>;
     } catch (err: unknown) {
       if (err instanceof UserNotFoundError) {
         return {

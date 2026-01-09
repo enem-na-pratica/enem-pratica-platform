@@ -1,9 +1,9 @@
 import { ToDtoMapper } from "@/src/core/domain/mapper"
 import { User } from "@/src/core/domain/user/user.entity";
-import { UserDTO } from "@/src/core/application/dtos/user";
+import { UserResDto } from "@/src/core/application/dtos/user";
 
-export class UserDtoMapper implements ToDtoMapper<User, UserDTO> {
-  toDto(input: User): UserDTO {
+export class UserResDtoMapper implements ToDtoMapper<User, UserResDto> {
+  toDto(input: User): UserResDto {
     return {
       id: input.id!,
       name: input.name,
@@ -11,6 +11,6 @@ export class UserDtoMapper implements ToDtoMapper<User, UserDTO> {
       role: input.role,
       createdAt: input.createdAt,
       updatedAt: input.updatedAt
-    } as UserDTO
+    } as UserResDto
   }
 }

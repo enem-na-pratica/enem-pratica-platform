@@ -1,4 +1,4 @@
-export type UserDTO = {
+export type UserResDto = {
   id: string;
   name: string;
   username: string;

@@ -4,7 +4,7 @@ import {
   HttpRequest,
   HttpResponse
 } from '@/src/core/presentation/interfaces';
-import { UserDTO } from '@/src/core/application/dtos/user';
+import { UserResDto } from '@/src/core/application/dtos/user';
 import { ForbiddenError } from '@/src/core/domain/errors';
 import { Role } from '@/src/core/domain/auth/roles';
 import { ListUsers } from '@/src/core/application/interfaces/user/list-users-use-case.interface';
@@ -14,7 +14,7 @@ export type GetCurrentUserDep = {
 }
 
 export class ListUsersController
-  implements Controller<Role, UserDTO[]> {
+  implements Controller<Role, UserResDto[]> {
   private readonly listUsersUseCase: ListUsers;
 
   constructor(deps: GetCurrentUserDep) {
@@ -23,7 +23,7 @@ export class ListUsersController
 
   async handle(
     request: HttpRequest<Role>
-  ): Promise<HttpResponse<UserDTO[] | ErrorResponse>> {
+  ): Promise<HttpResponse<UserResDto[] | ErrorResponse>> {
     const role = request.body
     try {
       const users = await this.listUsersUseCase.execute(role);
