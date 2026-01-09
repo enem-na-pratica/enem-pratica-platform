@@ -1,5 +1,5 @@
-import { CreateStudentDto } from "@/src/core/application/dtos/user";
+import { User } from "@/src/core/domain/user/user.entity";
 
 export interface StudentRegistrationCommand {
-  registerStudent(input: CreateStudentDto): Promise<void>;
+  registerStudent(params: {student: User, teacherId: string}): Promise<void>;
 }
