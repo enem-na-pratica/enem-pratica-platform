@@ -4,21 +4,21 @@ import {
   HttpResponse
 } from '@/src/core/presentation/interfaces';
 import { GetTeachingStaff } from "@/src/core/application/interfaces/user/get-teaching-staff-use-case.interface";
-import { TeachingStaffOptionDTO } from "@/src/core/application/dtos/user";
+import { TeachingStaffOptionResDto } from "@/src/core/application/dtos/user";
 
 export type GetTeachingStaffDep = {
   getTeachingStaffUseCase: GetTeachingStaff;
 }
 
 export class GetTeachingStaffController
-  implements Controller<void, TeachingStaffOptionDTO[]> {
+  implements Controller<void, TeachingStaffOptionResDto[]> {
   private readonly getTeachingStaffUseCase: GetTeachingStaff;
 
   constructor(deps: GetTeachingStaffDep) {
     this.getTeachingStaffUseCase = deps.getTeachingStaffUseCase;
   }
 
-  async handle(): Promise<HttpResponse<TeachingStaffOptionDTO[] | ErrorResponse>> {
+  async handle(): Promise<HttpResponse<TeachingStaffOptionResDto[] | ErrorResponse>> {
     try {
       const teachingStaff = await this.getTeachingStaffUseCase.execute();
 

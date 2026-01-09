@@ -1,5 +1,5 @@
 import { UserRepository } from "@/src/core/domain/user/user.repository.interface";
-import { UserDTO } from "@/src/core/application/dtos/user";
+import { UserResDto } from "@/src/core/application/dtos/user";
 import { ToDtoMapper } from "@/src/core/domain/mapper";
 import { User } from "@/src/core/domain/user/user.entity";
 import { ListUsers } from "@/src/core/application/interfaces/user/list-users-use-case.interface";
@@ -12,13 +12,13 @@ import { ForbiddenError } from "@/src/core/domain/errors";
 export type ListUsersUseCaseDeps = {
   userRepository: UserRepository;
   userQuery: UsersByRolesQuery;
-  mapper: ToDtoMapper<User, UserDTO>
+  mapper: ToDtoMapper<User, UserResDto>
 }
 
 export class ListUsersUseCase implements ListUsers {
   private readonly userRepository: UserRepository;
   private readonly userQuery: UsersByRolesQuery;
-  private readonly mapper: ToDtoMapper<User, UserDTO>;
+  private readonly mapper: ToDtoMapper<User, UserResDto>;
 
   constructor(deps: ListUsersUseCaseDeps) {
     this.userRepository = deps.userRepository;
@@ -26,7 +26,7 @@ export class ListUsersUseCase implements ListUsers {
     this.mapper = deps.mapper;
   }
 
-  async execute(role: Role): Promise<UserDTO[]> {
+  async execute(role: Role): Promise<UserResDto[]> {
     if (role === ROLES.ADMIN) {
       const users = await this.userQuery.findUsersByRoles([
         ROLES.STUDENT,
