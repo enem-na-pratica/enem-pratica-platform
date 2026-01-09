@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { HttpClient, RequestOptions } from "../http-client.interface";
+import { HttpClient, RequestOptions } from "@/src/services/api/common/http/http-client.interface";
 
 const HTTP_METHOD = {
   GET: "GET",

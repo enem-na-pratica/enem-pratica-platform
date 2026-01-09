@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Role, ROLES, ROLE_LABELS } from "@/src/ui/constants";
-import { TeachingStaffModel } from "@/src/services/models";
+import { TeachingStaffModel } from "@/src/services/api/models";
 import { useRouter } from "next/navigation";
 import { useValidation } from "@/src/ui/hooks";
 import { ZodValidation } from "@/src/ui/application/services/infrastructure/validation/zod/zod-validation";

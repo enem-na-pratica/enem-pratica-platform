@@ -3,7 +3,7 @@ import { ROLES } from "@/src/ui/constants";
 import Link from "next/link";
 import { headers } from "next/headers";
 import { getRoleFromHeaders } from "@/src/ui/helpers";
-import { makeUserService } from "@/src/services/factories";
+import { makeUserService } from "@/src/services/api/factories";
 
 type UserCreatorRole = typeof ROLES.ADMIN | typeof ROLES.SUPER_ADMIN;
 

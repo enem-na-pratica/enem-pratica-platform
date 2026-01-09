@@ -1,4 +1,4 @@
-import { UserModel, TeachingStaffModel } from "@/src/services/models";
+import { UserModel, TeachingStaffModel } from "@/src/services/api/models";
 
 export interface UserServiceHttp {
   getMe(): Promise<UserModel>;

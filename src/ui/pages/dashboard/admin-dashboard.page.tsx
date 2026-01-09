@@ -1,13 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { UserModel } from "@/src/ui/application/models";
+import { UserModel } from "@/src/services/api/models";
 import { LogoutButton } from "@/src/ui/components/logout-button";
 import { ThemeToggle } from "@/src/ui/components/theme-toggle";
 import { SidebarItem } from "@/src/ui/components/sidebar-item";
 import { UsersView } from "@/src/ui/components/users-view";
 import { HomeView } from "@/src/ui/components/home-view";
-import { makeUserService } from "@/src/services/factories";
+import { makeUserService } from "@/src/services/api/factories";
 
 type Tab = "home" | "users" | "settings";
 
