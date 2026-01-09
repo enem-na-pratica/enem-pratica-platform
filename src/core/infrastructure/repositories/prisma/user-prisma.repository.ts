@@ -17,9 +17,17 @@ export class UserPrismaRepository implements UserRepository {
     this.mapper = deps.mapper;
   }
 
-  async findAll(): Promise<User[]> {
-    const users = await this.prisma.user.findMany();
-    return users.map(user => this.mapper.toDomain(user));
+  async create(user: User): Promise<User> {
+    const newUser = await this.prisma.user.create({
+      data: {
+        name: user.name,
+        username: user.username,
+        passwordHash: user.passwordHash,
+        role: user.role,
+      }
+    });
+
+    return this.mapper.toDomain(newUser);
   }
 
   async findByUsername(username: string): Promise<User | null> {
@@ -28,5 +36,11 @@ export class UserPrismaRepository implements UserRepository {
     if (!user) return null;
 
     return this.mapper.toDomain(user);
+  }
+
+  async findAll(): Promise<User[]> {
+    const users = await this.prisma.user.findMany();
+
+    return users.map(user => this.mapper.toDomain(user));
   }
 }
