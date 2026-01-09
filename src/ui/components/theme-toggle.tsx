@@ -1,6 +1,6 @@
 "use client";
 
-import { useTheme } from "@/src/ui/hooks/use-theme";
+import { useTheme } from "@/src/ui/hooks";
 
 const SunIcon = () => <span className="text-xl">☀️</span>;
 const MoonIcon = () => <span className="text-xl">🌙</span>;
