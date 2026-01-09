@@ -13,7 +13,7 @@ const USERNAME_REGEX = {
 
 const PASSWORD_CONFIG = { MIN: 8, MAX: 20 };
 const PASSWORD_REGEX = {
-  LOWERCASE: /[A-Z]/,
+  LOWERCASE: /[a-z]/,
   UPPERCASE: /[A-Z]/,
   NUMBER: /[0-9]/,
   SYMBOL: /[^A-Za-z0-9]/,
