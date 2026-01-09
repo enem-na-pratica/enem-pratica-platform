@@ -3,8 +3,7 @@ import { ROLES } from "@/src/ui/constants";
 import Link from "next/link";
 import { headers } from "next/headers";
 import { getRoleFromHeaders } from "@/src/ui/helpers";
-import { makeGetTeachingStaff } from "@/src/ui/application/fatories/queries/get-teaching-staff.factory";
-import { cookies } from "next/headers";
+import { makeUserService } from "@/src/services/factories";
 
 type UserCreatorRole = typeof ROLES.ADMIN | typeof ROLES.SUPER_ADMIN;
 
@@ -12,10 +11,7 @@ export default async function NewUserPage() {
   const headersList = await headers();
   const role = getRoleFromHeaders(headersList) as UserCreatorRole;
 
-  const cookieStore = await cookies();
-  const token = cookieStore.get("auth_token")!;
-
-  const teachingStaff = await makeGetTeachingStaff().execute(token.value);
+  const teachingStaff = await makeUserService().findTeachingStaff();
 
   return (
     <div className="w-full flex items-center justify-center bg-(--background) p-1.5">

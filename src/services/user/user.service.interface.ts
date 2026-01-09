@@ -1,6 +1,7 @@
-import { UserModel } from "@/src/services/models";
+import { UserModel, TeachingStaffModel } from "@/src/services/models";
 
 export interface UserServiceHttp {
   getMe(): Promise<UserModel>;
   findAll(): Promise<UserModel[]>;
+  findTeachingStaff(): Promise<TeachingStaffModel[]>;
 }
