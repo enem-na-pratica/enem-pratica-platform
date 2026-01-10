@@ -2,13 +2,20 @@ import { BaseError } from "@/src/core/domain/errors";
 
 const DEFAULT_NOT_FOUND_MESSAGE = 'Entity not found.';
 
+type NotFoundErrorParams = {
+  entityName?: string;
+  fieldName?: string;
+  entityValue?: string | number;
+  message?: string;
+};
+
 export class NotFoundError extends BaseError {
-  constructor(
-    entityName?: string,
-    fieldName?: string,
-    entityValue?: string | number,
-    message?: string
-  ) {
+  constructor({
+    entityName,
+    fieldName,
+    entityValue,
+    message,
+  }: NotFoundErrorParams = {}) {
     let msg: string;
 
     if (message) {
