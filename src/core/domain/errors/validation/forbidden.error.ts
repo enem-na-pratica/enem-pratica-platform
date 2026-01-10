@@ -1,4 +1,4 @@
-import { BaseError } from "./base.error";
+import { BaseError } from "@/src/core/domain/errors";
 
 export class ForbiddenError extends BaseError {
   constructor(

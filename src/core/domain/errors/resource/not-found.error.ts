@@ -1,4 +1,4 @@
-import { BaseError } from "./base.error";
+import { BaseError } from "@/src/core/domain/errors";
 
 const DEFAULT_NOT_FOUND_MESSAGE = 'Entity not found.';
 
