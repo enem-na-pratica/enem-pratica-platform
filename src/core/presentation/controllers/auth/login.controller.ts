@@ -1,7 +1,7 @@
 import { LoginInputDTO } from '@/src/core/application/dtos/auth';
 import { Login } from '@/src/core/application/interfaces/auth/login-use-case.interface';
 import { IncorrectPasswordError, NotFoundError } from '@/src/core/domain/errors';
-import { ValidationError } from '@/src/core/domain/errors/validation.error';
+import { ValidationError } from '@/src/core/domain/errors';
 import { Validation } from '@/src/core/domain/validation/validator.interface';
 import {
   Controller,

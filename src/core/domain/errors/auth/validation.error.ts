@@ -1,4 +1,4 @@
-import { BaseError } from "./base.error";
+import { BaseError } from "@/src/core/domain/errors";
 import { ValidationErrors } from '@/src/core/domain/validation/validator.interface';
 
 export class ValidationError extends BaseError {

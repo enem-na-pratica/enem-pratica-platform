@@ -3,7 +3,7 @@ import {
   Validation,
   ValidationErrors
 } from '@/src/core/domain/validation/validator.interface';
-import { ValidationError } from '@/src/core/domain/errors/validation.error';
+import { ValidationError } from '@/src/core/domain/errors';
 
 export class ZodValidation<T> implements Validation<T> {
   constructor(private readonly schema: ZodType<T>) { }
