@@ -6,6 +6,7 @@ import { User } from "@/src/core/domain/user/user.entity";
 import { StudentRegistrationCommand } from "@/src/core/application/commands/interfaces";
 import { Role, ROLES } from "@/src/core/domain/auth/roles";
 import { Hasher } from "@/src/core/domain/secure";
+import { UserAlreadyExistsError } from "@/src/core/domain/errors/resource/";
 
 export type CreateUserUseCaseDep = {
   userRepository: UserRepository;
@@ -13,7 +14,6 @@ export type CreateUserUseCaseDep = {
   mapper: ToDtoMapper<User, UserResDto>;
   hasher: Hasher;
 }
-
 
 export class CreateUserUseCase implements CreateUserUser {
   private readonly userRepository: UserRepository;
@@ -35,8 +35,10 @@ export class CreateUserUseCase implements CreateUserUser {
     const userExists = !!(await this.userRepository.findByUsername(username));
 
     if (userExists) {
-      // TODO: Implementar erro personalizado
-      throw new Error(`Usuario com username "${username}", já exite.`);
+      throw new UserAlreadyExistsError({
+        fieldName: 'username',
+        entityValue: username,
+      });
     }
 
     if (role === ROLES.STUDENT && teacherId) {
