@@ -3,12 +3,10 @@ import {
   HttpRequest,
   HttpResponse
 } from '@/src/core/presentation/interfaces';
+import * as Http from '@/src/core/presentation/helpers/http.helper';
 
 export class LogoutController implements Controller<void, null> {
   async handle(_request: HttpRequest<unknown>): Promise<HttpResponse<null>> {
-    return {
-      statusCode: 204,
-      body: null,
-    };
+    return Http.noContent();
   }
 }
