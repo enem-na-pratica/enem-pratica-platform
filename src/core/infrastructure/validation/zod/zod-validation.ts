@@ -8,10 +8,10 @@ import { ValidationError } from '@/src/core/domain/errors';
 export class ZodValidation<T> implements Validation<T> {
   constructor(private readonly schema: ZodType<T>) { }
 
-  validate(input: T): void {
+  validate(input: T): T {
     const result = this.schema.safeParse(input);
 
-    if (result.success) return;
+    if (result.success) return result.data;
 
     const grouped: ValidationErrors = {};
 
