@@ -10,6 +10,7 @@ import {
   newUserSchema,
   NewUserSchema,
 } from "@/src/services/validation/zod/schemas/new-user.schema";
+import { makeUserService } from "@/src/services/api/factories";
 
 type NewUserFormData = {
   name: string;
@@ -77,7 +78,8 @@ export function NewUserForm({
 
       // TODO: Implement API call for user creation.
       try {
-        console.log("Dados para envio:", formData);
+        const newUser = await makeUserService().create(formData);
+        console.log("Novo Usuário :", newUser);
         router.replace("/dashboard");
         router.refresh();
       } catch {

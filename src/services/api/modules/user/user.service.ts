@@ -24,6 +24,15 @@ export class UserService implements UserServiceHttp {
     return this.mapper.toModel(data);
   }
 
+  async create(dataUser: unknown): Promise<UserModel> {
+    const data = await this.httpClient.post<UserResponseDto>(
+      "/users/new",
+      { data: dataUser }
+    );
+
+    return this.mapper.toModel(data);
+  }
+
   async findAll(): Promise<UserModel[]> {
     const data = await this.httpClient.get<UserResponseDto[]>("/users");
 
@@ -31,7 +40,7 @@ export class UserService implements UserServiceHttp {
   }
 
   async findTeachingStaff(): Promise<TeachingStaffModel[]> {
-    const data = await this.httpClient.get<TeachingStaffDto[]>("//teaching-staff");
+    const data = await this.httpClient.get<TeachingStaffDto[]>("/teaching-staff");
 
     return data.map((staff) => {
       return {

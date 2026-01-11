@@ -9,6 +9,7 @@ const PROTECTED_ROUTES_MAP: Record<string, Role> = {
   "/dashboard/simulations/": ROLES.TEACHER,
   "/dashboard/essays/": ROLES.TEACHER,
   "/api/teaching-staff/": ROLES.ADMIN,
+  "/api/user/new": ROLES.ADMIN,
 };
 
 const RULES = Object.entries(PROTECTED_ROUTES_MAP).sort(
