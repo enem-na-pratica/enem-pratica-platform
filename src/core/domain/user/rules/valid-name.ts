@@ -3,7 +3,7 @@ const NAME_CONFIG = {
   MAX: 50,
 };
 
-const NAME_REGEX = /^[p{L}s]+$/u;
+const NAME_REGEX = /^[\p{L}\s]+$/u;
 
 export function validName(name: string): void {
   if (typeof name !== "string") {

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ROLES } from "@/src/ui/constants";
+import { ROLES } from "@/src/core/domain/auth/roles";
 
 const NAME_CONFIG = { MIN: 3, MAX: 50 };
 const NAME_REGEX = /^[\p{L}\s]+$/u;
