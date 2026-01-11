@@ -1,11 +1,11 @@
 import { GetCurrentUserController } from "@/src/core/presentation/controllers/user/get-current-user.controller";
 import { GetCurrentUserUseCase } from "@/src/core/application/use-cases/user/get-current-user.use-case";
 import { makeUserPrismaRepository } from "@/src/core/main/factories/repositories/user-repository.factory";
-import { UserDtoMapper } from "@/src/core/application/mapper/user-dto.mapper";
+import { UserResDtoMapper } from "@/src/core/application/mapper/user-dto.mapper";
 
 export function makeGetCurrentUserController() {
   const userRepository = makeUserPrismaRepository();
-  const mapper = new UserDtoMapper();
+  const mapper = new UserResDtoMapper();
   const getCurrentUserUseCase = new GetCurrentUserUseCase({
     userRepository,
     mapper
