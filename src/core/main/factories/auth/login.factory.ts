@@ -1,4 +1,3 @@
-import { Controller } from '@/src/core/presentation/interfaces';
 import { LoginController } from '@/src/core/presentation/controllers/auth/login.controller';
 import { LoginUseCase } from '@/src/core/application/use-cases/auth/login.use-case';
 import { ZodValidation } from '@/src/core/infrastructure/validation/zod/zod-validation';
@@ -7,13 +6,13 @@ import { BcryptAdapter } from '@/src/core/infrastructure/criptography/bcrypt.ada
 import { JwtTokenAdapter } from '@/src/core/infrastructure/criptography/jwt.adapter';
 import { UserPrismaRepository } from '@/src/core/infrastructure/repositories/prisma/user-prisma.repository';
 import { prisma } from '@/src/core/infrastructure/databases/prisma/prisma';
-import { UserPrismaMapper } from '@/src/core/infrastructure/mapper/user-prisma.mapper';
+import { PrismaUserMapper } from '@/src/core/infrastructure/mapper/prisma-user.mapper';
 
 export function makeLoginController() {
   const SALT = 12;
   const SECRET = process.env.JWT_SECRET || "fallback_secret";
 
-  const userPrismaMapper = new UserPrismaMapper();
+  const userPrismaMapper = new PrismaUserMapper();
   const userRepository = new UserPrismaRepository({
     prisma,
     mapper: userPrismaMapper

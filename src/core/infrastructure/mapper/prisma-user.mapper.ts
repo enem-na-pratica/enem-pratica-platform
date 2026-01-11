@@ -2,7 +2,7 @@ import { User } from "@/src/core/domain/user/user.entity";
 import { ToDomainMapper } from "@/src/core/domain/mapper";
 import { User as UserPrisma } from "@/src/generated/prisma/client";
 
-export class UserPrismaMapper
+export class PrismaUserMapper
   implements ToDomainMapper<UserPrisma, User> {
   toDomain(input: UserPrisma): User {
     return User.load({
