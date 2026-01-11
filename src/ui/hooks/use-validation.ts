@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Validation, ValidationErrors } from '@/src/core/domain/validation/validator.interface';
-import { ValidationError } from '@/src/core/domain/errors/validation.error';
+import { ValidationError } from '@/src/core/domain/errors';
 
 export function useValidation<T>(validator: Validation<T>) {
   const [errors, setErrors] = useState<ValidationErrors>({});
