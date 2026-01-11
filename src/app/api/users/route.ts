@@ -6,7 +6,7 @@ export async function GET(request: NextRequest) {
   const userRole = request.headers.get("x-user-role") as Role;
 
   const listUsersController = await makeListUsersController().handle({
-    body: userRole
+    body: { role: userRole }
   });
 
   return NextResponse.json(

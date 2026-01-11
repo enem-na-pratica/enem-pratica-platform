@@ -5,16 +5,17 @@ import {
   HttpResponse
 } from '@/src/core/presentation/interfaces';
 import { UserResDto } from '@/src/core/application/dtos/user';
-import { ForbiddenError } from '@/src/core/domain/errors';
 import { Role } from '@/src/core/domain/auth/roles';
 import { ListUsers } from '@/src/core/application/interfaces/user/list-users-use-case.interface';
+import * as Http from '@/src/core/presentation/helpers/http.helper';
+import { handleError } from '@/src/core/presentation/helpers/error-handler.helper';
 
 export type GetCurrentUserDep = {
   listUsersUseCase: ListUsers;
 }
 
 export class ListUsersController
-  implements Controller<Role, UserResDto[]> {
+  implements Controller<{ role: Role }, UserResDto[]> {
   private readonly listUsersUseCase: ListUsers;
 
   constructor(deps: GetCurrentUserDep) {
@@ -22,29 +23,16 @@ export class ListUsersController
   }
 
   async handle(
-    request: HttpRequest<Role>
+    request: HttpRequest<{ role: Role }>
   ): Promise<HttpResponse<UserResDto[] | ErrorResponse>> {
-    const role = request.body
     try {
+      const { role } = request.body;
+
       const users = await this.listUsersUseCase.execute(role);
 
-      return {
-        statusCode: 200,
-        body: users,
-      };
-    } catch (err: unknown) {
-      if (err instanceof ForbiddenError) {
-        return {
-          statusCode: 403,
-          body: { message: err.message },
-        };
-      }
-
-      const error = err as Error;
-      return {
-        statusCode: 500,
-        body: { message: error.message || "Erro inesperado." },
-      };
+      return Http.ok(users);
+    } catch (error) {
+      return handleError(error);
     }
   }
 
