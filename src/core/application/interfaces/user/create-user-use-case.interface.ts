@@ -3,6 +3,6 @@ import {
   UserResDto
 } from "@/src/core/application/dtos/user";
 
-export interface CreateUserUser {
+export interface CreateUser {
   execute(user: CreateUserDto): Promise<UserResDto>;
 }

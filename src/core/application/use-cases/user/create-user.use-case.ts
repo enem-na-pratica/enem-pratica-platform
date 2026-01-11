@@ -1,5 +1,5 @@
 import { UserRepository } from "@/src/core/domain/user/user.repository.interface";
-import { CreateUserUser } from "@/src/core/application/interfaces/user";
+import { CreateUser } from "@/src/core/application/interfaces/user";
 import { CreateUserDto, UserResDto } from "@/src/core/application/dtos/user";
 import { ToDtoMapper } from "@/src/core/domain/mapper";
 import { User } from "@/src/core/domain/user/user.entity";
@@ -15,7 +15,7 @@ export type CreateUserUseCaseDep = {
   hasher: Hasher;
 }
 
-export class CreateUserUseCase implements CreateUserUser {
+export class CreateUserUseCase implements CreateUser {
   private readonly userRepository: UserRepository;
   private readonly userCommand: StudentRegistrationCommand;
   private readonly mapper: ToDtoMapper<User, UserResDto>;
