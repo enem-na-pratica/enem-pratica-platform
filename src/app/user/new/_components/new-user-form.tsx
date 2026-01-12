@@ -1,9 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { Role, ROLES } from "@/src/ui/constants";
-import { UserModel } from "@/src/ui/application/models";
+import { Role, ROLES, ROLE_LABELS } from "@/src/ui/constants";
+import { TeachingStaffModel } from "@/src/services/api/models";
 import { useRouter } from "next/navigation";
+import { useValidation } from "@/src/ui/hooks";
+import { ZodValidation } from "@/src/services/validation/zod/zod-validation";
+import {
+  newUserSchema,
+  NewUserSchema,
+} from "@/src/services/validation/zod/schemas/new-user.schema";
+import { makeUserService } from "@/src/services/api/factories";
 
 type NewUserFormData = {
   name: string;
@@ -13,26 +20,24 @@ type NewUserFormData = {
   teacherId: string;
 };
 
-type UserCreatorRole = typeof ROLES.ADMIN | typeof ROLES.SUPERADMIN;
+type UserCreatorRole = typeof ROLES.ADMIN | typeof ROLES.SUPER_ADMIN;
 
 const ROLE_CREATION_PERMISSIONS: Record<UserCreatorRole, Role[]> = {
-  [ROLES.SUPERADMIN]: Object.values(ROLES),
+  [ROLES.SUPER_ADMIN]: Object.values(ROLES),
   [ROLES.ADMIN]: [ROLES.STUDENT, ROLES.TEACHER],
 };
 
-export const ROLE_LABELS: Record<Role, string> = {
-  [ROLES.STUDENT]: "Estudante",
-  [ROLES.TEACHER]: "Professor",
-  [ROLES.ADMIN]: "Administrador",
-  [ROLES.SUPERADMIN]: "Super Administrador",
-};
-
 type NewUserFormProps = {
-  teachers: UserModel[];
+  teachingStaff: TeachingStaffModel[];
   currentUserRole: UserCreatorRole;
 };
 
-export function NewUserForm({ teachers, currentUserRole }: NewUserFormProps) {
+const newUserValidator = new ZodValidation(newUserSchema);
+
+export function NewUserForm({
+  teachingStaff,
+  currentUserRole,
+}: NewUserFormProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<NewUserFormData>({
@@ -42,6 +47,7 @@ export function NewUserForm({ teachers, currentUserRole }: NewUserFormProps) {
     role: "",
     teacherId: "",
   });
+  const { errors, validate } = useValidation(newUserValidator);
 
   const getAvailableRoles = (): Role[] => {
     return ROLE_CREATION_PERMISSIONS[currentUserRole];
@@ -65,17 +71,22 @@ export function NewUserForm({ teachers, currentUserRole }: NewUserFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    setIsLoading(true);
+    const isValid = validate(formData as unknown as NewUserSchema);
 
-    // TODO: Implement API call for user creation.
-    try {
-      console.log("Dados para envio:", formData);
-      router.replace("/dashboard");
-      router.refresh();
-    } catch {
-      alert("Erro ao cadastrar usuário.");
-    } finally {
-      setIsLoading(false);
+    if (isValid) {
+      setIsLoading(true);
+
+      // TODO: Implement API call for user creation.
+      try {
+        const newUser = await makeUserService().create(formData);
+        console.log("Novo Usuário :", newUser);
+        router.replace("/dashboard");
+        router.refresh();
+      } catch {
+        alert("Erro ao cadastrar usuário.");
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -94,6 +105,12 @@ export function NewUserForm({ teachers, currentUserRole }: NewUserFormProps) {
           value={formData.name}
           onChange={handleChange}
         />
+        {errors.name &&
+          errors.name.map((msg, i) => (
+            <p key={i} className="text-(--error) text-sm">
+              {msg}
+            </p>
+          ))}
       </div>
 
       <div className="flex flex-col gap-1.5">
@@ -109,6 +126,12 @@ export function NewUserForm({ teachers, currentUserRole }: NewUserFormProps) {
           value={formData.username}
           onChange={handleChange}
         />
+        {errors.username &&
+          errors.username.map((msg, i) => (
+            <p key={i} className="text-(--error) text-sm">
+              {msg}
+            </p>
+          ))}
       </div>
 
       <div className="flex flex-col gap-1.5">
@@ -124,6 +147,12 @@ export function NewUserForm({ teachers, currentUserRole }: NewUserFormProps) {
           value={formData.password}
           onChange={handleChange}
         />
+        {errors.password &&
+          errors.password.map((msg, i) => (
+            <p key={i} className="text-(--error) text-sm">
+              {msg}
+            </p>
+          ))}
       </div>
 
       <div className="flex flex-col gap-1.5">
@@ -144,6 +173,12 @@ export function NewUserForm({ teachers, currentUserRole }: NewUserFormProps) {
             </option>
           ))}
         </select>
+        {errors.role &&
+          errors.role.map((msg, i) => (
+            <p key={i} className="text-(--error) text-sm">
+              {msg}
+            </p>
+          ))}
       </div>
 
       {formData.role === ROLES.STUDENT && (
@@ -159,12 +194,19 @@ export function NewUserForm({ teachers, currentUserRole }: NewUserFormProps) {
             onChange={handleChange}
           >
             <option value="">Escolha um professor disponível...</option>
-            {teachers.map((teacher) => (
-              <option key={teacher.id} value={teacher.id}>
-                {teacher.name}
+            {teachingStaff.map(({ user, studentsCount }) => (
+              <option key={user.id} value={user.id}>
+                {user.name} | {ROLE_LABELS[user.role]} ({studentsCount}{" "}
+                {studentsCount === 1 ? "aluno" : "alunos"})
               </option>
             ))}
           </select>
+          {errors.teacherId &&
+            errors.teacherId.map((msg, i) => (
+              <p key={i} className="text-(--error) text-sm">
+                {msg}
+              </p>
+            ))}
         </div>
       )}
 

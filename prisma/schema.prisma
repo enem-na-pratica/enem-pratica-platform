@@ -7,8 +7,6 @@ datasource db {
   provider = "postgresql"
 }
 
-// Modelo de Dados
-
 model User {
   id           String   @id @default(uuid())
   name         String
@@ -18,13 +16,30 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
+  mentorshipAsStudent  StudentTeacher[] @relation("StudentRelation")
+  mentorshipsAsTeacher StudentTeacher[] @relation("TeacherRelation")
+
   @@index([username])
   @@map("users") // Garante que o nome da tabela no BD seja 'users' (plural snake_case)
+}
+
+model StudentTeacher {
+  id String @id @default(uuid())
+
+  studentId String
+  student   User   @relation("StudentRelation", fields: [studentId], references: [id])
+
+  teacherId String
+  teacher   User   @relation("TeacherRelation", fields: [teacherId], references: [id])
+
+  assignedAt DateTime @default(now())
+
+  @@map("student_teachers") // Nome da tabela no banco (snake_case)
 }
 
 enum Role {
   STUDENT
   TEACHER
   ADMIN
-  SUPERADMIN
+  SUPER_ADMIN
 }

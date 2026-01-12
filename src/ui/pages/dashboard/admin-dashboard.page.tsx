@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
-import { UserModel } from "@/src/ui/application/models";
+import { useEffect, useState } from "react";
+import { UserModel } from "@/src/services/api/models";
 import { LogoutButton } from "@/src/ui/components/logout-button";
 import { ThemeToggle } from "@/src/ui/components/theme-toggle";
 import { SidebarItem } from "@/src/ui/components/sidebar-item";
 import { UsersView } from "@/src/ui/components/users-view";
 import { HomeView } from "@/src/ui/components/home-view";
+import { makeUserService } from "@/src/services/api/factories";
 
 type Tab = "home" | "users" | "settings";
 
@@ -19,26 +20,25 @@ const MENU_ITEMS: { id: Tab; label: string; icon: string }[] = [
 export function AdminDashboard({ user }: { user: UserModel }) {
   const [activeTab, setActiveTab] = useState<Tab>("home");
 
-  // Mock de dados mantido
-  const users: UserModel[] = [
-    user,
-    {
-      id: "2",
-      name: "João Silva",
-      username: "joao.prof",
-      role: "TEACHER",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    {
-      id: "3",
-      name: "Maria Aluna",
-      username: "maria.aluno",
-      role: "STUDENT",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-  ];
+  const [users, setUsers] = useState<UserModel[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        setIsLoading(true);
+        const data = await makeUserService().findAll();
+        setUsers(data);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Erro desconhecido");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchUsers();
+  }, []);
 
   const renderView = () => {
     const views: Record<Tab, React.ReactNode> = {
@@ -51,7 +51,7 @@ export function AdminDashboard({ user }: { user: UserModel }) {
   };
 
   return (
-    <div className="flex min-h-screen bg-(--background) text-(--foreground) transition-colors duration-500">
+    <div className="flex h-screen overflow-hidden bg-(--background) text-(--foreground) transition-colors duration-500">
       {/* sidebar */}
       <aside className="w-64 bg-(--card-background) border-r border-(--foreground)/10 hidden md:flex flex-col">
         <div className="p-6 border-b border-(--foreground)/10">
@@ -63,7 +63,7 @@ export function AdminDashboard({ user }: { user: UserModel }) {
           </p>
         </div>
 
-        <nav className="flex-1 p-4 space-y-2">
+        <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
           {MENU_ITEMS.map((item) => (
             <SidebarItem
               key={item.id}
@@ -81,8 +81,8 @@ export function AdminDashboard({ user }: { user: UserModel }) {
       </aside>
 
       {/* main content */}
-      <main className="flex-1 flex flex-col">
-        <header className="h-16 border-b border-(--foreground)/10 flex items-center justify-between px-8 bg-(--card-background)/30 backdrop-blur-sm">
+      <main className="flex-1 flex flex-col min-w-0">
+        <header className="h-16 border-b border-(--foreground)/10 flex items-center justify-between px-8 bg-(--card-background)/30 backdrop-blur-sm shrink-0">
           <h2 className="font-semibold capitalize text-(--accent)">
             {MENU_ITEMS.find((item) => item.id === activeTab)!.label}
           </h2>
@@ -98,7 +98,7 @@ export function AdminDashboard({ user }: { user: UserModel }) {
           </div>
         </header>
 
-        <section className="p-8">{renderView()}</section>
+        <section className="flex-1 p-8 overflow-y-auto">{renderView()}</section>
       </main>
     </div>
   );

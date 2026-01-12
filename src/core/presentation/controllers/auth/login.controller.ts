@@ -1,7 +1,5 @@
 import { LoginInputDTO } from '@/src/core/application/dtos/auth';
 import { Login } from '@/src/core/application/interfaces/auth/login-use-case.interface';
-import { IncorrectPasswordError, NotFoundError } from '@/src/core/domain/errors';
-import { ValidationError } from '@/src/core/domain/errors/validation.error';
 import { Validation } from '@/src/core/domain/validation/validator.interface';
 import {
   Controller,
@@ -10,6 +8,8 @@ import {
   CookieOptions,
   ErrorResponse
 } from '@/src/core/presentation/interfaces';
+import * as Http from '@/src/core/presentation/helpers/http.helper';
+import { handleError } from '@/src/core/presentation/helpers/error-handler.helper';
 
 const COOKIE_OPTIONS: CookieOptions = {
   httpOnly: true,
@@ -45,41 +45,15 @@ export class LoginController
       const accessToken = await this.loginUseCase.execute({ username, password });
 
       return {
-        statusCode: 204,
-        body: null,
+        ...Http.noContent(),
         cookies: [{
           name: "auth_token",
           value: accessToken,
           options: COOKIE_OPTIONS,
         }]
       };
-    } catch (err: unknown) {
-      if (err instanceof ValidationError) {
-        return {
-          statusCode: 400,
-          body: { message: err.message, details: err.details },
-        };
-      }
-
-      if (err instanceof IncorrectPasswordError) {
-        return {
-          statusCode: 403,
-          body: { message: err.message },
-        };
-      }
-
-      if (err instanceof NotFoundError) {
-        return {
-          statusCode: 404,
-          body: { message: err.message },
-        };
-      }
-
-      const error = err as Error;
-      return {
-        statusCode: 500,
-        body: { message: error.message || "Erro inesperado." },
-      };
+    } catch (error) {
+      return handleError(error);
     }
   }
 } 

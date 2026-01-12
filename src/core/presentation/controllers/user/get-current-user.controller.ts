@@ -5,15 +5,16 @@ import {
   HttpResponse
 } from '@/src/core/presentation/interfaces';
 import { GetCurrentUser } from "@/src/core/application/interfaces/user/get-current-user-use-case.interface";
-import { UserDTO } from '@/src/core/application/dtos/user';
-import { UserNotFoundError } from '@/src/core/domain/errors';
+import { UserResDto } from '@/src/core/application/dtos/user';
+import * as Http from '@/src/core/presentation/helpers/http.helper';
+import { handleError } from '@/src/core/presentation/helpers/error-handler.helper';
 
 export type GetCurrentUserDep = {
   getCurrentUserUseCase: GetCurrentUser;
 }
 
 export class GetCurrentUserController
-  implements Controller<{ username: string }, UserDTO> {
+  implements Controller<{ username: string }, UserResDto> {
   private readonly getCurrentUserUseCase: GetCurrentUser;
 
   constructor(deps: GetCurrentUserDep) {
@@ -22,29 +23,15 @@ export class GetCurrentUserController
 
   async handle(
     request: HttpRequest<{ username: string }>
-  ): Promise<HttpResponse<UserDTO | ErrorResponse>> {
-    const { username } = request.body;
-
+  ): Promise<HttpResponse<UserResDto | ErrorResponse>> {
     try {
+      const { username } = request.body;
+
       const user = await this.getCurrentUserUseCase.execute(username);
 
-      return {
-        statusCode: 200,
-        body: user,
-      } as HttpResponse<UserDTO>;
-    } catch (err: unknown) {
-      if (err instanceof UserNotFoundError) {
-        return {
-          statusCode: 404,
-          body: { message: err.message },
-        };
-      }
-
-      const error = err as Error;
-      return {
-        statusCode: 500,
-        body: { message: error.message || "Erro inesperado." },
-      };
+      return Http.ok(user);
+    } catch (error) {
+      return handleError(error);
     }
   }
 }

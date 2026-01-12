@@ -26,7 +26,10 @@ export class LoginUseCase implements Login {
   async execute(credentials: LoginInputDTO): Promise<string> {
     const user = await this.userRepository.findByUsername(credentials.username);
 
-    if (!user) throw new UserNotFoundError('username', credentials.username);
+    if (!user) throw new UserNotFoundError({
+      fieldName: 'username',
+      entityValue: credentials.username
+    });
 
     const passwordMatch = await this.hashComparer.compare(
       credentials.password,
