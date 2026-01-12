@@ -19,6 +19,8 @@ model User {
   mentorshipAsStudent  StudentTeacher[] @relation("StudentRelation")
   mentorshipsAsTeacher StudentTeacher[] @relation("TeacherRelation")
 
+  essays Essay[]
+
   @@index([username])
   @@map("users") // Garante que o nome da tabela no BD seja 'users' (plural snake_case)
 }
@@ -35,6 +37,25 @@ model StudentTeacher {
   assignedAt DateTime @default(now())
 
   @@map("student_teachers") // Nome da tabela no banco (snake_case)
+}
+
+model Essay {
+  id String @id @default(uuid())
+
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id])
+
+  theme String
+
+  competency1 Int
+  competency2 Int
+  competency3 Int
+  competency4 Int
+  competency5 Int
+
+  createdAt DateTime @default(now())
+
+  @@map("essays") // Nome da tabela no banco (snake_case)
 }
 
 enum Role {
