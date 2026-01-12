@@ -1,5 +1,5 @@
-import { UserModel } from "@/src/ui/application/models";
-import { LogoutButton } from "@/src/ui/components/logout-button";
+import { UserModel } from "@/src/services/api/models";
+import { LogoutButton } from "@/src/ui/components";
 
 export function SuperAdminDashboard({ user }: { user: UserModel }) {
   return (

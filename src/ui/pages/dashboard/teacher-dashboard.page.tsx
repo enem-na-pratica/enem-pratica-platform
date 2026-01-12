@@ -1,8 +1,7 @@
 import { UserModel } from "@/src/services/api/models";
 import Link from "next/link";
 import { USER_ACTIONS, UserActionType } from "@/src/ui/constants";
-import { UserCard as StudentCard } from "@/src/ui/components/user-card";
-import { Header } from "@/src/ui/components/headers";
+import { UserCard as StudentCard, Header } from "@/src/ui/components";
 import { ROLES } from "@/src/ui/constants";
 
 const MOCK_STUDENTS: UserModel[] = [

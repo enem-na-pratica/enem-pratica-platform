@@ -1,7 +1,7 @@
 import { UserModel } from "@/src/services/api/models";
 import Link from "next/link";
 import { STUDENT_MENU, StudentMenuType } from "@/src/ui/constants";
-import { Header } from "@/src/ui/components/headers";
+import { Header } from "@/src/ui/components";
 
 export function StudentDashboard({ user }: { user: UserModel }) {
   return (

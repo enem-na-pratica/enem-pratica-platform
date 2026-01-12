@@ -1,5 +1,4 @@
-import { LogoutButton } from "@/src/ui/components/logout-button";
-import { ThemeToggle } from "@/src/ui/components/theme-toggle";
+import { ThemeToggle, LogoutButton } from "@/src/ui/components";
 
 export function Header() {
   return (

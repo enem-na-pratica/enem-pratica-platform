@@ -2,8 +2,7 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
-import { ThemeToggle } from "@/src/ui/components/theme-toggle";
-import { LogoutButton } from "@/src/ui/components/logout-button";
+import { ThemeToggle, LogoutButton } from "@/src/ui/components";
 
 interface Essay {
   id: string;

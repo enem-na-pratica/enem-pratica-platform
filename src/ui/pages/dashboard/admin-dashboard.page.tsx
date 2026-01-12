@@ -2,9 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { UserModel } from "@/src/services/api/models";
-import { LogoutButton } from "@/src/ui/components/logout-button";
-import { ThemeToggle } from "@/src/ui/components/theme-toggle";
-import { SidebarItem } from "@/src/ui/components/sidebar-item";
+import { SidebarItem, ThemeToggle, LogoutButton } from "@/src/ui/components";
 import {
   UsersView,
   HomeView,
