@@ -1,4 +1,4 @@
-import { UserModel } from "@/src/ui/application/models";
+import { UserModel } from "@/src/services/api/models";
 import Link from "next/link";
 import { UserActionType } from "@/src/ui/constants";
 

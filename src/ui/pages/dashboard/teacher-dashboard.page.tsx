@@ -1,4 +1,4 @@
-import { UserModel } from "@/src/ui/application/models";
+import { UserModel } from "@/src/services/api/models";
 import Link from "next/link";
 import { USER_ACTIONS, UserActionType } from "@/src/ui/constants";
 import { UserCard as StudentCard } from "@/src/ui/components/user-card";
