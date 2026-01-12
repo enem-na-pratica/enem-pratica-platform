@@ -30,7 +30,11 @@ body {
 
 .card {
   background-color: var(--card-background); 
-  @apply p-6 rounded-xl shadow-md w-full max-w-sm;
+  @apply p-6 rounded-xl shadow-md w-full;
+}
+
+.card-sm {
+  @apply max-w-sm mx-auto;
 }
 
 .card-interactive {
