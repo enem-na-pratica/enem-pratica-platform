@@ -24,7 +24,7 @@ export default function AccessDenied() {
       </div>
 
       {/* Text Content */}
-      <div className="card card-interactive border-t-4 border-(--error)">
+      <div className="card card-sm card-interactive border-t-4 border-(--error)">
         <h1 className="text-3xl font-bold mb-2">Acesso Restrito</h1>
         <p className="opacity-80 mb-6">
           Ops! Parece que você não tem permissão para acessar esta página ou sua
