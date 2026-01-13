@@ -45,7 +45,7 @@ export function TeacherDashboard({ user }: { user: UserModel }) {
   return (
     <>
       <Header />
-      <main className="w-full max-w-6xl mx-auto py-10 space-y-16 px-4">
+      <main className="w-full max-w-6xl mx-auto py-8 space-y-8 px-4">
         {/* Teacher's Panel */}
         <section className="space-y-8">
           <div className="flex flex-col gap-2">

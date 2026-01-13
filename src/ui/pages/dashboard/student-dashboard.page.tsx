@@ -7,7 +7,7 @@ export function StudentDashboard({ user }: { user: UserModel }) {
   return (
     <>
       <Header />
-      <main className="w-full max-w-6xl mx-auto py-10 space-y-16 px-4">
+      <main className="w-full max-w-6xl mx-auto py-8 space-y-8 px-4">
         {/* Welcome Header */}
         <section className="text-center md:text-left">
           <h2 className="text-3xl font-bold">Olá, {user.name}!</h2>
