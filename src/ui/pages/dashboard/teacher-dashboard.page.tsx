@@ -1,7 +1,7 @@
 import { UserModel } from "@/src/services/api/models";
 import Link from "next/link";
 import { USER_ACTIONS, UserActionType } from "@/src/ui/constants";
-import { UserCard as StudentCard, Header } from "@/src/ui/components";
+import { UserCard as StudentCard, Header, Footer } from "@/src/ui/components";
 import { ROLES } from "@/src/ui/constants";
 
 const MOCK_STUDENTS: UserModel[] = [
@@ -45,7 +45,7 @@ export function TeacherDashboard({ user }: { user: UserModel }) {
   return (
     <>
       <Header />
-      <main className="w-full max-w-7xl mx-auto py-10 space-y-16 px-4">
+      <main className="w-full max-w-6xl mx-auto py-10 space-y-16 px-4">
         {/* Teacher's Panel */}
         <section className="space-y-8">
           <div className="flex flex-col gap-2">
@@ -117,18 +117,7 @@ export function TeacherDashboard({ user }: { user: UserModel }) {
           )}
         </section>
       </main>
-      <footer className="w-full border-t border-(--card-background) mt-auto">
-        <div className="max-w-7xl mx-auto px-4 py-8">
-          <div className="flex items-center gap-4 text-sm opacity-60">
-            <div className="h-2 w-2 rounded-full bg-(--success) animate-pulse" />
-            <span>
-              Logado como: <strong>{user.username}</strong>
-            </span>
-            <span>•</span>
-            <span>ID: {user.id}</span>
-          </div>
-        </div>
-      </footer>
+      <Footer user={user} />
     </>
   );
 }
