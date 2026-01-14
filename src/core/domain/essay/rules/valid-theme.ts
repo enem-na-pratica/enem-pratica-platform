@@ -1,6 +1,6 @@
 const NAME_CONFIG = {
-  MIN: 10,
-  MAX: 150,
+  MIN: 20,
+  MAX: 255,
 }
 
 export function validTheme(theme: string): void {

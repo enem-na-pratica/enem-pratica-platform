@@ -1,7 +1,7 @@
 const COMPETENCY_CONFIG = {
   MIN: 0,
   MAX: 200,
-  STEP: 20,
+  STEP: 40,
 };
 
 export function validCompetency(score: number): void {
