@@ -52,3 +52,13 @@ body {
   color: var(--foreground); 
   @apply font-semibold py-2 px-4 rounded-md transition hover:opacity-70 cursor-pointer;
 }
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+.animate-shake {
+  animation: shake 0.2s ease-in-out 0s 2;
+}
