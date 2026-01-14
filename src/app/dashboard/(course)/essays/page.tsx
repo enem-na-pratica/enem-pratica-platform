@@ -1,6 +1,3 @@
-"use client";
-
-import { useState } from "react";
 import Link from "next/link";
 import { Header } from "@/src/ui/components";
 import {
@@ -40,7 +37,7 @@ type EssaysResponse = {
   data: Essay[];
 };
 
-// 2. (Raw Data
+// 2. Raw Data
 const RAW_ESSAYS = [
   {
     id: "1",
@@ -120,8 +117,14 @@ const MOCK_COMPLETE: EssaysResponse = {
   data: formattedEssays,
 };
 
-export default function EssayPage() {
-  const [showForm, setShowForm] = useState(false);
+export default async function EssayPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const params = await searchParams;
+  const isFormOpen = params.showForm === "true";
+
   const essays = MOCK_COMPLETE.data;
   const summary = MOCK_COMPLETE.summary;
 
@@ -146,17 +149,17 @@ export default function EssayPage() {
 
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-bold">Histórico</h2>
-          <button
-            onClick={() => setShowForm(!showForm)}
+          <Link
+            href={isFormOpen ? "?" : "?showForm=true"}
             className="button-primary flex items-center gap-2 shadow-lg shadow-(--accent)/20"
           >
-            <span>{showForm ? "Cancelar" : "Nova Redação"}</span>
-            {!showForm && <span>+</span>}
-          </button>
+            <span>{isFormOpen ? "Cancelar" : "Nova Redação"}</span>
+            {!isFormOpen && <span>+</span>}
+          </Link>
         </div>
 
         {/* --- Form for registering new essays. --- */}
-        {showForm && <EssayForm />}
+        {isFormOpen && <EssayForm />}
 
         {/* --- Essay listing section --- */}
         <EssayListSection essays={essays} />

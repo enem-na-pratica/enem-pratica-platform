@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 
 type CompetencyKey = "c1" | "c2" | "c3" | "c4" | "c5";
