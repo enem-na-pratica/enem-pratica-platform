@@ -19,7 +19,7 @@ export default async function NewUserPage() {
         <header className="mb-6">
           <Link
             href={"/dashboard"}
-            className="text-xs font-bold text-(--accent) uppercase tracking-widest hover:opacity-70 transition-all mb-2 flex items-center gap-1"
+            className="text-xs font-bold text-(--accent) uppercase tracking-widest hover:opacity-70 transition-all flex items-center gap-1"
           >
             ← Voltar para listagem
           </Link>
