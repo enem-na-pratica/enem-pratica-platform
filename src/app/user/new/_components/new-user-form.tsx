@@ -10,6 +10,7 @@ import {
   NewUserSchema,
 } from "@/src/services/validation/zod/schemas/new-user.schema";
 import { makeUserService } from "@/src/services/api/factories";
+import { notify } from "@/src/ui/helpers";
 
 type NewUserFormData = {
   name: string;
@@ -76,7 +77,11 @@ export function NewUserForm({
 
       try {
         const newUser = await makeUserService().create(formData);
-        alert(`${newUser.name}, foi cadastrado com sucesso.`);
+        notify({
+          type: "success",
+          message: `${newUser.name} foi cadastrado com sucesso.`,
+          description: "As credenciais já estão ativas no sistema.",
+        });
         setFormData({
           name: "",
           username: "",
@@ -85,7 +90,11 @@ export function NewUserForm({
           teacherId: "",
         });
       } catch {
-        alert("Erro ao cadastrar usuário.");
+        notify({
+          type: "error",
+          message: "Erro ao cadastrar usuário.",
+          description: "Verifique os dados ou tente novamente mais tarde.",
+        });
       } finally {
         setIsLoading(false);
       }
