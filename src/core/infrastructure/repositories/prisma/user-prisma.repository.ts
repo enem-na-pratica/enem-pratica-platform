@@ -34,7 +34,7 @@ export class UserPrismaRepository implements UserRepository {
   async getById(userId: string): Promise<User> {
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
 
-    if (!user) throw new UserNotFoundError("id", userId);
+    if (!user) throw new UserNotFoundError({ fieldName: "id", entityValue: userId });
 
     return this.mapper.toDomain(user);
   }

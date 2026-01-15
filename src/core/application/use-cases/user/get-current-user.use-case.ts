@@ -22,7 +22,10 @@ export class GetCurrentUserUseCase implements GetCurrentUser {
   async execute(username: string): Promise<UserResDto> {
     const user = await this.userRepository.findByUsername(username);
 
-    if (!user) throw new UserNotFoundError('username', username);
+    if (!user) throw new UserNotFoundError({
+      fieldName: 'username',
+      entityValue: username
+    });
 
     return this.mapper.toDto(user);
   }
