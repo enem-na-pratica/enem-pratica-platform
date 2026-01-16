@@ -28,22 +28,24 @@ export class CreateEssayUseCase implements CreateEssay {
     this.mapper = deps.mapper;
   }
 
-  async execute(request: {
-    requesterId: string;
-    requesterRole: string;
-    essayData: CreateEssayDto;
-  }): Promise<EssayResDto> {
+  async execute(request: CreateEssayDto): Promise<EssayResDto> {
     const { essayData, requesterId } = request;
     const requesterRole = request.requesterRole as Role;
 
-    await this.userRepository.getById(essayData.authorId);
-
-    if (essayData.authorId === requesterId) {
-      return await this.persistEssay(essayData);
+    if (!essayData.authorId) {
+      return await this.persistEssay({
+        ...essayData,
+        authorId: requesterId
+      });
     }
 
+    await this.userRepository.getById(essayData.authorId);
+
     if (hasAtLeastRole(ROLES.ADMIN, requesterRole)) {
-      return await this.persistEssay(essayData);
+      return await this.persistEssay({
+        ...essayData,
+        authorId: requesterId
+      });
     }
 
     if (hasAtLeastRole(ROLES.TEACHER, requesterRole)) {
@@ -53,14 +55,19 @@ export class CreateEssayUseCase implements CreateEssay {
       });
 
       if (hasRelationship) {
-        return await this.persistEssay(essayData);
+        return await this.persistEssay({
+          ...essayData,
+          authorId: essayData.authorId
+        });
       }
     }
 
     throw new ForbiddenError();
   }
 
-  private async persistEssay(essayData: CreateEssayDto): Promise<EssayResDto> {
+  private async persistEssay(
+    essayData: Required<CreateEssayDto["essayData"]>
+  ): Promise<EssayResDto> {
     const essay = Essay.create({ ...essayData });
     const createdEssay = await this.essayRepository.create(essay);
     return this.mapper.toDto(createdEssay);
