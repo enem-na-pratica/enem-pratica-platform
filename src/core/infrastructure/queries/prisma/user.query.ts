@@ -4,7 +4,8 @@ import { ToDomainMapper } from "@/src/core/domain/mapper";
 import { ROLES, Role } from "@/src/core/domain/auth/roles";
 import {
   TeachingStaffQuery,
-  UsersByRolesQuery
+  UsersByRolesQuery,
+  CheckTeacherStudentRelQuery
 } from "@/src/core/application/queries/interfaces";
 import { TeachingStaffReadModel } from "@/src/core/application/queries/read-model";
 
@@ -14,13 +15,35 @@ type PrismaUserQueryDeps = {
 }
 
 export class PrismaUserQuery
-  implements TeachingStaffQuery, UsersByRolesQuery {
+  implements
+  TeachingStaffQuery,
+  UsersByRolesQuery,
+  CheckTeacherStudentRelQuery {
   private readonly prisma: PrismaClient;
   private readonly mapper: ToDomainMapper<UserPrisma, User>;
 
   constructor(deps: PrismaUserQueryDeps) {
     this.prisma = deps.prisma;
     this.mapper = deps.mapper;
+  }
+
+  async checkTeacherStudentRel(ids: {
+    teacherId: string;
+    studentId: string;
+  }): Promise<boolean> {
+    const { studentId, teacherId } = ids;
+
+    const id = await this.prisma.user.findFirst({
+      where: {
+        id: teacherId,
+        mentorshipsAsTeacher: {
+          some: { studentId }
+        }
+      },
+      select: { id: true }
+    });
+
+    return !!id
   }
 
   async findUsersByRoles(roles: Role[]): Promise<User[]> {
