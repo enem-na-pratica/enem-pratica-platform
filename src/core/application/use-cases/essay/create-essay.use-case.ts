@@ -19,7 +19,7 @@ export class CreateEssayUseCase implements CreateEssay {
   private readonly essayRepository: EssayRepository;
   private readonly userRepository: UserRepository;
   private readonly relationChecker: CheckTeacherStudentRelQuery;
-  private readonly mapper: ToDtoMapper<Essay, EssayResDto>;;
+  private readonly mapper: ToDtoMapper<Essay, EssayResDto>;
 
   constructor(deps: CreateEssayUseCaseDeps) {
     this.essayRepository = deps.essayRepository;
