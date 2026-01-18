@@ -34,4 +34,13 @@ export class PrismaEssayRepository implements EssayRepository {
 
     return this.mapper.toDomain(newEssay);
   }
+
+  async findAllByAuthor(authorId: string): Promise<Essay[]> {
+    const essays = await this.prisma.essay.findMany({
+      where: { authorId },
+      orderBy: { createdAt: 'desc' }
+    });
+
+    return essays.map(essay => this.mapper.toDomain(essay));
+  }
 }
