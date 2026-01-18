@@ -8,6 +8,7 @@ import {
   newEssaySchema,
   NewEssaySchema,
 } from "@/src/services/validation/zod/schemas/new-essay.schema";
+import { makeEssayService } from "@/src/services/api/factories";
 
 type CompetencyKey = "c1" | "c2" | "c3" | "c4" | "c5";
 
@@ -80,7 +81,7 @@ export function EssayForm() {
     setFormData((prev) => ({ ...prev, theme: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     // Transformamos o estado para o formato que o Zod Schema espera
@@ -97,7 +98,21 @@ export function EssayForm() {
 
     if (isValid) {
       console.log("Dados validados e prontos para API:", dataToValidate);
-      // Chame seu service aqui
+
+      const newEssay = await makeEssayService().create(dataToValidate);
+
+      console.log("Resposta da API:", newEssay);
+
+      setFormData({
+        theme: "",
+        scores: {
+          c1: 120,
+          c2: 120,
+          c3: 120,
+          c4: 120,
+          c5: 120,
+        },
+      });
     }
   };
 
