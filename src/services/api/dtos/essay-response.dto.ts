@@ -1,4 +1,4 @@
-export type EssayModel = {
+export type EssayResponseDto = {
   id: string;
   authorId: string;
   theme: string;
@@ -10,5 +10,5 @@ export type EssayModel = {
     c5: number;
     total: number;
   };
-  createdAt: Date;
-};
+  createdAt: string;
+}
