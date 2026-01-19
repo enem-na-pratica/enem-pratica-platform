@@ -17,8 +17,6 @@ export default async function EssayPage({
 
   const listEssays = await makeEssayService().listMyEssays();
 
-  console.log("Minhas redações:", listEssays);
-
   const essays = listEssays.data;
   const summary = listEssays.summary;
 
