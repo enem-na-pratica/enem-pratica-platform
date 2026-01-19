@@ -26,7 +26,7 @@ export default function Login() {
 
   return (
     <main className={`container-center font-sans`}>
-      <div className="card">
+      <div className="card card-sm">
         <h1 className="text-3xl font-extrabold mb-8 text-center text-foreground">
           Acesso
           <br />

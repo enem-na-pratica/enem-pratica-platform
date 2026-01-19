@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { UserModel } from "@/src/services/api/models";
-import { LogoutButton } from "@/src/ui/components/logout-button";
-import { ThemeToggle } from "@/src/ui/components/theme-toggle";
-import { SidebarItem } from "@/src/ui/components/sidebar-item";
-import { UsersView } from "@/src/ui/components/users-view";
-import { HomeView } from "@/src/ui/components/home-view";
+import { SidebarItem, ThemeToggle, LogoutButton } from "@/src/ui/components";
+import {
+  UsersView,
+  HomeView,
+  UnderConstructionView,
+} from "@/src/ui/pages/dashboard/views";
 import { makeUserService } from "@/src/services/api/factories";
 
 type Tab = "home" | "users" | "settings";
@@ -44,10 +45,10 @@ export function AdminDashboard({ user }: { user: UserModel }) {
     const views: Record<Tab, React.ReactNode> = {
       home: <HomeView />,
       users: <UsersView users={users} />,
-      settings: <UnderConstruction title="configurações" />,
+      settings: <UnderConstructionView title="configurações" />,
     };
 
-    return views[activeTab] || <UnderConstruction title={activeTab} />;
+    return views[activeTab] || <UnderConstructionView title={activeTab} />;
   };
 
   return (
@@ -100,15 +101,6 @@ export function AdminDashboard({ user }: { user: UserModel }) {
 
         <section className="flex-1 p-8 overflow-y-auto">{renderView()}</section>
       </main>
-    </div>
-  );
-}
-
-function UnderConstruction({ title }: { title: string }) {
-  return (
-    <div className="card flex flex-col items-center justify-center h-64 border-2 border-dashed border-(--foreground)/10 bg-transparent text-(--foreground)/40">
-      <span className="text-4xl mb-2">🚧</span>
-      <p>Tela de {title} em construção...</p>
     </div>
   );
 }

@@ -30,7 +30,11 @@ body {
 
 .card {
   background-color: var(--card-background); 
-  @apply p-6 rounded-xl shadow-md w-full max-w-sm;
+  @apply p-6 rounded-xl shadow-md w-full;
+}
+
+.card-sm {
+  @apply max-w-sm mx-auto;
 }
 
 .card-interactive {
@@ -47,4 +51,14 @@ body {
   background-color: var(--accent);
   color: var(--foreground); 
   @apply font-semibold py-2 px-4 rounded-md transition hover:opacity-70 cursor-pointer;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+.animate-shake {
+  animation: shake 0.2s ease-in-out 0s 2;
 }

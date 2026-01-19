@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { Role, ROLES, ROLE_LABELS } from "@/src/ui/constants";
 import { TeachingStaffModel } from "@/src/services/api/models";
-import { useRouter } from "next/navigation";
 import { useValidation } from "@/src/ui/hooks";
 import { ZodValidation } from "@/src/services/validation/zod/zod-validation";
 import {
@@ -11,6 +10,7 @@ import {
   NewUserSchema,
 } from "@/src/services/validation/zod/schemas/new-user.schema";
 import { makeUserService } from "@/src/services/api/factories";
+import { notify } from "@/src/ui/helpers";
 
 type NewUserFormData = {
   name: string;
@@ -38,7 +38,6 @@ export function NewUserForm({
   teachingStaff,
   currentUserRole,
 }: NewUserFormProps) {
-  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<NewUserFormData>({
     name: "",
@@ -54,7 +53,7 @@ export function NewUserForm({
   };
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => {
@@ -76,14 +75,26 @@ export function NewUserForm({
     if (isValid) {
       setIsLoading(true);
 
-      // TODO: Implement API call for user creation.
       try {
         const newUser = await makeUserService().create(formData);
-        console.log("Novo Usuário :", newUser);
-        router.replace("/dashboard");
-        router.refresh();
+        notify({
+          type: "success",
+          message: `${newUser.name} foi cadastrado com sucesso.`,
+          description: "As credenciais já estão ativas no sistema.",
+        });
+        setFormData({
+          name: "",
+          username: "",
+          password: "",
+          role: "",
+          teacherId: "",
+        });
       } catch {
-        alert("Erro ao cadastrar usuário.");
+        notify({
+          type: "error",
+          message: "Erro ao cadastrar usuário.",
+          description: "Verifique os dados ou tente novamente mais tarde.",
+        });
       } finally {
         setIsLoading(false);
       }
@@ -91,78 +102,135 @@ export function NewUserForm({
   };
 
   return (
-    <form className="space-y-5" onSubmit={handleSubmit}>
+    <form className="space-y-4" onSubmit={handleSubmit}>
+      {/* Campo: Nome Completo */}
       <div className="flex flex-col gap-1.5">
-        <label className="text-[10px] font-black uppercase tracking-wider opacity-60 ml-1">
+        <label
+          className={`text-[10px] font-black uppercase tracking-wider ml-1 transition-colors ${
+            errors.name ? "text-(--error) opacity-100" : "opacity-60"
+          }`}
+        >
           Nome Completo
         </label>
         <input
           required
           type="text"
           name="name"
-          className="input focus:border-(--accent) outline-none transition-all ring-(--accent)/20 focus:ring-4"
+          className={`input outline-none transition-all ${
+            errors.name
+              ? "border-(--error) ring-1 ring-(--error) animate-shake focus:border-(--error)"
+              : "focus:border-(--accent) focus:ring-4 ring-(--accent)/20"
+          }`}
           placeholder="Digite o nome completo..."
           value={formData.name}
           onChange={handleChange}
         />
-        {errors.name &&
-          errors.name.map((msg, i) => (
-            <p key={i} className="text-(--error) text-sm">
-              {msg}
+        <div
+          className={`grid transition-all duration-300 ease-in-out ${
+            errors.name
+              ? "grid-rows-[1fr] opacity-100"
+              : "grid-rows-[0fr] opacity-0"
+          }`}
+        >
+          <div className="overflow-hidden">
+            <p className="text-(--error) text-xs italic mt-1 ml-1">
+              {errors.name?.[0]}
             </p>
-          ))}
+          </div>
+        </div>
       </div>
 
+      {/* Campo: Username */}
       <div className="flex flex-col gap-1.5">
-        <label className="text-[10px] font-black uppercase tracking-wider opacity-60 ml-1">
+        <label
+          className={`text-[10px] font-black uppercase tracking-wider ml-1 transition-colors ${
+            errors.username ? "text-(--error) opacity-100" : "opacity-60"
+          }`}
+        >
           Username
         </label>
         <input
           required
           type="text"
           name="username"
-          className="input focus:border-(--accent) outline-none transition-all ring-(--accent)/20 focus:ring-4"
+          className={`input outline-none transition-all ${
+            errors.username
+              ? "border-(--error) ring-1 ring-(--error) animate-shake focus:border-(--error)"
+              : "focus:border-(--accent) focus:ring-4 ring-(--accent)/20"
+          }`}
           placeholder="Ex: joao.silva"
           value={formData.username}
           onChange={handleChange}
         />
-        {errors.username &&
-          errors.username.map((msg, i) => (
-            <p key={i} className="text-(--error) text-sm">
-              {msg}
+        <div
+          className={`grid transition-all duration-300 ease-in-out ${
+            errors.username
+              ? "grid-rows-[1fr] opacity-100"
+              : "grid-rows-[0fr] opacity-0"
+          }`}
+        >
+          <div className="overflow-hidden">
+            <p className="text-(--error) text-xs italic mt-1 ml-1">
+              {errors.username?.[0]}
             </p>
-          ))}
+          </div>
+        </div>
       </div>
 
+      {/* Campo: Senha */}
       <div className="flex flex-col gap-1.5">
-        <label className="text-[10px] font-black uppercase tracking-wider opacity-60 ml-1">
+        <label
+          className={`text-[10px] font-black uppercase tracking-wider ml-1 transition-colors ${
+            errors.password ? "text-(--error) opacity-100" : "opacity-60"
+          }`}
+        >
           Senha
         </label>
         <input
           required
           type="password"
           name="password"
-          className="input focus:border-(--accent) outline-none transition-all ring-(--accent)/20 focus:ring-4"
+          className={`input outline-none transition-all ${
+            errors.password
+              ? "border-(--error) ring-1 ring-(--error) animate-shake focus:border-(--error)"
+              : "focus:border-(--accent) focus:ring-4 ring-(--accent)/20"
+          }`}
           placeholder="••••••••••••"
           value={formData.password}
           onChange={handleChange}
         />
-        {errors.password &&
-          errors.password.map((msg, i) => (
-            <p key={i} className="text-(--error) text-sm">
-              {msg}
+        <div
+          className={`grid transition-all duration-300 ease-in-out ${
+            errors.password
+              ? "grid-rows-[1fr] opacity-100"
+              : "grid-rows-[0fr] opacity-0"
+          }`}
+        >
+          <div className="overflow-hidden">
+            <p className="text-(--error) text-xs italic mt-1 ml-1">
+              {errors.password?.[0]}
             </p>
-          ))}
+          </div>
+        </div>
       </div>
 
+      {/* Campo: Nível de Permissão */}
       <div className="flex flex-col gap-1.5">
-        <label className="text-[10px] font-black uppercase tracking-wider opacity-60 ml-1">
+        <label
+          className={`text-[10px] font-black uppercase tracking-wider ml-1 transition-colors ${
+            errors.role ? "text-(--error) opacity-100" : "opacity-60"
+          }`}
+        >
           Nível de Permissão
         </label>
         <select
           required
           name="role"
-          className="input focus:border-(--accent) outline-none transition-all cursor-pointer"
+          className={`input outline-none transition-all cursor-pointer ${
+            errors.role
+              ? "border-(--error) ring-1 ring-(--error) animate-shake focus:border-(--error)"
+              : "focus:border-(--accent)"
+          }`}
           value={formData.role}
           onChange={handleChange}
         >
@@ -173,23 +241,39 @@ export function NewUserForm({
             </option>
           ))}
         </select>
-        {errors.role &&
-          errors.role.map((msg, i) => (
-            <p key={i} className="text-(--error) text-sm">
-              {msg}
+        <div
+          className={`grid transition-all duration-300 ease-in-out ${
+            errors.role
+              ? "grid-rows-[1fr] opacity-100"
+              : "grid-rows-[0fr] opacity-0"
+          }`}
+        >
+          <div className="overflow-hidden">
+            <p className="text-(--error) text-xs italic mt-1 ml-1">
+              {errors.role?.[0]}
             </p>
-          ))}
+          </div>
+        </div>
       </div>
 
+      {/* Campo Condicional: Professor */}
       {formData.role === ROLES.STUDENT && (
         <div className="flex flex-col gap-1.5 animate-in slide-in-from-top-4 duration-500">
-          <label className="text-[10px] font-black uppercase tracking-wider text-(--accent) ml-1">
+          <label
+            className={`text-[10px] font-black uppercase tracking-wider ml-1 transition-colors ${
+              errors.teacherId ? "text-(--error)" : "text-(--accent)"
+            }`}
+          >
             Vincular ao Professor
           </label>
           <select
             required
             name="teacherId"
-            className="input border-(--accent)/50 focus:border-(--accent) outline-none transition-all cursor-pointer bg-(--accent)/5"
+            className={`input outline-none transition-all cursor-pointer bg-(--accent)/5 ${
+              errors.teacherId
+                ? "border-(--error) ring-1 ring-(--error) animate-shake focus:border-(--error)"
+                : "border-(--accent)/50 focus:border-(--accent)"
+            }`}
             value={formData.teacherId}
             onChange={handleChange}
           >
@@ -201,21 +285,37 @@ export function NewUserForm({
               </option>
             ))}
           </select>
-          {errors.teacherId &&
-            errors.teacherId.map((msg, i) => (
-              <p key={i} className="text-(--error) text-sm">
-                {msg}
+          <div
+            className={`grid transition-all duration-300 ease-in-out ${
+              errors.teacherId
+                ? "grid-rows-[1fr] opacity-100"
+                : "grid-rows-[0fr] opacity-0"
+            }`}
+          >
+            <div className="overflow-hidden">
+              <p className="text-(--error) text-xs italic mt-1 ml-1">
+                {errors.teacherId?.[0]}
               </p>
-            ))}
+            </div>
+          </div>
         </div>
       )}
 
+      {/* Botão Submeter */}
       <div className="pt-2">
         <button
           type="submit"
-          className="button-primary w-full py-3 shadow-lg shadow-(--accent)/10 active:scale-[0.98] transition-transform"
+          disabled={isLoading}
+          className="button-primary w-full py-3 shadow-lg shadow-(--accent)/10 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isLoading ? "Cadastrando..." : "Cadastrar Usuário"}
+          {isLoading ? (
+            <span className="flex items-center justify-center gap-2">
+              <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full ananimate-shakeimate-spin" />
+              Cadastrando...
+            </span>
+          ) : (
+            "Cadastrar Usuário"
+          )}
         </button>
       </div>
     </form>

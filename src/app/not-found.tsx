@@ -9,7 +9,7 @@ export default function NotFound() {
       </div>
 
       {/* Content Card */}
-      <div className="card card-interactive border-t-4 border-(--accent) text-center relative z-10">
+      <div className="card card-sm card-interactive border-t-4 border-(--accent) text-center relative z-10">
         <div className="flex justify-center mb-6">
           <div className="bg-(--accent)/20 p-4 rounded-full">
             <svg

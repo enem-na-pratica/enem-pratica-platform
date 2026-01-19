@@ -33,7 +33,7 @@ export class CreateUserController
 
       const newUser = await this.createUserUseCase.execute(userData)
 
-      return Http.ok(newUser);
+      return Http.created(newUser);
     } catch (error) {
       return handleError(error);
     }
