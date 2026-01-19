@@ -5,117 +5,7 @@ import {
   EssayForm,
   EssayListSection,
 } from "@/src/app/dashboard/(course)/essays/_components";
-
-// Definition of Types
-type CompetencyKey = "c1" | "c2" | "c3" | "c4" | "c5";
-
-type EssayGrades = {
-  c1: number;
-  c2: number;
-  c3: number;
-  c4: number;
-  c5: number;
-  total: number;
-};
-
-type Essay = {
-  id: string;
-  authorId: string;
-  theme: string;
-  grades: EssayGrades;
-  createdAt: Date;
-};
-
-type EssaySummary = {
-  totalCount: number;
-  globalAverage: number;
-  averagesPerCompetency: Record<CompetencyKey, number>;
-};
-
-type EssaysResponse = {
-  summary: EssaySummary;
-  data: Essay[];
-};
-
-// 2. Raw Data
-const RAW_ESSAYS = [
-  {
-    id: "1",
-    authorId: "user-123",
-    theme: "Os desafios da inteligência artificial na educação",
-    c1: 160,
-    c2: 180,
-    c3: 160,
-    c4: 200,
-    c5: 180,
-    createdAt: new Date("2024-05-10T14:00:00"),
-  },
-  {
-    id: "2",
-    authorId: "user-123",
-    theme: "Caminhos para combater a intolerância religiosa",
-    c1: 140,
-    c2: 120,
-    c3: 120,
-    c4: 160,
-    c5: 100,
-    createdAt: new Date("2024-05-15T09:30:00"),
-  },
-  {
-    id: "3",
-    authorId: "user-123",
-    theme: "A democratização do acesso ao cinema no Brasil",
-    c1: 180,
-    c2: 200,
-    c3: 180,
-    c4: 180,
-    c5: 200,
-    createdAt: new Date("2024-06-01T16:45:00"),
-  },
-];
-
-// 3. Transformation to the new Essay[] structure
-const formattedEssays: Essay[] = RAW_ESSAYS.map((item) => {
-  const total = item.c1 + item.c2 + item.c3 + item.c4 + item.c5;
-  return {
-    id: item.id,
-    authorId: item.authorId,
-    theme: item.theme,
-    createdAt: item.createdAt,
-    grades: {
-      c1: item.c1,
-      c2: item.c2,
-      c3: item.c3,
-      c4: item.c4,
-      c5: item.c5,
-      total,
-    },
-  };
-});
-
-// 4. Calculation of Summaries
-const count = formattedEssays.length;
-
-const averagesPerCompetency: Record<CompetencyKey, number> = {
-  c1: formattedEssays.reduce((acc, curr) => acc + curr.grades.c1, 0) / count,
-  c2: formattedEssays.reduce((acc, curr) => acc + curr.grades.c2, 0) / count,
-  c3: formattedEssays.reduce((acc, curr) => acc + curr.grades.c3, 0) / count,
-  c4: formattedEssays.reduce((acc, curr) => acc + curr.grades.c4, 0) / count,
-  c5: formattedEssays.reduce((acc, curr) => acc + curr.grades.c5, 0) / count,
-};
-
-const globalAverage =
-  formattedEssays.reduce((acc, curr) => acc + curr.grades.total, 0) / count;
-
-// 5. Full Mock
-const MOCK_COMPLETE: EssaysResponse = {
-  summary: {
-    totalCount: count,
-    globalAverage: Number(globalAverage.toFixed(2)),
-    averagesPerCompetency,
-  },
-  data: formattedEssays,
-};
+import { makeEssayService } from "@/src/services/api/factories";
 
 export default async function EssayPage({
   searchParams,
@@ -125,8 +15,12 @@ export default async function EssayPage({
   const params = await searchParams;
   const isFormOpen = params.showForm === "true";
 
-  const essays = MOCK_COMPLETE.data;
-  const summary = MOCK_COMPLETE.summary;
+  const listEssays = await makeEssayService().listMyEssays();
+
+  console.log("Minhas redações:", listEssays);
+
+  const essays = listEssays.data;
+  const summary = listEssays.summary;
 
   return (
     <div className="min-h-screen bg-(--background) text-(--foreground) pb-20 transition-colors duration-500">

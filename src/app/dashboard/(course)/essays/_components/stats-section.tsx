@@ -1,32 +1,4 @@
-type CompetencyKey = "c1" | "c2" | "c3" | "c4" | "c5";
-
-type EssayGrades = {
-  c1: number;
-  c2: number;
-  c3: number;
-  c4: number;
-  c5: number;
-  total: number;
-};
-
-type Essay = {
-  id: string;
-  authorId: string;
-  theme: string;
-  grades: EssayGrades;
-  createdAt: Date;
-};
-
-type EssaySummary = {
-  totalCount: number;
-  globalAverage: number;
-  averagesPerCompetency: Record<CompetencyKey, number>;
-};
-
-type EssaysResponse = {
-  summary: EssaySummary;
-  data: Essay[];
-};
+import { EssaySummary } from "@/src/services/api/dtos";
 
 export function StatsSection({ summary }: { summary: EssaySummary }) {
   function getBarColor(avg: number) {

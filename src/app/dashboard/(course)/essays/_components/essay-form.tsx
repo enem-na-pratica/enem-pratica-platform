@@ -1,48 +1,18 @@
 "use client";
 
 import { useState } from "react";
-
 import { useValidation } from "@/src/ui/hooks/use-validation";
 import { ZodValidation } from "@/src/services/validation/zod/zod-validation";
 import {
   newEssaySchema,
   NewEssaySchema,
 } from "@/src/services/validation/zod/schemas/new-essay.schema";
-import { makeEssayService } from "@/src/services/api/factories";
+import { createEssayAction } from "../actions";
 
-type CompetencyKey = "c1" | "c2" | "c3" | "c4" | "c5";
-
-type EssayGrades = {
-  c1: number;
-  c2: number;
-  c3: number;
-  c4: number;
-  c5: number;
-  total: number;
-};
-
-type Essay = {
-  id: string;
-  authorId: string;
-  theme: string;
-  grades: EssayGrades;
-  createdAt: Date;
-};
-
-type EssaySummary = {
-  totalCount: number;
-  globalAverage: number;
-  averagesPerCompetency: Record<CompetencyKey, number>;
-};
-
-type EssaysResponse = {
-  summary: EssaySummary;
-  data: Essay[];
-};
+type CompetencyKey = "c1" | "c2" | "c3" | "c4" | "c5"
 
 const COMPETENCIES: CompetencyKey[] = ["c1", "c2", "c3", "c4", "c5"];
 
-// Mapeamento interno para converter as chaves do estado para as chaves do Schema
 const schemaKeyMap: Record<CompetencyKey, keyof NewEssaySchema> = {
   c1: "competency1",
   c2: "competency2",
@@ -84,7 +54,6 @@ export function EssayForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Transformamos o estado para o formato que o Zod Schema espera
     const dataToValidate = {
       theme: formData.theme,
       competency1: formData.scores.c1,
@@ -97,11 +66,7 @@ export function EssayForm() {
     const isValid = validate(dataToValidate);
 
     if (isValid) {
-      console.log("Dados validados e prontos para API:", dataToValidate);
-
-      const newEssay = await makeEssayService().create(dataToValidate);
-
-      console.log("Resposta da API:", newEssay);
+      await createEssayAction(dataToValidate);
 
       setFormData({
         theme: "",
