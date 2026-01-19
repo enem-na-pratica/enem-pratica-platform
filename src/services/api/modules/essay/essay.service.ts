@@ -1,7 +1,7 @@
 import { HttpClient } from '@/src/services/api/common/http/http-client.interface';
 import { Mapper } from "@/src/services/api/common/interfaces/mapper.interface";
-import { EssayResponseDto } from "@/src/services/api/dtos";
-import { EssayModel } from "@/src/services/api/models";
+import { EssayResponseDto, EssaysResponse } from "@/src/services/api/dtos";
+import { EssayModel, EssaysModel } from "@/src/services/api/models";
 import { EssayServiceHttp } from './essay.service.interface';
 
 type EssayServiceDeps = {
@@ -25,5 +25,18 @@ export class EssayService implements EssayServiceHttp {
     );
 
     return this.mapper.toModel(data);
+  }
+
+  async listMyEssays(): Promise<EssaysModel> {
+    const dataRaw = await this.httpClient.get<EssaysResponse>(
+      "/essays/me",
+    );
+
+    const listEssays = dataRaw.data.map(essayDto => this.mapper.toModel(essayDto));
+
+    return {
+      summary: dataRaw.summary,
+      data: listEssays,
+    };
   }
 }
