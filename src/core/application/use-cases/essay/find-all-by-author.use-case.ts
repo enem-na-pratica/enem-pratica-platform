@@ -1,7 +1,7 @@
 import { FindAllByAuthor } from "@/src/core/application/interfaces/essay/find-all-by-author-use-case.interface";
-import { Essay } from "@/src/core/domain/essay/essay.entity";
+import { Essay } from "@/src/core/domain/entities/essay.entity";
 import { EssayResDto, EssaysResponse } from "@/src/core/application/dtos/essay";
-import { EssayRepository } from "@/src/core/domain/essay/essay.repository.interface";
+import { EssayRepository } from "@/src/core/domain/contracts/repositories/essay-repository.interface";
 import { ToDtoMapper } from "@/src/core/domain/mapper";
 
 export type FindAllByAuthorUseCaseDeps = {

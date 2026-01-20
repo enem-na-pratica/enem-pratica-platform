@@ -1,6 +1,6 @@
 import { UserRepository } from "@/src/core/domain/user/user.repository.interface";
-import { User } from "@/src/core/domain/user/user.entity";
-import { ROLES } from "@/src/core/domain/auth/roles";
+import { User } from "@/src/core/domain/entities/user.entity";
+import { ROLES } from "@/src/core/domain/auth";
 
 const now = new Date();
 const MOCK_DB: User[] = [

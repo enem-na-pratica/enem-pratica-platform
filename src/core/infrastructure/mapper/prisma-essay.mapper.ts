@@ -1,4 +1,4 @@
-import { Essay } from "@/src/core/domain/essay/essay.entity";
+import { Essay } from "@/src/core/domain/entities/essay.entity";
 import { ToDomainMapper } from "@/src/core/domain/mapper";
 import { Essay as EssayPrisma } from "@/src/generated/prisma/client";
 

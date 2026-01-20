@@ -3,7 +3,7 @@ import { GetCurrentUser } from "@/src/core/application/interfaces/user/get-curre
 import { UserResDto } from "@/src/core/application/dtos/user";
 import { UserNotFoundError } from "@/src/core/domain/errors";
 import { ToDtoMapper } from "@/src/core/domain/mapper";
-import { User } from "@/src/core/domain/user/user.entity";
+import { User } from "@/src/core/domain/entities/user.entity";
 
 export type GetCurrentUserUseCaseDep = {
   userRepository: UserRepository;

@@ -1,4 +1,4 @@
-import { Role } from "@/src/core/domain/auth/roles";
+import { Role } from "@/src/core/domain/auth";
 import { UserResponseDto } from "@/src/services/api/dtos";
 import { UserModel } from "@/src/services/api/models";
 import { Mapper } from "@/src/services/api/common/interfaces";

@@ -1,5 +1,5 @@
 import { UserRepository } from "@/src/core/domain/user/user.repository.interface";
-import { User } from "@/src/core/domain/user/user.entity";
+import { User } from "@/src/core/domain/entities/user.entity";
 import { PrismaClient, User as UserPrisma } from "@/src/generated/prisma/client";
 import { ToDomainMapper } from "@/src/core/domain/mapper";
 import { UserNotFoundError } from "@/src/core/domain/errors";

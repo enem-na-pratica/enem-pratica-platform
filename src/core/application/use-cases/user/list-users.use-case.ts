@@ -1,9 +1,9 @@
 import { UserRepository } from "@/src/core/domain/user/user.repository.interface";
 import { UserResDto } from "@/src/core/application/dtos/user";
 import { ToDtoMapper } from "@/src/core/domain/mapper";
-import { User } from "@/src/core/domain/user/user.entity";
+import { User } from "@/src/core/domain/entities/user.entity";
 import { ListUsers } from "@/src/core/application/interfaces/user/list-users-use-case.interface";
-import { Role, ROLES } from "@/src/core/domain/auth/roles";
+import { Role, ROLES } from "@/src/core/domain/auth";
 import {
   UsersByRolesQuery
 } from "@/src/core/application/queries/interfaces";

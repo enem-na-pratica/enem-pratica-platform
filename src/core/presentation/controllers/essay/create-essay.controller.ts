@@ -8,7 +8,7 @@ import * as Http from '@/src/core/presentation/helpers/http.helper';
 import { handleError } from '@/src/core/presentation/helpers/error-handler.helper';
 import { CreateEssayDto, EssayContent, EssayResDto } from '@/src/core/application/dtos/essay';
 import { CreateEssay } from "@/src/core/application/interfaces/essay/create-essay-use-case.interface";
-import { Validation } from '@/src/core/domain/validation/validator.interface';
+import { Validation } from '@/src/core/domain/contracts/validation/validation.interface';
 
 export type CreateEssayControllerDeps = {
   createEssayUseCase: CreateEssay;

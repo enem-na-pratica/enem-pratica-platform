@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { Role, hasAtLeastRole, ROLES } from "@/src/core/domain/auth/roles";
+import { Role, hasAtLeastRole, ROLES } from "@/src/core/domain/auth";
 
 const PROTECTED_ROUTES_MAP: Record<string, Role> = {
   "/user/new": ROLES.ADMIN,

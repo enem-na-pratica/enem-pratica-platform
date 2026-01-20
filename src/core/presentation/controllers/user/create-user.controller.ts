@@ -1,5 +1,5 @@
 import { CreateUser } from "@/src/core/application/interfaces/user";
-import { Validation } from '@/src/core/domain/validation/validator.interface';
+import { Validation } from '@/src/core/domain/contracts/validation/validation.interface';
 import {
   Controller,
   HttpRequest,

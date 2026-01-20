@@ -1,4 +1,4 @@
-import { Role } from "@/src/core/domain/auth/roles";
+import { Role } from "@/src/core/domain/auth";
 import { makeListUsersController } from "@/src/core/main/factories/user/list-users.factory";
 import { NextResponse, NextRequest } from "next/server";
 

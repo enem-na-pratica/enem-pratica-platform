@@ -1,7 +1,7 @@
-import { User } from "@/src/core/domain/user/user.entity";
+import { User } from "@/src/core/domain/entities/user.entity";
 import { PrismaClient, User as UserPrisma } from "@/src/generated/prisma/client";
 import { ToDomainMapper } from "@/src/core/domain/mapper";
-import { ROLES, Role } from "@/src/core/domain/auth/roles";
+import { ROLES, Role } from "@/src/core/domain/auth";
 import {
   TeachingStaffQuery,
   UsersByRolesQuery,

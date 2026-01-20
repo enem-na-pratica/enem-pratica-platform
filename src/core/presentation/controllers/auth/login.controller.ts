@@ -1,6 +1,6 @@
 import { LoginInputDTO } from '@/src/core/application/dtos/auth';
 import { Login } from '@/src/core/application/interfaces/auth/login-use-case.interface';
-import { Validation } from '@/src/core/domain/validation/validator.interface';
+import { Validation } from '@/src/core/domain/contracts/validation/validation.interface';
 import {
   Controller,
   HttpRequest,

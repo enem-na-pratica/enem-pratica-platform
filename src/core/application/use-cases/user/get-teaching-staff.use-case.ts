@@ -1,7 +1,7 @@
 import { TeachingStaffQuery } from "@/src/core/application/queries/interfaces";
 import { TeachingStaffOptionResDto, UserResDto } from "@/src/core/application/dtos/user";
 import { ToDtoMapper } from "@/src/core/domain/mapper";
-import { User } from "@/src/core/domain/user/user.entity";
+import { User } from "@/src/core/domain/entities/user.entity";
 import { GetTeachingStaff } from "@/src/core/application/interfaces/user/get-teaching-staff-use-case.interface";
 
 export type GetTeachingStaffUseCaseDep = {

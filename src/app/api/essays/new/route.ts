@@ -1,5 +1,5 @@
 import { NextResponse, NextRequest } from "next/server";
-import { Role } from "@/src/core/domain/auth/roles";
+import { Role } from "@/src/core/domain/auth";
 import { makeCreateEssayController } from "@/src/core/main/factories/essay/create-user.factory";
 
 export async function POST(request: NextRequest) {

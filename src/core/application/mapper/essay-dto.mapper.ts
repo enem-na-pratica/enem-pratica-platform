@@ -1,5 +1,5 @@
 import { ToDtoMapper } from "@/src/core/domain/mapper"
-import { Essay } from "@/src/core/domain/essay/essay.entity";
+import { Essay } from "@/src/core/domain/entities/essay.entity";
 import { EssayResDto } from "@/src/core/application/dtos/essay";
 
 export class EssayResDtoMapper implements ToDtoMapper<Essay, EssayResDto> {

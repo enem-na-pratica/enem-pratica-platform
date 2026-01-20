@@ -2,9 +2,9 @@ import { UserRepository } from "@/src/core/domain/user/user.repository.interface
 import { CreateUser } from "@/src/core/application/interfaces/user";
 import { CreateUserDto, UserResDto } from "@/src/core/application/dtos/user";
 import { ToDtoMapper } from "@/src/core/domain/mapper";
-import { User } from "@/src/core/domain/user/user.entity";
+import { User } from "@/src/core/domain/entities/user.entity";
 import { StudentRegistrationCommand } from "@/src/core/application/commands/interfaces";
-import { Role, ROLES } from "@/src/core/domain/auth/roles";
+import { Role, ROLES } from "@/src/core/domain/auth";
 import { Hasher } from "@/src/core/domain/secure";
 import { UserAlreadyExistsError } from "@/src/core/domain/errors/resource/";
 

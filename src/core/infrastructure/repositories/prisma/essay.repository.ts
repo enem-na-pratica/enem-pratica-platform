@@ -1,5 +1,5 @@
-import { EssayRepository } from "@/src/core/domain/essay/essay.repository.interface";
-import { Essay } from "@/src/core/domain/essay/essay.entity";
+import { EssayRepository } from "@/src/core/domain/contracts/repositories/essay-repository.interface";
+import { Essay } from "@/src/core/domain/entities/essay.entity";
 import { PrismaClient, Essay as EssayPrisma } from "@/src/generated/prisma/client";
 import { ToDomainMapper } from "@/src/core/domain/mapper";
 

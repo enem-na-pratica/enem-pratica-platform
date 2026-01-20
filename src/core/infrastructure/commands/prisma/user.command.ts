@@ -1,4 +1,4 @@
-import { User } from "@/src/core/domain/user/user.entity";
+import { User } from "@/src/core/domain/entities/user.entity";
 import { PrismaClient, User as UserPrisma } from "@/src/generated/prisma/client";
 import { StudentRegistrationCommand } from "@/src/core/application/commands/interfaces";
 import { ToDomainMapper } from "@/src/core/domain/mapper";

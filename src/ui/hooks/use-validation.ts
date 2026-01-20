@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Validation, ValidationErrors } from '@/src/core/domain/validation/validator.interface';
+import { Validation, ValidationErrors } from '@/src/core/domain/contracts/validation/validation.interface';
 import { ValidationError } from '@/src/core/domain/errors';
 
 export function useValidation<T>(validator: Validation<T>) {

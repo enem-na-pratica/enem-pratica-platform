@@ -1,9 +1,9 @@
 import { CreateEssay } from "@/src/core/application/interfaces/essay/create-essay-use-case.interface";
-import { Essay } from "@/src/core/domain/essay/essay.entity";
+import { Essay } from "@/src/core/domain/entities/essay.entity";
 import { CreateEssayDto, EssayResDto } from "@/src/core/application/dtos/essay";
-import { Role, ROLES, hasAtLeastRole } from "@/src/core/domain/auth/roles";
+import { Role, ROLES, hasAtLeastRole } from "@/src/core/domain/auth";
 import { ForbiddenError } from "@/src/core/domain/errors";
-import { EssayRepository } from "@/src/core/domain/essay/essay.repository.interface";
+import { EssayRepository } from "@/src/core/domain/contracts/repositories/essay-repository.interface";
 import { CheckTeacherStudentRelQuery } from "@/src/core/application/queries/interfaces";
 import { UserRepository } from "@/src/core/domain/user/user.repository.interface";
 import { ToDtoMapper } from "@/src/core/domain/mapper";

@@ -2,7 +2,7 @@ import { ZodType } from 'zod';
 import {
   Validation,
   ValidationErrors
-} from '@/src/core/domain/validation/validator.interface';
+} from '@/src/core/domain/contracts/validation/validation.interface';
 import { ValidationError } from '@/src/core/domain/errors';
 
 export class ZodValidation<T> implements Validation<T> {
