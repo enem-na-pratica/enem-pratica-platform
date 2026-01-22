@@ -9,5 +9,4 @@ export interface UserRepository {
   create(input: CreateUserParams): Promise<User>;
   getById(userId: string): Promise<User>;
   findByUsername(username: string): Promise<User | null>;
-  findAll(): Promise<User[]>;
 }
