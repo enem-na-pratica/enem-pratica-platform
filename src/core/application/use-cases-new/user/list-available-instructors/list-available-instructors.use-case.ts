@@ -2,21 +2,21 @@ import type { UseCase } from '@/src/core/application/common/interfaces';
 import type {
   InstructorWithStudentCountDto
 } from "./instructor-with-student-count.dto";
-import type { GetInstructorsLoadQuery } from "./get-instructors-load.query";
+import type { ListInstructorsLoadQuery } from "./list-instructors-load.query";
 
 export type ListAvailableInstructorsUseCaseDeps = {
-  getInstructorsLoad: GetInstructorsLoadQuery;
+  listInstructorsLoad: ListInstructorsLoadQuery;
 }
 
 export class ListAvailableInstructorsUseCase
   implements UseCase<void, InstructorWithStudentCountDto[]> {
-  private readonly getInstructorsLoad: GetInstructorsLoadQuery;
+  private readonly listInstructorsLoad: ListInstructorsLoadQuery;
 
-  constructor({ getInstructorsLoad }: ListAvailableInstructorsUseCaseDeps) {
-    this.getInstructorsLoad = getInstructorsLoad;
+  constructor({ listInstructorsLoad }: ListAvailableInstructorsUseCaseDeps) {
+    this.listInstructorsLoad = listInstructorsLoad;
   }
 
   async execute(): Promise<InstructorWithStudentCountDto[]> {
-    return await this.getInstructorsLoad.execute();
+    return await this.listInstructorsLoad.execute();
   }
 }

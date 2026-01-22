@@ -3,7 +3,7 @@ import type {
   InstructorWithStudentCountDto
 } from "./instructor-with-student-count.dto";
 
-export type GetInstructorsLoadQuery = Query<
+export type ListInstructorsLoadQuery = Query<
   void,
   InstructorWithStudentCountDto[]
 >
