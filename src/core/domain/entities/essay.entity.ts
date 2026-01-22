@@ -1,4 +1,4 @@
-import { CompetencyScore, Theme } from "@/src/core/domain/value-objects";
+import { Theme, EssayGrades } from "@/src/core/domain/value-objects";
 
 interface EssayProps {
   id?: string;
@@ -12,34 +12,26 @@ interface EssayProps {
   createdAt?: Date;
 }
 
-type CompetenciesTuple = [
-  CompetencyScore,
-  CompetencyScore,
-  CompetencyScore,
-  CompetencyScore,
-  CompetencyScore
-];
-
 type CompetencyIndex = 1 | 2 | 3 | 4 | 5;
 
 export class Essay {
   private _id: string | undefined;
   private _authorId: string;
   private _theme: Theme;
-  private _competencies: CompetenciesTuple;
+  private _grades: EssayGrades;
   private _createdAt: Date;
 
   private constructor(props: EssayProps) {
     this._id = props.id;
     this._authorId = props.authorId;
     this._theme = Theme.create(props.theme);
-    this._competencies = [
-      CompetencyScore.create(props.competency1),
-      CompetencyScore.create(props.competency2),
-      CompetencyScore.create(props.competency3),
-      CompetencyScore.create(props.competency4),
-      CompetencyScore.create(props.competency5),
-    ];
+    this._grades = EssayGrades.createFromPrimitives({
+      c1: props.competency1,
+      c2: props.competency2,
+      c3: props.competency3,
+      c4: props.competency4,
+      c5: props.competency5
+    });
     this._createdAt = props.createdAt || new Date();
   }
 
@@ -59,19 +51,19 @@ export class Essay {
   public get id(): string | undefined { return this._id; }
   public get authorId(): string { return this._authorId; }
   public get theme(): string { return this._theme.value; }
-  public get competency1(): number { return this._competencies[0].value; }
-  public get competency2(): number { return this._competencies[1].value; }
-  public get competency3(): number { return this._competencies[2].value; }
-  public get competency4(): number { return this._competencies[3].value; }
-  public get competency5(): number { return this._competencies[4].value; }
+  public get competency1(): number { return this._grades.getScore(1); }
+  public get competency2(): number { return this._grades.getScore(2); }
+  public get competency3(): number { return this._grades.getScore(3); }
+  public get competency4(): number { return this._grades.getScore(4); }
+  public get competency5(): number { return this._grades.getScore(5); }
   public get createdAt(): Date { return this._createdAt; }
 
   public getCompetency(index: CompetencyIndex): number {
-    return this._competencies[index - 1].value;
+    return this._grades.getScore(index);
   }
 
   public get totalScore(): number {
-    return this._competencies.reduce((acc, curr) => acc + curr.value, 0);
+    return this._grades.totalScore;
   }
 
   // --- Mutações ---
@@ -82,13 +74,6 @@ export class Essay {
   public changeGrades(
     grades: Partial<Record<'c1' | 'c2' | 'c3' | 'c4' | 'c5', number>>
   ): void {
-    const mapping = { c1: 0, c2: 1, c3: 2, c4: 3, c5: 4 } as const;
-
-    for (const [key, value] of Object.entries(grades)) {
-      if (value !== undefined) {
-        const index = mapping[key as keyof typeof mapping];
-        this._competencies[index] = CompetencyScore.create(value);
-      }
-    }
+    this._grades = this._grades.updateGrades(grades);
   }
 }
