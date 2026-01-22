@@ -107,7 +107,7 @@ export class CreateEssayUseCase implements UseCase<CreateEssayInput, EssayDto> {
     author: User;
   }) {
     if (!hasHigherRole(requester.role, author.role)) {
-      throw new ForbiddenError("Você só pode criar redações para usuários de nível inferior.");
+      throw new ForbiddenError("You do not have permission to create essays for users with an equivalent or higher role.");
     }
 
     if (hasExactRole(requester.role, ROLES.TEACHER)) {
@@ -132,7 +132,7 @@ export class CreateEssayUseCase implements UseCase<CreateEssayInput, EssayDto> {
       });
 
     if (!canAccessStudent) {
-      throw new ForbiddenError("Você só pode criar redações para estudantes atribuídos a você.");
+      throw new ForbiddenError("You can only create essays for students who are assigned to you.");
     }
   }
 }
