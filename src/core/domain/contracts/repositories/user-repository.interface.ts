@@ -1,6 +1,6 @@
 import type { User } from "@/src/core/domain/entities/user.entity";
 
-export interface CreateUserParams {
+interface CreateUserParams {
   user: User;
   teacherId?: string;
 }
