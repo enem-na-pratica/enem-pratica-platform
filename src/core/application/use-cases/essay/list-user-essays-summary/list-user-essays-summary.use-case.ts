@@ -91,15 +91,14 @@ export class ListUserEssaysSummaryUseCase
       };
     }
 
+    const initialTotals = { total: 0, c1: 0, c2: 0, c3: 0, c4: 0, c5: 0 };
+
     const totals = essays.reduce((acc, curr) => {
-      acc.total += curr.grades.total;
-      acc.c1 += curr.grades.c1;
-      acc.c2 += curr.grades.c2;
-      acc.c3 += curr.grades.c3;
-      acc.c4 += curr.grades.c4;
-      acc.c5 += curr.grades.c5;
+      (Object.keys(acc) as (keyof typeof acc)[]).forEach(key => {
+        acc[key] += curr.grades[key];
+      });
       return acc;
-    }, { total: 0, c1: 0, c2: 0, c3: 0, c4: 0, c5: 0 });
+    }, { ...initialTotals });
 
     return {
       totalCount,
