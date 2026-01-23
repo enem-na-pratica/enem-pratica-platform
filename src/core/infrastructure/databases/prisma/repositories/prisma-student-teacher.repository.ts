@@ -12,7 +12,7 @@ export class PrismaStudentTeacherRepository implements StudentTeacherRepository 
     this.prisma = prisma;
   }
 
-  isStudentAssignedToTeacher(
+  async isStudentAssignedToTeacher(
     {
       studentId,
       teacherId
@@ -21,6 +21,15 @@ export class PrismaStudentTeacherRepository implements StudentTeacherRepository 
       teacherId: string;
     }
   ): Promise<boolean> {
-    throw new Error('Method not implemented.');
+    const relation = await this.prisma.studentTeacher.findUnique({
+      where: {
+        studentId_teacherId: {
+          studentId: studentId,
+          teacherId: teacherId,
+        },
+      },
+    });
+
+    return !!relation
   }
 }
