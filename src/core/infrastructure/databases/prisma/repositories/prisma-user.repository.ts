@@ -5,6 +5,7 @@ import type {
 import type { User } from '@/src/core/domain/entities';
 import type { PrismaClient, User as PrismaUser } from "@/src/generated/prisma/client";
 import type { Mapper } from "@/src/core/domain/contracts/mappers";
+import { UserNotFoundError } from '@/src/core/domain/errors';
 
 type PrismaUserRepositoryDeps = {
   prisma: PrismaClient;
@@ -41,7 +42,11 @@ export class PrismaUserRepository implements UserRepository {
   }
 
   async getById(userId: string): Promise<User> {
-    throw new Error('Method not implemented.');
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+
+    if (!user) throw new UserNotFoundError({ fieldName: "id", entityValue: userId });
+
+    return this.mapper.map(user);
   }
 
   async findByUsername(username: string): Promise<User | null> {
