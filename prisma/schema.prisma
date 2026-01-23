@@ -36,6 +36,7 @@ model StudentTeacher {
 
   assignedAt DateTime @default(now())
 
+  @@unique([studentId, teacherId])
   @@map("student_teachers") // Nome da tabela no banco (snake_case)
 }
 
