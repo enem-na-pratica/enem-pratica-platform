@@ -1,5 +1,5 @@
-import { ROLES } from '@/src/ui/constants/role.constant';
-import { prisma } from './prisma';
+import { ROLES } from '@/src/core/domain/auth';
+import { prisma } from '../prisma';
 
 // Senha padrão: 0123456789
 const DEFAULT_PASSWORD = "$2b$12$8QHdhZ8bP4tLH.ZjaOKNpuCQUt5plrgKfbCUKEGX1Gc2hDmSGewkC";
