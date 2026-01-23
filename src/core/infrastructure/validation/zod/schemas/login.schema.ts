@@ -14,6 +14,7 @@ const USERNAME_REGEX = {
 export const loginSchema = z.object({
   username: z.string()
     .trim()
+    .toLowerCase()
     .min(
       USERNAME_CONFIG.MIN,
       `Username must be at least ${USERNAME_CONFIG.MIN} characters long`
