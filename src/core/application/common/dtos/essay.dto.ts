@@ -4,6 +4,6 @@ export type EssayDto = {
   id: string;
   authorId: string;
   theme: string;
-  grade: Grades & { total: number };
+  grades: Grades & { total: number };
   createdAt: string;
 };
