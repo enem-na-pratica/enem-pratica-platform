@@ -83,7 +83,15 @@ export class CreateEssayUseCase implements UseCase<CreateEssayInput, EssayDto> {
     essayData: CreateEssayDto;
     authorId: string;
   }): Promise<EssayDto> {
-    const essay = Essay.create({ ...essayData, authorId });
+    const essay = Essay.create({
+      authorId,
+      theme: essayData.theme,
+      competency1: essayData.grades.c1,
+      competency2: essayData.grades.c2,
+      competency3: essayData.grades.c3,
+      competency4: essayData.grades.c4,
+      competency5: essayData.grades.c5,
+    });
     const createdEssay = await this.essayRepository.create(essay);
     return this.mapper.map(createdEssay);
   }

@@ -1,6 +1,13 @@
 import { ValueObject } from "@/src/core/domain/shared";
 import { CompetencyScore } from "./competency-score.vo";
 
+export type CompetencyIndex = 1 | 2 | 3 | 4 | 5;
+
+export type CompetencyKey = `c${CompetencyIndex}`;
+
+type EssayGradesProps = Record<CompetencyKey, number>;
+export type { EssayGradesProps as Grades };
+
 type GradesTuple = [
   CompetencyScore,
   CompetencyScore,
@@ -8,16 +15,6 @@ type GradesTuple = [
   CompetencyScore,
   CompetencyScore
 ];
-
-type CompetencyIndex = 1 | 2 | 3 | 4 | 5;
-
-type RawGradesProps = {
-  c1: number;
-  c2: number;
-  c3: number;
-  c4: number;
-  c5: number;
-};
 
 export class EssayGrades extends ValueObject<GradesTuple> {
   private constructor(grades: GradesTuple) {
@@ -34,7 +31,7 @@ export class EssayGrades extends ValueObject<GradesTuple> {
     return new EssayGrades(grades);
   }
 
-  public static createFromPrimitives(props: RawGradesProps): EssayGrades {
+  public static createFromPrimitives(props: EssayGradesProps): EssayGrades {
     const grades: GradesTuple = [
       CompetencyScore.create(props.c1),
       CompetencyScore.create(props.c2),
@@ -54,7 +51,7 @@ export class EssayGrades extends ValueObject<GradesTuple> {
   }
 
   public updateGrades(
-    updates: Partial<Record<'c1' | 'c2' | 'c3' | 'c4' | 'c5', number>>
+    updates: Partial<EssayGradesProps>
   ): EssayGrades {
     const mapping = { c1: 0, c2: 1, c3: 2, c4: 3, c5: 4 } as const;
 

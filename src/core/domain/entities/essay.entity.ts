@@ -1,4 +1,5 @@
 import { Theme, EssayGrades } from "@/src/core/domain/value-objects";
+import type { CompetencyIndex, Grades } from "@/src/core/domain/value-objects";
 
 interface EssayProps {
   id?: string;
@@ -11,8 +12,6 @@ interface EssayProps {
   competency5: number;
   createdAt?: Date;
 }
-
-type CompetencyIndex = 1 | 2 | 3 | 4 | 5;
 
 export class Essay {
   private _id: string | undefined;
@@ -72,7 +71,7 @@ export class Essay {
   }
 
   public changeGrades(
-    grades: Partial<Record<'c1' | 'c2' | 'c3' | 'c4' | 'c5', number>>
+    grades: Partial<Grades>
   ): void {
     this._grades = this._grades.updateGrades(grades);
   }
