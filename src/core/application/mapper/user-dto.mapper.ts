@@ -1,20 +1,16 @@
-import { ToDtoMapper } from "@/src/core/domain/mapper"
+import { Mapper } from "@/src/core/domain/contracts/mappers/mapper.interface";
 import { User } from "@/src/core/domain/entities/user.entity";
-import { UserResDto } from "@/src/core/application/dtos/user";
+import { UserDto } from "@/src/core/application/common/dtos";
 
-export class UserResDtoMapper implements ToDtoMapper<User, UserResDto> {
-  toDto(user: User): UserResDto {
-    if (!user.id) {
-      throw new Error("Cannot map an user without a valid ID to DTO.");
-    }
-
+export class UserDtoMapper implements Mapper<User, UserDto> {
+  public map(user: User): UserDto {
     return {
-      id: user.id,
+      id: user.id!,
       name: user.name,
       username: user.username,
       role: user.role,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt
-    } as UserResDto
+      createdAt: user.createdAt.toISOString(),
+      updatedAt: user.updatedAt.toISOString(),
+    };
   }
 }
