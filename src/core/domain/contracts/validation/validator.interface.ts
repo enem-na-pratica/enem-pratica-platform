@@ -1,3 +1,3 @@
-export interface Validation<T> {
+export interface Validator<T> {
   validate(input: unknown): T;
 }

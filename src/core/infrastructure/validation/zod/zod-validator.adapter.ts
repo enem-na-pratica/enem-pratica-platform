@@ -1,11 +1,11 @@
-import { ZodType } from 'zod';
-import {
-  Validation,
-  ValidationErrors
-} from '@/src/core/domain/contracts/validation/validation.interface';
+import type { ZodType } from 'zod';
+import type {
+  Validator,
+  FieldErrors
+} from '@/src/core/domain/contracts/validation';
 import { ValidationError } from '@/src/core/domain/errors';
 
-export class ZodValidation<T> implements Validation<T> {
+export class ZodValidation<T> implements Validator<T> {
   constructor(private readonly schema: ZodType<T>) { }
 
   validate(input: T): T {
@@ -13,7 +13,7 @@ export class ZodValidation<T> implements Validation<T> {
 
     if (result.success) return result.data;
 
-    const grouped: ValidationErrors = {};
+    const grouped: FieldErrors = {};
 
     for (const issue of result.error.issues) {
       const field = issue.path.join('.');
