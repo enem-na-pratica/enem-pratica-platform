@@ -50,6 +50,10 @@ export class PrismaUserRepository implements UserRepository {
   }
 
   async findByUsername(username: string): Promise<User | null> {
-    throw new Error('Method not implemented.');
+    const user = await this.prisma.user.findUnique({ where: { username } });
+
+    if (!user) return null;
+
+    return this.mapper.map(user);
   }
 }
