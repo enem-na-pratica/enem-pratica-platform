@@ -8,16 +8,20 @@ import {
   userPublicSelect,
   type PrismaUserPublic
 } from "@/src/core/infrastructure/databases/prisma/selects";
+import type { Mapper } from "@/src/core/domain/contracts/mappers";
 
 type PrismaListUsersByRolesQueryDeps = {
   prisma: PrismaClient;
+  mapper: Mapper<PrismaUserPublic, UserDto>
 };
 
 export class PrismaListUsersByRolesQuery implements ListUsersByRolesQuery {
   private readonly prisma: PrismaClient;
+  private readonly mapper: Mapper<PrismaUserPublic, UserDto>;
 
-  constructor({ prisma }: PrismaListUsersByRolesQueryDeps) {
+  constructor({ prisma, mapper }: PrismaListUsersByRolesQueryDeps) {
     this.prisma = prisma;
+    this.mapper = mapper;
   }
 
   async execute(roles: Role[]): Promise<UserDto[]> {
@@ -28,17 +32,6 @@ export class PrismaListUsersByRolesQuery implements ListUsersByRolesQuery {
       select: userPublicSelect,
     });
 
-    return users.map(this.mapToDto);
-  }
-
-  private mapToDto(user: PrismaUserPublic): UserDto {
-    return {
-      id: user.id,
-      name: user.name,
-      username: user.username,
-      role: user.role,
-      createdAt: user.createdAt.toISOString(),
-      updatedAt: user.updatedAt.toISOString(),
-    };
+    return users.map(this.mapper.map);
   }
 }

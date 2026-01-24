@@ -8,16 +8,21 @@ import {
   userPublicSelect,
   type PrismaUserPublic
 } from "@/src/core/infrastructure/databases/prisma/selects";
+import type { Mapper } from "@/src/core/domain/contracts/mappers";
+import type { UserDto } from "@/src/core/application/common/dtos";
 
 type PrismaListInstructorsLoadQueryDeps = {
   prisma: PrismaClient;
+  mapper: Mapper<PrismaUserPublic, UserDto>
 };
 
 export class PrismaListInstructorsLoadQuery implements ListInstructorsLoadQuery {
   private readonly prisma: PrismaClient;
+  private readonly mapper: Mapper<PrismaUserPublic, UserDto>;
 
-  constructor({ prisma }: PrismaListInstructorsLoadQueryDeps) {
+  constructor({ prisma, mapper }: PrismaListInstructorsLoadQueryDeps) {
     this.prisma = prisma;
+    this.mapper = mapper;
   }
 
   async execute(): Promise<InstructorWithStudentCountDto[]> {
@@ -37,22 +42,11 @@ export class PrismaListInstructorsLoadQuery implements ListInstructorsLoadQuery 
       },
     });
 
-    return instructors.map(this.mapToDto);
-  }
-
-  private mapToDto(
-    user: PrismaUserPublic & { _count: { mentorshipsAsTeacher: number } }
-  ): InstructorWithStudentCountDto {
-    return {
-      instructor: {
-        id: user.id,
-        name: user.name,
-        username: user.username,
-        role: user.role,
-        createdAt: user.createdAt.toISOString(),
-        updatedAt: user.updatedAt.toISOString(),
-      },
-      studentsCount: user._count.mentorshipsAsTeacher,
-    };
+    return instructors.map((i) => {
+      return {
+        instructor: this.mapper.map(i),
+        studentsCount: i._count.mentorshipsAsTeacher
+      };
+    });
   }
 }
