@@ -2,8 +2,12 @@ import type {
   ListInstructorsLoadQuery,
   InstructorWithStudentCountDto
 } from "@/src/core/application/use-cases/user/list-available-instructors";
-import type { PrismaClient, User as PrismaUser } from "@/src/generated/prisma/client";
+import type { PrismaClient } from "@/src/generated/prisma/client";
 import { ROLES } from "@/src/core/domain/auth";
+import {
+  userPublicSelect,
+  type PrismaUserPublic
+} from "@/src/core/infrastructure/databases/prisma/selects";
 
 type PrismaListInstructorsLoadQueryDeps = {
   prisma: PrismaClient;
@@ -23,7 +27,8 @@ export class PrismaListInstructorsLoadQuery implements ListInstructorsLoadQuery 
           in: [ROLES.TEACHER, ROLES.ADMIN],
         },
       },
-      include: {
+      select: {
+        ...userPublicSelect,
         _count: {
           select: {
             mentorshipsAsTeacher: true,
@@ -36,7 +41,7 @@ export class PrismaListInstructorsLoadQuery implements ListInstructorsLoadQuery 
   }
 
   private mapToDto(
-    user: PrismaUser & { _count: { mentorshipsAsTeacher: number } }
+    user: PrismaUserPublic & { _count: { mentorshipsAsTeacher: number } }
   ): InstructorWithStudentCountDto {
     return {
       instructor: {
