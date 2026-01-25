@@ -1,5 +1,10 @@
 export type HttpRequest<T = unknown> = {
   body: T;
+  // params?: any;
+  // query?: any;
+  // userId?: string; // Preenchido por middlewares de auth
+  // userUsername?: string; // Preenchido por middlewares de auth
+  // userRole?: string; // Preenchido por middlewares de auth
 }
 
 export type HttpResponse<T = unknown> = {

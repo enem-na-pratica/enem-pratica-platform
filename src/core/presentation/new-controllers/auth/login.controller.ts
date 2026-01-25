@@ -18,7 +18,7 @@ const COOKIE_OPTIONS: CookieOptions = {
   sameSite: "strict",
 };
 
-export type LoginControllerDeps = {
+type LoginControllerDeps = {
   loginUseCase: UseCase<LoginDto, string>;
   validator: Validator<LoginDto>;
 }
