@@ -1,7 +1,8 @@
-import { BaseError } from "@/src/core/domain/errors";
+import { BaseError, type ErrorCategory } from "@/src/core/domain/errors";
 import type { FieldErrors } from '@/src/core/domain/contracts';
 
 export class ValidationError extends BaseError {
+  public category: ErrorCategory = 'VALIDATION';
   public readonly details: FieldErrors;
 
   constructor(details: FieldErrors) {
