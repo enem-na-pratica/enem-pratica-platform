@@ -24,7 +24,7 @@ export type LoginControllerDeps = {
 }
 
 export class LoginController
-  implements Controller<LoginDto, null> {
+  implements Controller<LoginDto, void> {
   private readonly loginUseCase: UseCase<LoginDto, string>;
   private readonly validator: Validator<LoginDto>;
 
@@ -35,7 +35,7 @@ export class LoginController
 
   async handle(
     request: HttpRequest<LoginDto>
-  ): Promise<HttpResponse<null | ErrorResponse>> {
+  ): Promise<HttpResponse<void | ErrorResponse>> {
     try {
       const validatedData = this.validator.validate(request.body);
 

@@ -16,10 +16,9 @@ export function created<T>(data: T): HttpResponse<T> {
   };
 }
 
-export function noContent(): HttpResponse<null> {
+export function noContent(): HttpResponse<void> {
   return {
-    statusCode: HttpStatus.NO_CONTENT,
-    body: null,
+    statusCode: HttpStatus.NO_CONTENT
   };
 }
 

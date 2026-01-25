@@ -4,7 +4,7 @@ export type HttpRequest<T = unknown> = {
 
 export type HttpResponse<T = unknown> = {
   statusCode: number;
-  body: T;
+  body?: T;
   cookies?: CookieData[];
 }
 
