@@ -1,11 +1,22 @@
+import type { Role } from '@/src/core/domain/auth';
+
+type Requester = {
+  id: string;
+  username: string;
+  role: Role;
+};
+
 export type HttpRequest<T = unknown> = {
   body: T;
   // params?: any;
   // query?: any;
-  // userId?: string; // Preenchido por middlewares de auth
-  // userUsername?: string; // Preenchido por middlewares de auth
-  // userRole?: string; // Preenchido por middlewares de auth
 }
+
+export type AuthenticatedRequest<T = unknown> = HttpRequest<T> & {
+  requester: Requester;
+};
+
+
 
 export type HttpResponse<T = unknown> = {
   statusCode: number;

@@ -19,7 +19,7 @@ type Requester = {
   role: Role;
 };
 
-type CreateEssayInput = {
+export type CreateEssayInput = {
   data: CreateEssayDto;
   requester: Requester;
 };
