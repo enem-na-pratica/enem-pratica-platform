@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import * as Http from '@/src/core/presentation/helpers/http.helper';
-import { HttpResponse, ErrorResponse } from '@/src/core/presentation/interfaces';
+import * as Http from './http.helper';
+import { HttpResponse, ErrorResponse } from '@/src/core/presentation/protocols';
 
 const errorMap: Record<string, (err: any) => HttpResponse<ErrorResponse>> = {
   // Auth Errors

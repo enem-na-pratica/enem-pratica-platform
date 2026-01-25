@@ -1,4 +1,4 @@
-import { HttpResponse, ErrorResponse } from '@/src/core/presentation/interfaces';
+import { HttpResponse, ErrorResponse } from '@/src/core/presentation/protocols';
 import { HttpStatus } from './http-status-code.constants';
 
 export function ok<T>(data: T): HttpResponse<T> {
