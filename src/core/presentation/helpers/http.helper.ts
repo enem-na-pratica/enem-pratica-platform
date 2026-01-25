@@ -1,5 +1,5 @@
 import { HttpResponse, ErrorResponse } from '@/src/core/presentation/interfaces';
-import { HttpStatus } from '@/src/core/presentation/constants/http-status-code';
+import { HttpStatus } from './http-status-code.constants';
 
 export function ok<T>(data: T): HttpResponse<T> {
   return {
