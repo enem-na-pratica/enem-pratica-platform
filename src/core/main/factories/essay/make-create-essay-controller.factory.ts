@@ -9,7 +9,7 @@ import {
   ZodValidator,
   createEssaySchema
 } from "@/src/core/infrastructure/validation/zod";
-import { makeEssayDtoMapper } from "@/src/core/main/factories/common/mappers/entity-to-dto";
+import { makeEssayDtoMapper } from "@/src/core/main/factories/common/mappers";
 
 export function makeCreateEssayController() {
   const createEssayUseCase = new CreateEssayUseCase({

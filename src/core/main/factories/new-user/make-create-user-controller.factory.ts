@@ -6,7 +6,7 @@ import {
   createUserSchema
 } from '@/src/core/infrastructure/validation/zod';
 import { makeBcryptAdapter } from "@/src/core/main/factories/common/crypto";
-import { makeUserDtoMapper } from "@/src/core/main/factories/common/mappers/entity-to-dto";
+import { makeUserDtoMapper } from "@/src/core/main/factories/common/mappers";
 
 export function makeCreateUserController() {
   const createUserUseCase = new CreateUserUseCase({
