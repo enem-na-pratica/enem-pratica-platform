@@ -10,13 +10,12 @@ import {
   usernameSchema
 } from "@/src/core/infrastructure/validation/zod";
 import { prisma } from '@/src/core/infrastructure/databases/prisma/prisma';
-import { PrismaEssayDtoMapper } from '@/src/core/infrastructure/databases/prisma/mappers';
+import { makePrismaEssayDtoMapper } from '@/src/core/main/factories/common/mappers';
 
 export function makeListUserEssaysSummaryController() {
-  const prismaEssayDtoMapper = new PrismaEssayDtoMapper();
   const prismaListEssaysByAuthorQuery = new PrismaListEssaysByAuthorQuery({
     prisma,
-    mapper: prismaEssayDtoMapper
+    mapper: makePrismaEssayDtoMapper(),
   });
   const listUserEssaysSummaryUseCase = new ListUserEssaysSummaryUseCase({
     listEssaysByAuthorQuery: prismaListEssaysByAuthorQuery,
