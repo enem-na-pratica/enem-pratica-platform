@@ -5,19 +5,18 @@ import {
   makePrismaEssayRepository,
   makePrismaStudentTeacherRepository
 } from "@/src/core/main/factories/common/repositories";
-import { EssayDtoMapper } from "@/src/core/application/mapper";
 import {
   ZodValidator,
   createEssaySchema
 } from "@/src/core/infrastructure/validation/zod";
+import { makeEssayDtoMapper } from "@/src/core/main/factories/common/mappers/entity-to-dto";
 
 export function makeCreateEssayController() {
-  const essayDtoMapper = new EssayDtoMapper();
   const createEssayUseCase = new CreateEssayUseCase({
     essayRepository: makePrismaEssayRepository(),
     userRepository: makePrismaUserRepository(),
     studentTeacherRepository: makePrismaStudentTeacherRepository(),
-    mapper: essayDtoMapper,
+    mapper: makeEssayDtoMapper(),
   });
 
   const zodValidator = new ZodValidator(createEssaySchema);
