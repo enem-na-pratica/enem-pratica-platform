@@ -8,7 +8,7 @@ import {
 import { makeBcryptAdapter } from "@/src/core/main/factories/common/crypto";
 import { makeUserDtoMapper } from "@/src/core/main/factories/common/mappers";
 
-export function makeCreateUserController() {
+export function makeCreateUser() {
   const createUserUseCase = new CreateUserUseCase({
     hasher: makeBcryptAdapter(),
     mapper: makeUserDtoMapper(),

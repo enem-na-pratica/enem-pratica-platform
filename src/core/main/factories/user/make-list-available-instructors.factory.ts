@@ -4,7 +4,7 @@ import { PrismaListInstructorsLoadQuery } from "@/src/core/infrastructure/databa
 import { prisma } from '@/src/core/infrastructure/databases/prisma/prisma';
 import { makePrismaUserDtoMapper } from '@/src/core/main/factories/common/mappers';
 
-export function makeListAvailableInstructorsController() {
+export function makeListAvailableInstructors() {
   const prismaListInstructorsLoadQuery = new PrismaListInstructorsLoadQuery({
     mapper: makePrismaUserDtoMapper(),
     prisma,

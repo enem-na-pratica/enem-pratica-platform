@@ -12,7 +12,7 @@ import {
 import { prisma } from '@/src/core/infrastructure/databases/prisma/prisma';
 import { makePrismaEssayDtoMapper } from '@/src/core/main/factories/common/mappers';
 
-export function makeListUserEssaysSummaryController() {
+export function makeListUserEssaysSummary() {
   const prismaListEssaysByAuthorQuery = new PrismaListEssaysByAuthorQuery({
     prisma,
     mapper: makePrismaEssayDtoMapper(),

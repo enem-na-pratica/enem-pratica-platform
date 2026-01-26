@@ -3,7 +3,7 @@ import { GetAuthenticatedUserUseCase } from '@/src/core/application/use-cases/us
 import { makeUserDtoMapper } from '@/src/core/main/factories/common/mappers';
 import { makePrismaUserRepository } from '@/src/core/main/factories/common/repositories';
 
-export function makeGetAuthenticatedUserController() {
+export function makeGetAuthenticatedUser() {
   const getAuthenticatedUserUseCase = new GetAuthenticatedUserUseCase({
     mapper: makeUserDtoMapper(),
     userRepository: makePrismaUserRepository(),

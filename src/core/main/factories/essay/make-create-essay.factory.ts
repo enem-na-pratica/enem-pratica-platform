@@ -11,7 +11,7 @@ import {
 } from "@/src/core/infrastructure/validation/zod";
 import { makeEssayDtoMapper } from "@/src/core/main/factories/common/mappers";
 
-export function makeCreateEssayController() {
+export function makeCreateEssay() {
   const createEssayUseCase = new CreateEssayUseCase({
     essayRepository: makePrismaEssayRepository(),
     userRepository: makePrismaUserRepository(),

@@ -5,7 +5,7 @@ import { ZodValidator, loginSchema } from "@/src/core/infrastructure/validation/
 import { makeJwtAdapter } from "@/src/core/main/factories/common/auth";
 import { makeBcryptAdapter } from "@/src/core/main/factories/common/crypto";
 
-export function makeLoginController() {
+export function makeLogin() {
   const loginUseCase = new LoginUseCase({
     userRepository: makePrismaUserRepository(),
     tokenGenerator: makeJwtAdapter(),

@@ -4,7 +4,7 @@ import { PrismaListUsersByRolesQuery } from "@/src/core/infrastructure/databases
 import { prisma } from '@/src/core/infrastructure/databases/prisma/prisma';
 import { makePrismaUserDtoMapper } from '@/src/core/main/factories/common/mappers';
 
-export function makeListUsersByRolesController() {
+export function makeListUsersByRoles() {
   const prismaListUsersByRolesQuery = new PrismaListUsersByRolesQuery({
     mapper: makePrismaUserDtoMapper(),
     prisma,
