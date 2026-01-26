@@ -8,15 +8,13 @@ type Requester = {
 
 export type HttpRequest<T = unknown> = {
   body: T;
-  // params?: any;
+  params?: string;
   // query?: any;
 }
 
 export type AuthenticatedRequest<T = unknown> = HttpRequest<T> & {
   requester: Requester;
 };
-
-
 
 export type HttpResponse<T = unknown> = {
   statusCode: number;

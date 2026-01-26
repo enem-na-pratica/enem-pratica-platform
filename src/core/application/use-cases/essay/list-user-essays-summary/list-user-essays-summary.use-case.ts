@@ -20,8 +20,8 @@ type Requester = {
   role: Role;
 };
 
-type ListUserEssaysSummaryInput = {
-  authorUsername: string;
+export type ListUserEssaysSummaryInput = {
+  authorUsername?: string;
   requester: Requester;
 };
 
@@ -48,7 +48,8 @@ export class ListUserEssaysSummaryUseCase
   }
 
   async execute({
-    authorUsername, requester
+    authorUsername,
+    requester
   }: ListUserEssaysSummaryInput): Promise<UserEssaysOverviewDto> {
     const authorId = await this.getValidatedAuthorId({
       requester,
