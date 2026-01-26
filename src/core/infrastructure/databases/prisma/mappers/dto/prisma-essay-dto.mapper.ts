@@ -2,7 +2,7 @@ import type { Mapper } from "@/src/core/domain/contracts/mappers";
 import type { EssayDto } from "@/src/core/application/common/dtos";
 import type { Essay as PrismaEssay } from "@/src/generated/prisma/client";
 
-export class PrismaUserDtoMapper implements Mapper<PrismaEssay, EssayDto> {
+export class PrismaEssayDtoMapper implements Mapper<PrismaEssay, EssayDto> {
   public map(essay: PrismaEssay): EssayDto {
     return {
       id: essay.id,
