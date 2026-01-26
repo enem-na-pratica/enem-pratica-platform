@@ -1,11 +1,10 @@
 import { PrismaUserRepository } from '@/src/core/infrastructure/databases/prisma/repositories';
-import { UserEntityMapper } from '@/src/core/infrastructure/databases/prisma/mappers';
 import { prisma } from '@/src/core/infrastructure/databases/prisma/prisma';
+import { makeUserEntityMapper } from '@/src/core/main/factories/common/mappers'
 
 export function makePrismaUserRepository() {
-  const userEntityMapper = new UserEntityMapper();
   return new PrismaUserRepository({
     prisma,
-    mapper: userEntityMapper
+    mapper: makeUserEntityMapper(),
   });
 }
