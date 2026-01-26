@@ -1,11 +1,10 @@
 import { PrismaEssayRepository } from '@/src/core/infrastructure/databases/prisma/repositories';
-import { EssayEntityMapper } from '@/src/core/infrastructure/databases/prisma/mappers';
-import { prisma } from '@/src/core/infrastructure/databases/prisma/prisma'
+import { prisma } from '@/src/core/infrastructure/databases/prisma/prisma';
+import { makeEssayEntityMapper } from '@/src/core/main/factories/common/mappers';
 
 export function makePrismaEssayRepository() {
-  const essayEntityMapper = new EssayEntityMapper();
   return new PrismaEssayRepository({
     prisma,
-    mapper: essayEntityMapper
+    mapper: makeEssayEntityMapper(),
   });
 }
