@@ -5,7 +5,7 @@ import type {
 } from '@/src/core/domain/contracts/validation';
 import { ValidationError } from '@/src/core/domain/errors';
 
-export class ZodValidation<T> implements Validator<T> {
+export class ZodValidator<T> implements Validator<T> {
   constructor(private readonly schema: ZodType<T>) { }
 
   validate(input: T): T {
