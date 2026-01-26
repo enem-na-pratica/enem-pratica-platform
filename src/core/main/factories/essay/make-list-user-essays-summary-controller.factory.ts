@@ -5,7 +5,10 @@ import {
   makePrismaUserRepository
 } from "@/src/core/main/factories/common/repositories";
 import { PrismaListEssaysByAuthorQuery } from "@/src/core/infrastructure/databases/prisma/queries";
-import { ZodValidator, usernameSchema } from "@/src/core/infrastructure/validation/zod";
+import {
+  ZodValidator,
+  usernameSchema
+} from "@/src/core/infrastructure/validation/zod";
 import { prisma } from '@/src/core/infrastructure/databases/prisma/prisma';
 import { PrismaEssayDtoMapper } from '@/src/core/infrastructure/databases/prisma/mappers';
 

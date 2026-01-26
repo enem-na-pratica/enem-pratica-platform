@@ -6,7 +6,10 @@ import {
   makePrismaStudentTeacherRepository
 } from "@/src/core/main/factories/common/repositories";
 import { EssayDtoMapper } from "@/src/core/application/mapper";
-import { ZodValidator, createEssaySchema } from "@/src/core/infrastructure/validation/zod";
+import {
+  ZodValidator,
+  createEssaySchema
+} from "@/src/core/infrastructure/validation/zod";
 
 export function makeCreateEssayController() {
   const essayDtoMapper = new EssayDtoMapper();
