@@ -2,7 +2,7 @@ import type { UseCase } from '@/src/core/application/common/interfaces';
 import type { Role } from '@/src/core/domain/auth';
 import type { ListUsersByRolesQuery } from './list-users-by-roles.query';
 import type { UserDto } from "@/src/core/application//common/dtos";
-import { ROLES } from '@/src/core/domain/auth';
+import { ROLES, hasExactRole } from '@/src/core/domain/auth';
 import { ForbiddenError } from '@/src/core/domain/errors';
 
 export type ListUsersByRolesUseCaseDeps = {
@@ -17,14 +17,14 @@ export class ListUsersByRolesUseCase implements UseCase<Role, UserDto[]> {
   }
 
   async execute(role: Role): Promise<UserDto[]> {
-    if (role === ROLES.ADMIN) {
+    if (hasExactRole(role, ROLES.ADMIN)) {
       return await this.listUsersByRoles.execute([
         ROLES.STUDENT,
         ROLES.TEACHER
       ]);
     }
 
-    if (role === ROLES.SUPER_ADMIN) {
+    if (hasExactRole(role, ROLES.SUPER_ADMIN)) {
       return await this.listUsersByRoles.execute([]);
     }
 
