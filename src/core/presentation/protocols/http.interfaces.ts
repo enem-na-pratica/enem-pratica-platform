@@ -8,8 +8,8 @@ type Requester = {
 
 export type HttpRequest<T = unknown> = {
   body: T;
-  params?: string;
-  // query?: any;
+  params?: Record<string, string | string[]>;
+  query?: Record<string, string | string[]>;
 }
 
 export type AuthenticatedRequest<T = unknown> = HttpRequest<T> & {

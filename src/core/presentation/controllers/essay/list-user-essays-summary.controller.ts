@@ -40,7 +40,7 @@ export class ListUserEssaysSummaryController
     request: AuthenticatedRequest<void>
   ): Promise<HttpResponse<UserEssaysOverviewDto | ErrorResponse>> {
     try {
-      const rawUsername = request.params;
+      const { username: rawUsername } = request.params ?? {};
 
       const authorUsername = rawUsername
         ? this.validator.validate(rawUsername)
