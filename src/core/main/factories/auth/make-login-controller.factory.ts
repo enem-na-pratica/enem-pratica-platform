@@ -1,6 +1,6 @@
 import { LoginController } from "@/src/core/presentation/controllers/auth";
 import { LoginUseCase } from "@/src/core/application/use-cases/auth";
-import { makePrismaUserRepository } from "@/src/core/main/factories/repositories";
+import { makePrismaUserRepository } from "@/src/core/main/factories/common/repositories";
 import { JwtAdapter } from "@/src/core/infrastructure/auth";
 import { BcryptAdapter } from "@/src/core/infrastructure/crypto";
 import { ZodValidator, loginSchema } from "@/src/core/infrastructure/validation/zod";

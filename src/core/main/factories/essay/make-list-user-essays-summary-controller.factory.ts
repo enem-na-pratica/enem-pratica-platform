@@ -3,7 +3,7 @@ import { ListUserEssaysSummaryUseCase } from "@/src/core/application/use-cases/e
 import {
   makePrismaStudentTeacherRepository,
   makePrismaUserRepository
-} from "@/src/core/main/factories/repositories";
+} from "@/src/core/main/factories/common/repositories";
 import { PrismaListEssaysByAuthorQuery } from "@/src/core/infrastructure/databases/prisma/queries";
 import { ZodValidator, usernameSchema } from "@/src/core/infrastructure/validation/zod";
 import { prisma } from '@/src/core/infrastructure/databases/prisma/prisma';
