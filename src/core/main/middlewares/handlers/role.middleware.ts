@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
-import { isAuthorizedByRole } from "./utils";
-import { Middleware } from "@/src/middlewares/middleware.interface";
+import { roleGuard } from "@/src/core/main/middlewares/guards";
+import type { Middleware } from "@/src/core/main/middlewares/interfaces";
 
 export const RoleMiddleware: Middleware = async (request) => {
   const pathname = request.nextUrl.pathname;
-  const isAuthorized = isAuthorizedByRole(request);
+  const isAuthorized = roleGuard(request);
 
   if (!isAuthorized) {
     // If API

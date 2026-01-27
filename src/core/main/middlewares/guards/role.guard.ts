@@ -16,7 +16,7 @@ const RULES = Object.entries(PROTECTED_ROUTES_MAP).sort(
   ([pathA], [pathB]) => pathB.length - pathA.length
 );
 
-export function isAuthorizedByRole(request: NextRequest): boolean {
+export function roleGuard(request: NextRequest): boolean {
   const pathname = request.nextUrl.pathname;
   const userRole = request.headers.get("x-user-role") as Role;
 

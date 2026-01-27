@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createMiddlewareChain } from "./middlewares/middleware-chain";
-import { AuthMiddleware } from "./middlewares/auth.middleware";
-import { RoleMiddleware } from "./middlewares/role.middleware";
+import {
+  createMiddlewareChain,
+  AuthMiddleware,
+  RoleMiddleware
+} from '@/src/core/main/middlewares';
 
 export const config = {
   /**

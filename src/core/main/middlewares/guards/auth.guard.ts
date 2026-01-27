@@ -1,16 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { JwtTokenAdapter } from "@/src/core/infrastructure/criptography/jwt.adapter";
-import { TokenPayload } from "@/src/core/domain/shared/interfaces";
+import { makeJwtAdapter } from '@/src/core/main/factories/common/auth';
+import { TokenPayload } from "@/src/core/domain/contracts/auth";
 
 const LOGIN_PATH = "/login";
 const AUTH_COOKIE_NAME = "auth_token";
 
-const jwtAdapter = new JwtTokenAdapter<TokenPayload>(
-  process.env.JWT_SECRET || "fallback_secret",
-  '7d'
-);
+const jwtAdapter = makeJwtAdapter();
 
-export function authenticate(
+export function authGuard(
   request: NextRequest
 ): { user: TokenPayload } | { response: NextResponse } {
   const token = request.cookies.get(AUTH_COOKIE_NAME)?.value;

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Middleware } from "@/src/middlewares/middleware.interface";
+import type { Middleware } from "@/src/core/main/middlewares/interfaces";
 
 export async function createMiddlewareChain(
   request: NextRequest,

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { authenticate } from "@/src/middlewares/utils";
-import { Middleware } from "@/src/middlewares/middleware.interface";
-import { TokenPayload } from "../core/domain/shared/interfaces";
+import type { TokenPayload } from "@/src/core/domain/contracts/auth";
+import { authGuard } from "@/src/core/main/middlewares/guards";
+import type { Middleware } from "@/src/core/main/middlewares/interfaces";
 
 const GUEST_ONLY_PAGES = [
   "/login",
@@ -20,7 +20,7 @@ export const AuthMiddleware: Middleware = async (request) => {
   const isGuestPage = GUEST_ONLY_PAGES.includes(pathname);
   const isPublicPage = PUBLIC_PAGES.includes(pathname);
 
-  const authResult = authenticate(request);
+  const authResult = authGuard(request);
   const isAuthenticated = !('response' in authResult);
 
   if (isPublicPage) {
