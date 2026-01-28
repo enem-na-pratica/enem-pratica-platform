@@ -14,7 +14,7 @@ export type EssayDto = {
   createdAt: string;
 };
 
-export type EssayStatistics = {
+type EssayStatistics = {
   totalCount: number;
   globalAverage: number;
   averagesPerCompetency: Grades;

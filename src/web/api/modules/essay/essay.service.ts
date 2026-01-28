@@ -1,7 +1,7 @@
 import { HttpClient } from '@/src/web/api/shared';
-import { EssayDto, UserEssaysOverviewDto } from './essay.dto';
+import type { EssayDto, UserEssaysOverviewDto } from './essay.dto';
 import { EssayMapper } from './essay.mapper';
-import { Essay, UserEssaysOverview } from './essay.model';
+import type { Essay, UserEssaysOverview } from './essay.model';
 
 type EssayServiceDeps = {
   httpClient: HttpClient,
@@ -28,7 +28,7 @@ export class EssayService {
 
   async create(dataEssay: CreateEssayDto): Promise<Essay> {
     const data = await this.httpClient.post<EssayDto>({
-      endpoint: "/essays/new",
+      endpoint: "/essays",
       options: { data: dataEssay }
     });
 
