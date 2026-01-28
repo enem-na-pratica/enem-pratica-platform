@@ -18,10 +18,13 @@ export class FetchHttpClient implements HttpClient {
     this.baseUrl = baseUrl || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
   }
 
-  private applyPathParams(
+  private applyPathParams({
+    endpoint,
+    params
+  }: {
     endpoint: string,
     params?: Record<string, string | string[]>
-  ): string {
+  }): string {
     if (!params) return endpoint;
     let result = endpoint;
     for (const [key, value] of Object.entries(params)) {
@@ -54,14 +57,18 @@ export class FetchHttpClient implements HttpClient {
     return s ? `?${s}` : '';
   }
 
-  private async request<T>(
-    endpoint: string,
-    method: HttpMethod,
-    options: RequestOptions = {},
-  ): Promise<T> {
+  private async request<T>({
+    endpoint,
+    method,
+    options = {},
+  }: {
+    endpoint: string;
+    method: HttpMethod;
+    options?: RequestOptions;
+  }): Promise<T> {
     const { data, headers, params, query, cache, next } = options;
 
-    const endpointWithParams = this.applyPathParams(endpoint, params);
+    const endpointWithParams = this.applyPathParams({ endpoint, params });
 
     const base = this.baseUrl.replace(/\/+$/, '');
     const path = String(endpointWithParams).replace(/^\/+/, '');
@@ -122,23 +129,53 @@ export class FetchHttpClient implements HttpClient {
     return response.json();
   }
 
-  get<T>(endpoint: string, options?: Omit<RequestOptions, "data">): Promise<T> {
-    return this.request<T>(endpoint, HTTP_METHOD.GET, options);
+  get<T>({
+    endpoint,
+    options
+  }: {
+    endpoint: string,
+    options?: Omit<RequestOptions, "data">
+  }): Promise<T> {
+    return this.request<T>({ endpoint, method: HTTP_METHOD.GET, options });
   }
 
-  post<T>(endpoint: string, options?: RequestOptions): Promise<T> {
-    return this.request<T>(endpoint, HTTP_METHOD.POST, options);
+  post<T>({
+    endpoint,
+    options
+  }: {
+    endpoint: string,
+    options?: RequestOptions
+  }): Promise<T> {
+    return this.request<T>({ endpoint, method: HTTP_METHOD.POST, options });
   }
 
-  put<T>(endpoint: string, options?: RequestOptions): Promise<T> {
-    return this.request<T>(endpoint, HTTP_METHOD.PUT, options);
+  put<T>({
+    endpoint,
+    options
+  }: {
+    endpoint: string,
+    options?: RequestOptions
+  }): Promise<T> {
+    return this.request<T>({ endpoint, method: HTTP_METHOD.PUT, options });
   }
 
-  patch<T>(endpoint: string, options?: RequestOptions): Promise<T> {
-    return this.request<T>(endpoint, HTTP_METHOD.PATCH, options);
+  patch<T>({
+    endpoint,
+    options
+  }: {
+    endpoint: string,
+    options?: RequestOptions
+  }): Promise<T> {
+    return this.request<T>({ endpoint, method: HTTP_METHOD.PATCH, options });
   }
 
-  delete<T>(endpoint: string, options?: Omit<RequestOptions, "data">): Promise<T> {
-    return this.request<T>(endpoint, HTTP_METHOD.DELETE, options);
+  delete<T>({
+    endpoint,
+    options
+  }: {
+    endpoint: string,
+    options?: Omit<RequestOptions, "data">
+  }): Promise<T> {
+    return this.request<T>({ endpoint, method: HTTP_METHOD.DELETE, options });
   }
 }

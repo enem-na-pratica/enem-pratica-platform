@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 export type RequestOptions = {
-  data?: any;
+  data?: unknown;
   params?: Record<string, string | string[]>;
   query?: Record<string, string | string[]>;
   headers?: Record<string, string>;
@@ -9,9 +8,11 @@ export type RequestOptions = {
 };
 
 export interface HttpClient {
-  get<T>(endpoint: string, options?: Omit<RequestOptions, 'data'>): Promise<T>;
-  post<T>(endpoint: string, options?: RequestOptions): Promise<T>;
-  put<T>(endpoint: string, options?: RequestOptions): Promise<T>;
-  patch<T>(endpoint: string, options?: RequestOptions): Promise<T>;
-  delete<T>(endpoint: string, options?: Omit<RequestOptions, 'data'>): Promise<T>;
+  get<T>(args: { endpoint: string, options?: Omit<RequestOptions, 'data'> }): Promise<T>;
+  post<T>(args: { endpoint: string, options?: RequestOptions }): Promise<T>;
+  put<T>(args: { endpoint: string, options?: RequestOptions }): Promise<T>;
+  patch<T>(args: { endpoint: string, options?: RequestOptions }): Promise<T>;
+  delete<T>(
+    args: { endpoint: string, options?: Omit<RequestOptions, 'data'> }
+  ): Promise<T>;
 }
