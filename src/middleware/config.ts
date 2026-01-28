@@ -1,4 +1,5 @@
 import { type Role, ROLES } from "@/src/core/domain/auth";
+import { URLPattern } from "next/server";
 
 export const ROUTES = {
   GUEST_ONLY: ["/login", "/register"],
@@ -11,13 +12,23 @@ export const ROUTES = {
 export const AUTH_COOKIE_NAME = "auth_token";
 
 // Order matters: more specific paths must come before more generic ones.
-export const ACL_RULES: Array<{ path: string; minRole: Role }> = [
-  { path: "/user/new", minRole: ROLES.ADMIN },
-  { path: "/api/teaching-staff", minRole: ROLES.ADMIN },
-  { path: "/api/users/new", minRole: ROLES.ADMIN },
-  { path: "/dashboard/content/", minRole: ROLES.TEACHER },
-  { path: "/dashboard/essays/", minRole: ROLES.TEACHER },
-  { path: "/dashboard/review/", minRole: ROLES.TEACHER },
-  { path: "/dashboard/simulations/", minRole: ROLES.TEACHER },
-  { path: "/dashboard/to-be-reviewed/", minRole: ROLES.TEACHER },
+export const ACL_RULES: Array<{ pattern: URLPattern; minRole: Role }> = [
+  {
+    pattern: new URLPattern({ pathname: "/user/new" }),
+    minRole: ROLES.ADMIN
+  },
+  {
+    pattern: new URLPattern({ pathname: "/api/teaching-staff" }),
+    minRole: ROLES.ADMIN
+  },
+  {
+    pattern: new URLPattern({ pathname: "/api/users/new" }),
+    minRole: ROLES.ADMIN
+  },
+  {
+    pattern: new URLPattern({
+      pathname: "/dashboard/:folder(content|essays|review|simulations|to-be-reviewed)/:rest+"
+    }),
+    minRole: ROLES.TEACHER
+  },
 ];

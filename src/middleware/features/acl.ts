@@ -13,13 +13,13 @@ export const aclMiddleware: MiddlewareHandler = async (request: NextRequest) => 
   // ACL rules do not apply.
   if (!userRole) return null;
 
-  const rule = ACL_RULES.find((r) => pathname.startsWith(r.path));
+  const rule = ACL_RULES.find((r) => r.pattern.test({ pathname }));
 
   if (rule) {
     const isAuthorized = hasAtLeastRole(rule.minRole, userRole);
 
     if (!isAuthorized) {
-       // API routes return JSON errors instead of redirects.
+      // API routes return JSON errors instead of redirects.
       if (pathname.startsWith("/api/")) {
         return NextResponse.json(
           { error: "Forbidden: Insufficient permissions." },
