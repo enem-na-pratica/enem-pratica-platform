@@ -9,25 +9,25 @@ import type { UserDto } from '@/src/core/application/common/dtos';
 import type { Role } from '@/src/core/domain/auth';
 import { handleError, ok } from '@/src/core/presentation/helpers';
 
-type ListUsersByRolesControllerDeps = {
-  listUsersByRolesUseCase: UseCase<Role, UserDto[]>;
+type ListUsersControllerDeps = {
+  listUsersUseCase: UseCase<Role, UserDto[]>;
 }
 
-export class ListUsersByRolesController
+export class ListUsersController
   implements Controller<void, UserDto[]> {
-  private readonly listUsersByRolesUseCase: UseCase<Role, UserDto[]>;
+  private readonly listUsersUseCase: UseCase<Role, UserDto[]>;
 
   constructor({
-    listUsersByRolesUseCase,
-  }: ListUsersByRolesControllerDeps) {
-    this.listUsersByRolesUseCase = listUsersByRolesUseCase;
+    listUsersUseCase,
+  }: ListUsersControllerDeps) {
+    this.listUsersUseCase = listUsersUseCase;
   }
 
   async handle(
     request: AuthenticatedRequest<void>
   ): Promise<HttpResponse<UserDto[] | ErrorResponse>> {
     try {
-      const listUsers = await this.listUsersByRolesUseCase.execute(
+      const listUsers = await this.listUsersUseCase.execute(
         request.requester.role
       );
 

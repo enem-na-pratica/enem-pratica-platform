@@ -1,6 +1,4 @@
-import type {
-  ListUsersByRolesQuery
-} from "@/src/core/application/use-cases/user/list-users-by-roles";
+import type { ListUsersQuery } from "@/src/core/application/use-cases/user/list-users";
 import type { PrismaClient } from "@/src/generated/prisma/client";
 import type { Role } from "@/src/core/domain/auth";
 import type { UserDto } from "@/src/core/application/common/dtos";
@@ -10,16 +8,16 @@ import {
 } from "@/src/core/infrastructure/databases/prisma/selects";
 import type { Mapper } from "@/src/core/domain/contracts/mappers";
 
-type PrismaListUsersByRolesQueryDeps = {
+type PrismaListUsersQueryDeps = {
   prisma: PrismaClient;
   mapper: Mapper<PrismaUserPublic, UserDto>
 };
 
-export class PrismaListUsersByRolesQuery implements ListUsersByRolesQuery {
+export class PrismaListUsersQuery implements ListUsersQuery {
   private readonly prisma: PrismaClient;
   private readonly mapper: Mapper<PrismaUserPublic, UserDto>;
 
-  constructor({ prisma, mapper }: PrismaListUsersByRolesQueryDeps) {
+  constructor({ prisma, mapper }: PrismaListUsersQueryDeps) {
     this.prisma = prisma;
     this.mapper = mapper;
   }
