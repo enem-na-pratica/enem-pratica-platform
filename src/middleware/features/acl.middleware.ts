@@ -1,10 +1,11 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { type Role, hasAtLeastRole } from "@/src/core/domain/auth";
-import { ACL_RULES, ROUTES } from "../config";
+import { ACL_RULES, ROUTES, HttpMethod } from "../config";
 import type { MiddlewareHandler } from "../types";
 
 export const aclMiddleware: MiddlewareHandler = async (request: NextRequest) => {
   const pathname = request.nextUrl.pathname;
+  const method = request.method as HttpMethod;
 
   // AuthMiddleware is expected to have already injected this header.
   const userRole = request.headers.get("x-user-role") as Role;
@@ -13,7 +14,16 @@ export const aclMiddleware: MiddlewareHandler = async (request: NextRequest) => 
   // ACL rules do not apply.
   if (!userRole) return null;
 
-  const rule = ACL_RULES.find((r) => r.pattern.test({ pathname }));
+  const rule = ACL_RULES.find((rule) => {
+    const isUrlMatch = rule.pattern.test({ pathname });
+
+    const isMethodMatch =
+      !rule.methods ||
+      rule.methods.length === 0 ||
+      rule.methods.includes(method);
+
+    return isUrlMatch && isMethodMatch;
+  });
 
   if (rule) {
     const isAuthorized = hasAtLeastRole(rule.minRole, userRole);
