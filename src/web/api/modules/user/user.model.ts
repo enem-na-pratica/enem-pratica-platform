@@ -1,11 +1,4 @@
-export const ROLES = {
-  STUDENT: "STUDENT",
-  TEACHER: "TEACHER",
-  ADMIN: "ADMIN",
-  SUPER_ADMIN: "SUPER_ADMIN",
-} as const;
-
-export type Role = typeof ROLES[keyof typeof ROLES];
+import type { Role } from '@/src/web/config'
 
 export type User = {
   id: string;
