@@ -1,4 +1,4 @@
-export const NAVIGATION_ITEMS = [
+export const COURSE_NAVIGATION_ITEMS = [
   {
     key: "content",
     label: "Conteúdos",
@@ -31,5 +31,5 @@ export const NAVIGATION_ITEMS = [
   },
 ] as const;
 
-export type NavigationItem = (typeof NAVIGATION_ITEMS)[number];
-export type NavigationKey = NavigationItem["key"];
+export type CourseNavigationItem = (typeof COURSE_NAVIGATION_ITEMS)[number];
+export type CourseNavigationKey = CourseNavigationItem["key"];
