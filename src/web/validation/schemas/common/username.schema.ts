@@ -12,21 +12,21 @@ export const usernameSchema = z.string()
   .toLowerCase()
   .min(
     USERNAME_CONFIG.MIN,
-    `Username must be at least ${USERNAME_CONFIG.MIN} characters long`
+    `O username deve ter no mínimo ${USERNAME_CONFIG.MIN} caracteres`
   )
   .max(
     USERNAME_CONFIG.MAX,
-    `Username must be at most ${USERNAME_CONFIG.MAX} characters long`
+    `O username deve ter no máximo ${USERNAME_CONFIG.MAX} caracteres`
   )
   .regex(
     USERNAME_REGEX.ALLOWED,
-    "Use only lowercase letters, numbers, periods, hyphens, or underscores"
+    "Use apenas letras minúsculas, números, pontos, hífens ou underlines"
   )
   .refine((val) => !USERNAME_REGEX.BOUNDARIES.test(val), {
-    message: "Username cannot start or end with symbols",
+    message: "O username não pode começar ou terminar com símbolos",
   })
   .refine((val) => !USERNAME_REGEX.SEQUENTIAL.test(val), {
-    message: "Username cannot contain sequential symbols (e.g., '..', '--')",
+    message: "O username não pode conter símbolos sequenciais (ex: '..', '--')",
   });
 
 export type UsernameSchema = z.infer<typeof usernameSchema>;
