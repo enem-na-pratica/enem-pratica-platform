@@ -1,17 +1,13 @@
 import { NewUserForm } from "./_components/new-user-form";
-import { ROLES } from "@/src/ui/constants";
 import Link from "next/link";
 import { headers } from "next/headers";
-import { getRoleFromHeaders } from "@/src/ui/helpers";
-import { makeUserService } from "@/src/services/api/factories";
-
-type UserCreatorRole = typeof ROLES.ADMIN | typeof ROLES.SUPER_ADMIN;
+import { extractUserRole, makeUserService } from "@/src/web/api";
 
 export default async function NewUserPage() {
   const headersList = await headers();
-  const role = getRoleFromHeaders(headersList) as UserCreatorRole;
+  const role = extractUserRole(headersList);
 
-  const teachingStaff = await makeUserService().findTeachingStaff();
+  const ListInstructors = await makeUserService().listAvailableInstructors();
 
   return (
     <div className="w-full flex items-center justify-center bg-(--background) p-1.5">
@@ -29,7 +25,7 @@ export default async function NewUserPage() {
           </p>
         </header>
 
-        <NewUserForm teachingStaff={teachingStaff} currentUserRole={role} />
+        <NewUserForm teachingStaff={ListInstructors} currentUserRole={role} />
       </div>
     </div>
   );
