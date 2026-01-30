@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import dynamic from "next/dynamic";
 import { User, makeUserService } from "@/src/web/api";
-import { ROLES } from "@/src/ui/constants";
+import { ROLES } from "@/src/web/config";
 
 const AdminDashboard = dynamic(() =>
   import("@/src/web/view").then((mod) => mod.AdminDashboard),
