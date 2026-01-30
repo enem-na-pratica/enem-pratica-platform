@@ -1,17 +1,5 @@
-import { NextResponse, NextRequest } from "next/server";
-import { makeGetCurrentUserController } from "@/src/core/main/factories/user/get-current-user.factory";
+import { nextRouteAdapter } from '@/src/core/main/adapters';
+import { UserFactories } from '@/src/core/main/factories';
 
-export async function GET(request: NextRequest) {
-  const userUsername = request.headers.get("x-user-username") as string;
-
-  const getCurrentUserController = await makeGetCurrentUserController().handle({
-    body: {
-      username: userUsername
-    }
-  });
-
-  return NextResponse.json(
-    getCurrentUserController.body,
-    { status: getCurrentUserController.statusCode }
-  );
-}
+const authenticatedUser = UserFactories.makeGetAuthenticatedUser();
+export const GET = nextRouteAdapter(authenticatedUser);
