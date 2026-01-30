@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { makeAuthService } from "@/src/services/api/factories";
+import { makeAuthService } from "@/src/web/api";
 
 export default function Login() {
   const [username, setUsername] = useState("");
