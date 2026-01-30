@@ -1,10 +1,8 @@
-import { EssayModel } from "@/src/services/api/models";
-
-type CompetencyKey = "c1" | "c2" | "c3" | "c4" | "c5";
+import { Essay, CompetencyKey } from "@/src/web/api";
 
 const COMPETENCIES: CompetencyKey[] = ["c1", "c2", "c3", "c4", "c5"];
 
-export function EssayItem({ essay }: { essay: EssayModel }) {
+export function EssayItem({ essay }: { essay: Essay }) {
   return (
     <div
       key={essay.id}

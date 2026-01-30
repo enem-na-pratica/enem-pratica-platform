@@ -1,11 +1,11 @@
 import Link from "next/link";
-import { Header } from "@/src/ui/components";
+import { Header } from "@/src/web/components";
 import {
   StatsSection,
   EssayForm,
   EssayListSection,
 } from "@/src/app/dashboard/(course)/essays/_components";
-import { makeEssayService } from "@/src/services/api/factories";
+import { makeEssayService } from "@/src/web/api";
 
 export default async function EssayPage({
   searchParams,
@@ -15,10 +15,10 @@ export default async function EssayPage({
   const params = await searchParams;
   const isFormOpen = params.showForm === "true";
 
-  const listEssays = await makeEssayService().listMyEssays();
+  const listEssays = await makeEssayService().listUserEssaysStatistics();
 
-  const essays = listEssays.data;
-  const summary = listEssays.summary;
+  const essays = listEssays.essays;
+  const summary = listEssays.statistics;
 
   return (
     <div className="min-h-screen bg-(--background) text-(--foreground) pb-20 transition-colors duration-500">
@@ -35,7 +35,7 @@ export default async function EssayPage({
 
       <main className="w-full max-w-6xl mx-auto py-8 space-y-8 px-4">
         {/* --- Statistics section --- */}
-        {essays.length > 0 && <StatsSection summary={summary} />}
+        {essays.length > 0 && <StatsSection statistics={summary} />}
 
         <hr className="border-(--foreground)/10" />
 

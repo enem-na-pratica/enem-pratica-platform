@@ -35,10 +35,10 @@ export class EssayService {
     return EssayMapper.toModel(data);
   }
 
-  async listUserEssaysSummary(username: string): Promise<UserEssaysOverview> {
+  async listUserEssaysStatistics(username?: string): Promise<UserEssaysOverview> {
     const data = await this.httpClient.get<UserEssaysOverviewDto>({
       endpoint: "/essays/:username",
-      options: { params: { username } }
+      ...(username && { options: { params: { username } } })
     });
 
     return EssayMapper.toOverviewModel(data);
