@@ -2,7 +2,7 @@ import { LogoutButton, SidebarItem } from "@/src/web/components";
 import type { AdminNavigationKey, AdminNavigationItem } from "@/src/web/config";
 
 type SidebarProps = {
-  navigation_items: AdminNavigationItem[];
+  readonly navigation_items: readonly AdminNavigationItem[];
   activeTab: AdminNavigationKey;
 };
 
