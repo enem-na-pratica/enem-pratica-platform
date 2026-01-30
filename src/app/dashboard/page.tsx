@@ -1,18 +1,29 @@
 import { redirect } from "next/navigation";
-import {
-  AdminDashboard,
-  StudentDashboard,
-  TeacherDashboard,
-  SuperAdminDashboard,
-} from "@/src/ui/pages/dashboard";
-import { UserModel } from "@/src/services/api/models";
+import dynamic from "next/dynamic";
+import { User, makeUserService } from "@/src/web/api";
 import { ROLES } from "@/src/ui/constants";
-import { makeUserService } from "@/src/services/api/factories";
 
-export default async function Dashboard() {
-  let user: UserModel;
+const AdminDashboard = dynamic(() =>
+  import("@/src/web/view").then((mod) => mod.AdminDashboard),
+);
+const StudentDashboard = dynamic(() =>
+  import("@/src/web/view").then((mod) => mod.StudentDashboard),
+);
+const TeacherDashboard = dynamic(() =>
+  import("@/src/web/view").then((mod) => mod.TeacherDashboard),
+);
+const SuperAdminDashboard = dynamic(() =>
+  import("@/src/web/view").then((mod) => mod.SuperAdminDashboard),
+);
+
+export default async function Dashboard({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  let user: User;
   try {
-    user = await makeUserService().getMe();
+    user = await makeUserService().getAuthenticated();
   } catch {
     return (
       <div className="flex h-screen items-center justify-center">
@@ -30,7 +41,8 @@ export default async function Dashboard() {
     case ROLES.TEACHER:
       return <TeacherDashboard user={user} />;
     case ROLES.ADMIN:
-      return <AdminDashboard user={user} />;
+      const params = await searchParams;
+      return <AdminDashboard user={user} params={params} />;
     case ROLES.SUPER_ADMIN:
       return <SuperAdminDashboard user={user} />;
     default:
