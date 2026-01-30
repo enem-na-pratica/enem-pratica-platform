@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { User } from "@/src/web/api";
+import { makeUserService } from "@/src/web/api";
 
-export function UsersManager({ users }: { users: User[] }) {
+export async function UsersManager() {
+  const users = await makeUserService().list();
   return (
     <>
       <div className="flex justify-between items-center mb-8">

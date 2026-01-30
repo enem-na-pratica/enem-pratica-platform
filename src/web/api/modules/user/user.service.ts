@@ -47,7 +47,7 @@ export class UserService {
     return UserMapper.toModel(data);
   }
 
-  async ListAvailableInstructors(): Promise<InstructorWithStudentCount[]> {
+  async listAvailableInstructors(): Promise<InstructorWithStudentCount[]> {
     const data = await this.httpClient.get<InstructorWithStudentCountDto[]>({
       endpoint: "/users/instructors"
     });

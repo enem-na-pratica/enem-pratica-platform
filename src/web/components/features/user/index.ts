@@ -1,2 +1,2 @@
 export * from './user-card';
-export * from './user-manager';
+export * from './users-manager';
