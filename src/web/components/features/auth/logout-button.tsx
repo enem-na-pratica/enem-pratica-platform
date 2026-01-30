@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { makeAuthService } from "@/src/web/api/factories";
+import { makeAuthService } from "@/src/web/api";
 
 export function LogoutButton() {
   const router = useRouter();
@@ -18,6 +18,7 @@ export function LogoutButton() {
       router.push("/login");
       router.refresh();
     } catch (error) {
+      //TODO: Substituir com useNotify
       console.error("Erro ao desconectar:", error);
       alert("Ocorreu um erro. Verifique sua conexão ou tente novamente.");
     } finally {
