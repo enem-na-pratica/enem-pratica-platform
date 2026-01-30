@@ -15,7 +15,11 @@ export const nextRouteAdapter = (controller: Controller<any, any>) => {
   return async (request: NextRequest, context: RouteContext) => {
     let body = {};
     try {
-      if (request.headers.get("content-length") !== "0") {
+      const contentType = request.headers.get("content-type") || "";
+      if (
+        contentType.includes("application/json")
+        && request.headers.get("content-length") !== "0"
+      ) {
         body = await request.json();
       }
     } catch { }
@@ -66,7 +70,7 @@ export const nextRouteAdapter = (controller: Controller<any, any>) => {
       }
     } else {
       response = NextResponse.json(
-        { error: httpResponse.body },
+        httpResponse.body,
         { status: httpResponse.statusCode }
       );
     }
