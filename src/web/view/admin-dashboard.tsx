@@ -45,7 +45,10 @@ export async function AdminDashboard({ user, params }: AdminDashboardProps) {
 
   return (
     <div className="flex h-screen overflow-hidden bg-(--background) text-(--foreground) transition-colors duration-500">
-      <Sidebar activeTab="home" navigation_items={ADMIN_NAVIGATION_ITEMS} />
+      <Sidebar
+        activeTab={activeTab}
+        navigation_items={ADMIN_NAVIGATION_ITEMS}
+      />
 
       {/* main content */}
       <main className="flex-1 flex flex-col min-w-0">
