@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ROLES } from "@/src/ui/constants";
+import { ROLES } from "@/src/web/config";
 import { usernameSchema, passwordSchema } from "./common";
 
 const NAME_CONFIG = { MIN: 3, MAX: 50 };
