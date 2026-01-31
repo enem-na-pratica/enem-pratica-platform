@@ -1,45 +1,47 @@
-import {
+import type {
   Controller,
-  HttpRequest,
+  ErrorResponse,
   HttpResponse,
-  ErrorResponse
-} from '@/src/core/presentation/interfaces';
-import * as Http from '@/src/core/presentation/helpers/http.helper';
-import { handleError } from '@/src/core/presentation/helpers/error-handler.helper';
-import { CreateEssayDto, EssayContent, EssayResDto } from '@/src/core/application/dtos/essay';
-import { CreateEssay } from "@/src/core/application/interfaces/essay/create-essay-use-case.interface";
-import { Validation } from '@/src/core/domain/validation/validator.interface';
+  AuthenticatedRequest
+} from '@/src/core/presentation/protocols';
+import type { UseCase } from '@/src/core/application/common/interfaces';
+import type { Validator } from '@/src/core/domain/contracts/validation';
+import type {
+  CreateEssayDto,
+  CreateEssayInput
+} from '@/src/core/application/use-cases/essay';
+import type { EssayDto } from '@/src/core/application/common/dtos';
+import { handleError, created } from '@/src/core/presentation/helpers';
 
-export type CreateEssayControllerDeps = {
-  createEssayUseCase: CreateEssay;
-  createEssayValidator: Validation<EssayContent>;
+type CreateEssayControllerDeps = {
+  createEssayUseCase: UseCase<CreateEssayInput, EssayDto>;
+  validator: Validator<CreateEssayDto>;
 }
 
 export class CreateEssayController
-  implements Controller<CreateEssayDto, EssayResDto> {
-  private readonly createEssayUseCase: CreateEssay;
-  private readonly createEssayValidator: Validation<EssayContent>;
+  implements Controller<CreateEssayDto, EssayDto> {
+  private readonly createEssayUseCase: UseCase<CreateEssayInput, EssayDto>;
+  private readonly validator: Validator<CreateEssayDto>;
 
-  constructor(deps: CreateEssayControllerDeps) {
-    this.createEssayUseCase = deps.createEssayUseCase;
-    this.createEssayValidator = deps.createEssayValidator;
+  constructor({ createEssayUseCase, validator }: CreateEssayControllerDeps) {
+    this.createEssayUseCase = createEssayUseCase;
+    this.validator = validator;
   }
 
   async handle(
-    request: HttpRequest<CreateEssayDto>
-  ): Promise<HttpResponse<EssayResDto | ErrorResponse<unknown>>> {
+    request: AuthenticatedRequest<CreateEssayDto>
+  ): Promise<HttpResponse<EssayDto | ErrorResponse>> {
     try {
-      const validatedEssay = this.createEssayValidator.validate(request.body.essayData);
+      const validatedData = this.validator.validate(request.body);
 
       const newEssay = await this.createEssayUseCase.execute({
-        ...request.body,
-        essayData: validatedEssay
+        data: validatedData,
+        requester: request.requester
       });
 
-      return Http.created(newEssay);
+      return created(newEssay);
     } catch (error) {
       return handleError(error);
     }
-
   }
 }

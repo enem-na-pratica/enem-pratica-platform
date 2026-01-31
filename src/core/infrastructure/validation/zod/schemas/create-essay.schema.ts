@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { usernameSchema } from './common';
 
 const THEME_CONFIG = {
   MIN: 20,
@@ -33,7 +34,9 @@ const competencySchema = z
     }
   );
 
-export const newEssaySchema = z.object({
+export const createEssaySchema = z.object({
+  authorUsername: usernameSchema.optional(),
+
   theme: z
     .string()
     .trim()
@@ -46,15 +49,13 @@ export const newEssaySchema = z.object({
       `Theme must be at most ${THEME_CONFIG.MAX} characters long`
     ),
 
-  competency1: competencySchema,
-
-  competency2: competencySchema,
-
-  competency3: competencySchema,
-
-  competency4: competencySchema,
-
-  competency5: competencySchema,
+  grades: z.object({
+    c1: competencySchema,
+    c2: competencySchema,
+    c3: competencySchema,
+    c4: competencySchema,
+    c5: competencySchema,
+  }),
 });
 
-export type NewEssaySchema = z.infer<typeof newEssaySchema>;
+export type CreateEssaySchema = z.infer<typeof createEssaySchema>;

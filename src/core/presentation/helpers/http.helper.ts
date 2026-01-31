@@ -1,5 +1,6 @@
-import { HttpResponse, ErrorResponse } from '@/src/core/presentation/interfaces';
-import { HttpStatus } from '@/src/core/presentation/constants/http-status-code';
+import type { HttpResponse, ErrorResponse } from '@/src/core/presentation/protocols';
+import { HttpStatus } from './http-status-code.constants';
+import type { BaseError } from "@/src/core/domain/errors";
 
 export function ok<T>(data: T): HttpResponse<T> {
   return {
@@ -15,15 +16,14 @@ export function created<T>(data: T): HttpResponse<T> {
   };
 }
 
-export function noContent(): HttpResponse<null> {
+export function noContent(): HttpResponse<void> {
   return {
-    statusCode: HttpStatus.NO_CONTENT,
-    body: null,
+    statusCode: HttpStatus.NO_CONTENT
   };
 }
 
 export function badRequest(
-  error: Error & { details?: unknown }
+  error: BaseError & { details?: unknown }
 ): HttpResponse<ErrorResponse> {
   return {
     statusCode: HttpStatus.BAD_REQUEST,
@@ -31,28 +31,28 @@ export function badRequest(
   };
 }
 
-export function unauthorized(error: Error): HttpResponse<ErrorResponse> {
+export function unauthorized(error: BaseError): HttpResponse<ErrorResponse> {
   return {
     statusCode: HttpStatus.UNAUTHORIZED,
     body: { message: error.message },
   };
 }
 
-export function forbidden(error: Error): HttpResponse<ErrorResponse> {
+export function forbidden(error: BaseError): HttpResponse<ErrorResponse> {
   return {
     statusCode: HttpStatus.FORBIDDEN,
     body: { message: error.message },
   };
 }
 
-export function notFound(error: Error): HttpResponse<ErrorResponse> {
+export function notFound(error: BaseError): HttpResponse<ErrorResponse> {
   return {
     statusCode: HttpStatus.NOT_FOUND,
     body: { message: error.message },
   };
 }
 
-export function conflict(error: Error): HttpResponse<ErrorResponse> {
+export function conflict(error: BaseError): HttpResponse<ErrorResponse> {
   return {
     statusCode: HttpStatus.CONFLICT,
     body: { message: error.message },

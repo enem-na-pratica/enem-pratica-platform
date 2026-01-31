@@ -1,4 +1,4 @@
-import { BaseError } from "@/src/core/domain/errors";
+import { BaseError, type ErrorCategory } from "@/src/core/domain/errors";
 
 const DEFAULT_NOT_FOUND_MESSAGE = 'Entity not found.';
 
@@ -10,6 +10,8 @@ type NotFoundErrorParams = {
 };
 
 export class NotFoundError extends BaseError {
+  public category: ErrorCategory = 'NOT_FOUND';
+
   constructor({
     entityName,
     fieldName,

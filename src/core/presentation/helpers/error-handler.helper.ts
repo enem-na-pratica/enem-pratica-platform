@@ -1,33 +1,27 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import * as Http from '@/src/core/presentation/helpers/http.helper';
-import { HttpResponse, ErrorResponse } from '@/src/core/presentation/interfaces';
+import * as Http from './http.helper';
+import type { HttpResponse, ErrorResponse } from '@/src/core/presentation/protocols';
+import {
+  BaseError,
+  type ErrorCategory
+} from '@/src/core/domain/errors'
 
-const errorMap: Record<string, (err: any) => HttpResponse<ErrorResponse>> = {
-  // Auth Errors
-  IncorrectPasswordError: (err) => Http.unauthorized(err),
-  InvalidTokenError: (err) => Http.unauthorized(err),
-  TokenExpiredError: (err) => Http.unauthorized(err),
-
-  // Validation Errors
-  ValidationError: (err) => Http.badRequest(err),
-  ForbiddenError: (err) => Http.forbidden(err),
-
-  // Resource - Not Found
-  NotFoundError: (err) => Http.notFound(err),
-  UserNotFoundError: (err) => Http.notFound(err),
-
-  // Resource - Conflict
-  ConflictError: (err) => Http.conflict(err),
-  EntityAlreadyExistsError: (err) => Http.conflict(err),
-  UserAlreadyExistsError: (err) => Http.conflict(err),
+const categoryMap: Record<ErrorCategory, (err: BaseError) => HttpResponse<ErrorResponse>> = {
+  VALIDATION: Http.badRequest,
+  UNAUTHORIZED: Http.unauthorized,
+  FORBIDDEN: Http.forbidden,
+  NOT_FOUND: Http.notFound,
+  CONFLICT: Http.conflict,
+  INTERNAL: Http.serverError,
 };
 
-export const handleError = (err: any): HttpResponse<ErrorResponse> => {
-  const handler = errorMap[err.constructor.name];
+export function handleError(error: unknown): HttpResponse<ErrorResponse> {
+  if (error instanceof BaseError) {
+    const handler = categoryMap[error.category];
+    if (handler) return handler(error);
+  }
 
-  if (handler) return handler(err);
+  const genericError = error instanceof Error ? error : new Error(String(error));
+  console.error(`[Unhandled Error]: ${genericError.name}`, genericError);
 
-  console.error(`[Unhandled Error]: ${err.constructor.name}`, err);
-
-  return Http.serverError(err);
-};
+  return Http.serverError(genericError);
+}

@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createMiddlewareChain } from "./middlewares/middleware-chain";
-import { AuthMiddleware } from "./middlewares/auth.middleware";
-import { RoleMiddleware } from "./middlewares/role.middleware";
+import {
+  executeMiddlewareChain,
+  authMiddleware,
+  aclMiddleware
+} from '@/src/middleware';
 
 export const config = {
   /**
@@ -28,18 +30,22 @@ export const config = {
   ],
 };
 
+// The order of middlewares matters.
+// Middlewares are executed sequentially in the same order they are listed here.
 const middlewares = [
-  AuthMiddleware,
-  RoleMiddleware,
+  authMiddleware,
+  aclMiddleware,
 ];
 
 export async function proxy(request: NextRequest) {
-  const response = await createMiddlewareChain(request, middlewares);
+  const response = await executeMiddlewareChain(request, middlewares);
 
+  // If any middleware returned a redirect or error, short-circuit the request.
   if (response) {
     return response;
   }
 
+  // Allows the request to continue and propagates any injected headers.
   return NextResponse.next({
     request: {
       headers: request.headers,

@@ -1,5 +1,5 @@
 import { FeatureCard } from "@/src/app/_components";
-import { ThemeToggle } from "@/src/ui/components";
+import { ThemeToggle } from "@/src/web/components";
 
 export default function Home() {
   return (

@@ -1,1 +1,0 @@
-export * from "./teaching-staff.read-model"

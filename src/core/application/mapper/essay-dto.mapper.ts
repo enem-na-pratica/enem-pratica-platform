@@ -1,15 +1,11 @@
-import { ToDtoMapper } from "@/src/core/domain/mapper"
-import { Essay } from "@/src/core/domain/essay/essay.entity";
-import { EssayResDto } from "@/src/core/application/dtos/essay";
+import { Mapper } from "@/src/core/domain/contracts/mappers/mapper.interface";
+import { Essay } from "@/src/core/domain/entities/essay.entity";
+import { EssayDto } from "@/src/core/application/common/dtos";
 
-export class EssayResDtoMapper implements ToDtoMapper<Essay, EssayResDto> {
-  toDto(essay: Essay): EssayResDto {
-    if (!essay.id) {
-      throw new Error("Cannot map an essay without a valid ID to DTO.");
-    }
-
+export class EssayDtoMapper implements Mapper<Essay, EssayDto> {
+  public map(essay: Essay): EssayDto {
     return {
-      id: essay.id,
+      id: essay.id!,
       authorId: essay.authorId,
       theme: essay.theme,
       grades: {

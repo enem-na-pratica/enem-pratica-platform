@@ -1,39 +1,39 @@
-import { CreateUser } from "@/src/core/application/interfaces/user";
-import { Validation } from '@/src/core/domain/validation/validator.interface';
-import {
+import type {
   Controller,
-  HttpRequest,
+  ErrorResponse,
   HttpResponse,
-  ErrorResponse
-} from '@/src/core/presentation/interfaces';
-import { CreateUserDto, UserResDto } from "@/src/core/application/dtos/user";
-import * as Http from '@/src/core/presentation/helpers/http.helper';
-import { handleError } from '@/src/core/presentation/helpers/error-handler.helper';
+  AuthenticatedRequest
+} from '@/src/core/presentation/protocols';
+import type { UseCase } from '@/src/core/application/common/interfaces';
+import type { Validator } from '@/src/core/domain/contracts/validation';
+import type { CreateUserDto } from '@/src/core/application/use-cases/user';
+import type { UserDto } from '@/src/core/application/common/dtos';
+import { handleError, created } from '@/src/core/presentation/helpers';
 
-export type CreateUserDeps = {
-  createUserUseCase: CreateUser;
-  createUserValidator: Validation<CreateUserDto>;
+type CreateUserControllerDeps = {
+  createUserUseCase: UseCase<CreateUserDto, UserDto>;
+  validator: Validator<CreateUserDto>;
 }
 
 export class CreateUserController
-  implements Controller<CreateUserDto, UserResDto> {
-  private readonly createUserUseCase: CreateUser;
-  private readonly createUserValidator: Validation<CreateUserDto>;
+  implements Controller<CreateUserDto, UserDto> {
+  private readonly createUserUseCase: UseCase<CreateUserDto, UserDto>;
+  private readonly validator: Validator<CreateUserDto>;
 
-  constructor(deps: CreateUserDeps) {
-    this.createUserUseCase = deps.createUserUseCase;
-    this.createUserValidator = deps.createUserValidator;
+  constructor({ createUserUseCase, validator }: CreateUserControllerDeps) {
+    this.createUserUseCase = createUserUseCase;
+    this.validator = validator;
   }
 
   async handle(
-    request: HttpRequest<CreateUserDto>
-  ): Promise<HttpResponse<UserResDto | ErrorResponse>> {
+    request: AuthenticatedRequest<CreateUserDto>
+  ): Promise<HttpResponse<UserDto | ErrorResponse>> {
     try {
-      const userData = this.createUserValidator.validate(request.body);
+      const validatedData = this.validator.validate(request.body);
 
-      const newUser = await this.createUserUseCase.execute(userData)
+      const newUser = await this.createUserUseCase.execute(validatedData);
 
-      return Http.created(newUser);
+      return created(newUser);
     } catch (error) {
       return handleError(error);
     }

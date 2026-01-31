@@ -1,7 +1,7 @@
 import { EssayItem } from "./essay-item";
-import { EssayModel } from "@/src/services/api/models";
+import { Essay } from "@/src/web/api";
 
-export function EssayListSection({ essays }: { essays: EssayModel[] }) {
+export function EssayListSection({ essays }: { essays: Essay[] }) {
   return (
     <section className="grid grid-cols-1 gap-4">
       {essays.length === 0 ? (

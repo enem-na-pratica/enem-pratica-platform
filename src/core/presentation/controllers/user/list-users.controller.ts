@@ -1,39 +1,39 @@
-import {
+import type { UseCase } from '@/src/core/application/common/interfaces';
+import type {
   Controller,
   ErrorResponse,
-  HttpRequest,
-  HttpResponse
-} from '@/src/core/presentation/interfaces';
-import { UserResDto } from '@/src/core/application/dtos/user';
-import { Role } from '@/src/core/domain/auth/roles';
-import { ListUsers } from '@/src/core/application/interfaces/user/list-users-use-case.interface';
-import * as Http from '@/src/core/presentation/helpers/http.helper';
-import { handleError } from '@/src/core/presentation/helpers/error-handler.helper';
+  HttpResponse,
+  AuthenticatedRequest
+} from '@/src/core/presentation/protocols';
+import type { UserDto } from '@/src/core/application/common/dtos';
+import type { Role } from '@/src/core/domain/auth';
+import { handleError, ok } from '@/src/core/presentation/helpers';
 
-export type GetCurrentUserDep = {
-  listUsersUseCase: ListUsers;
+type ListUsersControllerDeps = {
+  listUsersUseCase: UseCase<Role, UserDto[]>;
 }
 
 export class ListUsersController
-  implements Controller<{ role: Role }, UserResDto[]> {
-  private readonly listUsersUseCase: ListUsers;
+  implements Controller<void, UserDto[]> {
+  private readonly listUsersUseCase: UseCase<Role, UserDto[]>;
 
-  constructor(deps: GetCurrentUserDep) {
-    this.listUsersUseCase = deps.listUsersUseCase;
+  constructor({
+    listUsersUseCase,
+  }: ListUsersControllerDeps) {
+    this.listUsersUseCase = listUsersUseCase;
   }
 
   async handle(
-    request: HttpRequest<{ role: Role }>
-  ): Promise<HttpResponse<UserResDto[] | ErrorResponse>> {
+    request: AuthenticatedRequest<void>
+  ): Promise<HttpResponse<UserDto[] | ErrorResponse>> {
     try {
-      const { role } = request.body;
+      const listUsers = await this.listUsersUseCase.execute(
+        request.requester.role
+      );
 
-      const users = await this.listUsersUseCase.execute(role);
-
-      return Http.ok(users);
+      return ok(listUsers);
     } catch (error) {
       return handleError(error);
     }
   }
-
 }

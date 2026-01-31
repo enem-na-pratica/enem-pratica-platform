@@ -1,6 +1,6 @@
-import { EssaySummary } from "@/src/services/api/dtos";
+import { EssayStatistics } from "@/src/web/api";
 
-export function StatsSection({ summary }: { summary: EssaySummary }) {
+export function StatsSection({ statistics }: { statistics: EssayStatistics }) {
   function getBarColor(avg: number) {
     if (avg <= 80) return "hsl(0, 84%, 60%)"; // Red (Insufficient)
     if (avg < 120) return "hsl(35, 90%, 55%)"; // Orange/Amber (Regular/Medium)
@@ -19,10 +19,10 @@ export function StatsSection({ summary }: { summary: EssaySummary }) {
           Média Geral
         </span>
         <strong className="text-6xl font-black mt-2">
-          {summary.globalAverage.toFixed(0)}
+          {statistics.globalAverage.toFixed(0)}
         </strong>
         <span className="text-xs font-medium mt-2 bg-black/10 px-3 py-1 rounded-full">
-          Baseado em {summary.totalCount} redações
+          Baseado em {statistics.totalCount} redações
         </span>
       </div>
 
@@ -32,7 +32,7 @@ export function StatsSection({ summary }: { summary: EssaySummary }) {
           Média por Competência
         </h3>
         <div className="space-y-3">
-          {Object.entries(summary.averagesPerCompetency).map(
+          {Object.entries(statistics.averagesPerCompetency).map(
             ([competency, avg], index) => {
               const barColor = getBarColor(avg);
 

@@ -1,15 +1,14 @@
-import { LoginInputDTO } from '@/src/core/application/dtos/auth';
-import { Login } from '@/src/core/application/interfaces/auth/login-use-case.interface';
-import { Validation } from '@/src/core/domain/validation/validator.interface';
-import {
+import type {
   Controller,
-  HttpRequest,
-  HttpResponse,
   CookieOptions,
-  ErrorResponse
-} from '@/src/core/presentation/interfaces';
-import * as Http from '@/src/core/presentation/helpers/http.helper';
-import { handleError } from '@/src/core/presentation/helpers/error-handler.helper';
+  ErrorResponse,
+  HttpRequest,
+  HttpResponse
+} from '@/src/core/presentation/protocols';
+import type { UseCase } from '@/src/core/application/common/interfaces';
+import type { LoginDto } from '@/src/core/application/use-cases/auth';
+import type { Validator } from '@/src/core/domain/contracts/validation';
+import { handleError, noContent } from '@/src/core/presentation/helpers';
 
 const COOKIE_OPTIONS: CookieOptions = {
   httpOnly: true,
@@ -19,33 +18,31 @@ const COOKIE_OPTIONS: CookieOptions = {
   sameSite: "strict",
 };
 
-export type LoginDep = {
-  loginUseCase: Login;
-  loginValidator: Validation<LoginInputDTO>;
+type LoginControllerDeps = {
+  loginUseCase: UseCase<LoginDto, string>;
+  validator: Validator<LoginDto>;
 }
 
 export class LoginController
-  implements Controller<LoginInputDTO, null> {
-  private readonly loginUseCase: Login;
-  private readonly loginValidator: Validation<LoginInputDTO>;
+  implements Controller<LoginDto, void> {
+  private readonly loginUseCase: UseCase<LoginDto, string>;
+  private readonly validator: Validator<LoginDto>;
 
-  constructor(deps: LoginDep) {
-    this.loginUseCase = deps.loginUseCase;
-    this.loginValidator = deps.loginValidator;
+  constructor({ loginUseCase, validator }: LoginControllerDeps) {
+    this.loginUseCase = loginUseCase;
+    this.validator = validator;
   }
 
   async handle(
-    request: HttpRequest<LoginInputDTO>
-  ): Promise<HttpResponse<null | ErrorResponse>> {
+    request: HttpRequest<LoginDto>
+  ): Promise<HttpResponse<void | ErrorResponse>> {
     try {
-      const { username, password } = request.body;
+      const validatedData = this.validator.validate(request.body);
 
-      this.loginValidator.validate(request.body);
-
-      const accessToken = await this.loginUseCase.execute({ username, password });
+      const accessToken = await this.loginUseCase.execute(validatedData);
 
       return {
-        ...Http.noContent(),
+        ...noContent(),
         cookies: [{
           name: "auth_token",
           value: accessToken,
@@ -56,4 +53,4 @@ export class LoginController
       return handleError(error);
     }
   }
-} 
+}
