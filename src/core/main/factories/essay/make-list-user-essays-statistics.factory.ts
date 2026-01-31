@@ -1,5 +1,5 @@
-import { ListUserEssaysSummaryController } from "@/src/core/presentation/controllers/essay";
-import { ListUserEssaysSummaryUseCase } from "@/src/core/application/use-cases/essay";
+import { ListUserEssaysStatisticsController } from "@/src/core/presentation/controllers/essay";
+import { ListUserEssaysStatisticsUseCase } from "@/src/core/application/use-cases/essay";
 import {
   makePrismaStudentTeacherRepository,
   makePrismaUserRepository
@@ -12,12 +12,12 @@ import {
 import { prisma } from '@/src/core/infrastructure/databases/prisma/prisma';
 import { makePrismaEssayDtoMapper } from '@/src/core/main/factories/common/mappers';
 
-export function makeListUserEssaysSummary() {
+export function makeListUserEssaysStatistics() {
   const prismaListEssaysByAuthorQuery = new PrismaListEssaysByAuthorQuery({
     prisma,
     mapper: makePrismaEssayDtoMapper(),
   });
-  const listUserEssaysSummaryUseCase = new ListUserEssaysSummaryUseCase({
+  const listUserEssaysStatisticsUseCase = new ListUserEssaysStatisticsUseCase({
     listEssaysByAuthorQuery: prismaListEssaysByAuthorQuery,
     studentTeacherRepository: makePrismaStudentTeacherRepository(),
     userRepository: makePrismaUserRepository(),
@@ -25,8 +25,8 @@ export function makeListUserEssaysSummary() {
 
   const zodValidator = new ZodValidator(usernameSchema);
 
-  return new ListUserEssaysSummaryController({
-    listUserEssaysSummaryUseCase,
+  return new ListUserEssaysStatisticsController({
+    listUserEssaysStatisticsUseCase,
     validator: zodValidator,
   });
 }

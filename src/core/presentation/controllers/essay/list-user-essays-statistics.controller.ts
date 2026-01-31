@@ -1,6 +1,6 @@
 import type { UseCase } from '@/src/core/application/common/interfaces';
 import type {
-  ListUserEssaysSummaryInput,
+  ListUserEssaysStatisticsInput,
   UserEssaysOverviewDto
 } from '@/src/core/application/use-cases/essay';
 import type {
@@ -12,27 +12,27 @@ import type {
 import type { Validator } from '@/src/core/domain/contracts/validation';
 import { handleError, ok } from '@/src/core/presentation/helpers';
 
-type ListUserEssaysSummaryControllerDeps = {
-  listUserEssaysSummaryUseCase: UseCase<
-    ListUserEssaysSummaryInput,
+type ListUserEssaysStatisticsControllerDeps = {
+  listUserEssaysStatisticsUseCase: UseCase<
+    ListUserEssaysStatisticsInput,
     UserEssaysOverviewDto
   >;
   validator: Validator<string>;
 }
 
-export class ListUserEssaysSummaryController
+export class ListUserEssaysStatisticsController
   implements Controller<void, UserEssaysOverviewDto> {
-  private readonly listUserEssaysSummaryUseCase: UseCase<
-    ListUserEssaysSummaryInput,
+  private readonly listUserEssaysStatisticsUseCase: UseCase<
+    ListUserEssaysStatisticsInput,
     UserEssaysOverviewDto
   >;
   private readonly validator: Validator<string>;
 
   constructor({
-    listUserEssaysSummaryUseCase,
+    listUserEssaysStatisticsUseCase,
     validator
-  }: ListUserEssaysSummaryControllerDeps) {
-    this.listUserEssaysSummaryUseCase = listUserEssaysSummaryUseCase;
+  }: ListUserEssaysStatisticsControllerDeps) {
+    this.listUserEssaysStatisticsUseCase = listUserEssaysStatisticsUseCase;
     this.validator = validator;
   }
 
@@ -46,7 +46,7 @@ export class ListUserEssaysSummaryController
         ? this.validator.validate(rawUsername)
         : undefined;
 
-      const listEssays = await this.listUserEssaysSummaryUseCase.execute({
+      const listEssays = await this.listUserEssaysStatisticsUseCase.execute({
         authorUsername,
         requester: request.requester,
       });

@@ -1,4 +1,4 @@
-import type { ListEssaysByAuthorQuery } from "@/src/core/application/use-cases/essay/list-user-essays-summary";
+import type { ListEssaysByAuthorQuery } from "@/src/core/application/use-cases/essay";
 import type { Mapper } from "@/src/core/domain/contracts/mappers";
 import type { EssayDto } from "@/src/core/application/common/dtos";
 import type { PrismaClient, Essay as PrismaEssay } from "@/src/generated/prisma/client";

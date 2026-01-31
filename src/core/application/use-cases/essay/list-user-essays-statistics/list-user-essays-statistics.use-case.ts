@@ -20,19 +20,19 @@ type Requester = {
   role: Role;
 };
 
-export type ListUserEssaysSummaryInput = {
+export type ListUserEssaysStatisticsInput = {
   authorUsername?: string;
   requester: Requester;
 };
 
-type ListUserEssaysSummaryUseCaseDeps = {
+type ListUserEssaysStatisticsUseCaseDeps = {
   userRepository: UserRepository;
   studentTeacherRepository: StudentTeacherRepository;
   listEssaysByAuthorQuery: ListEssaysByAuthorQuery;
 }
 
-export class ListUserEssaysSummaryUseCase
-  implements UseCase<ListUserEssaysSummaryInput, UserEssaysOverviewDto> {
+export class ListUserEssaysStatisticsUseCase
+  implements UseCase<ListUserEssaysStatisticsInput, UserEssaysOverviewDto> {
   private readonly userRepository: UserRepository;
   private readonly studentTeacherRepository: StudentTeacherRepository;
   private readonly listEssaysByAuthorQuery: ListEssaysByAuthorQuery;
@@ -41,7 +41,7 @@ export class ListUserEssaysSummaryUseCase
     userRepository,
     studentTeacherRepository,
     listEssaysByAuthorQuery,
-  }: ListUserEssaysSummaryUseCaseDeps) {
+  }: ListUserEssaysStatisticsUseCaseDeps) {
     this.userRepository = userRepository;
     this.studentTeacherRepository = studentTeacherRepository;
     this.listEssaysByAuthorQuery = listEssaysByAuthorQuery;
@@ -50,7 +50,7 @@ export class ListUserEssaysSummaryUseCase
   async execute({
     authorUsername,
     requester
-  }: ListUserEssaysSummaryInput): Promise<UserEssaysOverviewDto> {
+  }: ListUserEssaysStatisticsInput): Promise<UserEssaysOverviewDto> {
     const authorId = await this.getValidatedAuthorId({
       requester,
       authorUsername
