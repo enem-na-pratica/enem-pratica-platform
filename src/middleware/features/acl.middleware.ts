@@ -26,7 +26,7 @@ export const aclMiddleware: MiddlewareHandler = async (request: NextRequest) => 
   });
 
   if (rule) {
-    const isAuthorized = hasAtLeastRole(rule.minRole, userRole);
+    const isAuthorized = hasAtLeastRole({ requiredRole: rule.minRole, userRole });
 
     if (!isAuthorized) {
       // API routes return JSON errors instead of redirects.

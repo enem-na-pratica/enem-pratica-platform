@@ -132,14 +132,26 @@ export class ListUserEssaysStatisticsUseCase
     requester: Requester;
     author: User;
   }) {
-    if (!hasHigherRole(requester.role, author.role)) {
-      throw new ForbiddenError("You do not have permission to view the statistics of a user with a higher or equal role.");
+    if (
+      !hasHigherRole({
+        userRole: requester.role,
+        targetRole: author.role,
+      })
+    ) {
+      throw new ForbiddenError(
+        "You do not have permission to view the statistics of a user with a higher or equal role."
+      );
     }
 
-    if (hasExactRole(requester.role, ROLES.TEACHER)) {
+    if (
+      hasExactRole({
+        userRole: requester.role,
+        expectedRole: ROLES.TEACHER,
+      })
+    ) {
       await this.validateTeacherStudentLink({
         studentId: author.id!,
-        teacherId: requester.id
+        teacherId: requester.id,
       });
     }
   }

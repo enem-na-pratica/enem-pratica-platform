@@ -46,7 +46,7 @@ export class CreateUserUseCase implements UseCase<CreateUserDto, UserDto> {
 
     let validatedTeacherId: string | undefined = undefined;
 
-    if (hasExactRole(ROLES.STUDENT, role)) {
+    if (hasExactRole({ userRole: role, expectedRole: ROLES.STUDENT })) {
       if (!teacherId) {
         // TODO: create custom error, "MissingParamError"
         throw new Error('Teacher ID is required for students.');

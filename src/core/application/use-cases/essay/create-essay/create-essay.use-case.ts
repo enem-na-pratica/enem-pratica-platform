@@ -114,11 +114,17 @@ export class CreateEssayUseCase implements UseCase<CreateEssayInput, EssayDto> {
     requester: Requester;
     author: User;
   }) {
-    if (!hasHigherRole(requester.role, author.role)) {
+    if (!hasHigherRole({
+      userRole: requester.role,
+      targetRole: author.role,
+    })) {
       throw new ForbiddenError("You do not have permission to create essays for users with an equivalent or higher role.");
     }
 
-    if (hasExactRole(requester.role, ROLES.TEACHER)) {
+    if (hasExactRole({
+      userRole: requester.role,
+      expectedRole: ROLES.TEACHER,
+    })) {
       await this.validateTeacherStudentLink({
         studentId: author.id!,
         teacherId: requester.id

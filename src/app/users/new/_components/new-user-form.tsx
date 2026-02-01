@@ -1,24 +1,12 @@
 "use client";
 
-import { useState } from "react";
-import { Role, ROLES, ROLE_LABELS } from "@/src/ui/constants";
-import { TeachingStaffModel } from "@/src/services/api/models";
-import { useValidation } from "@/src/ui/hooks";
-import { ZodValidation } from "@/src/services/validation/zod/zod-validation";
-import {
-  newUserSchema,
-  NewUserSchema,
-} from "@/src/services/validation/zod/schemas/new-user.schema";
-import { makeUserService } from "@/src/services/api/factories";
-import { notify } from "@/src/ui/helpers";
-
-type NewUserFormData = {
-  name: string;
-  username: string;
-  password: string;
-  role: Role | "";
-  teacherId: string;
-};
+import { useEffect } from "react";
+import { useForm, useWatch } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { makeUserService, InstructorWithStudentCount } from "@/src/web/api";
+import { Role, ROLES, ROLE_LABELS } from "@/src/web/config";
+import { CreateUserFormValues, createUserSchema } from "@/src/web/validation";
+import { useNotify } from "@/src/web/hooks";
 
 type UserCreatorRole = typeof ROLES.ADMIN | typeof ROLES.SUPER_ADMIN;
 
@@ -28,82 +16,85 @@ const ROLE_CREATION_PERMISSIONS: Record<UserCreatorRole, Role[]> = {
 };
 
 type NewUserFormProps = {
-  teachingStaff: TeachingStaffModel[];
+  listInstructors: InstructorWithStudentCount[];
   currentUserRole: UserCreatorRole;
 };
 
-const newUserValidator = new ZodValidation(newUserSchema);
-
+/**
+ * TODO: Refactor needed
+ *
+ * Reasons:
+ * - Component is too long and hard to scan
+ * - Repeated markup for inputs and error handling
+ * - Business rules mixed with presentation logic
+ * - Difficult to test and maintain
+ *
+ * This should be split into smaller components and hooks.
+ */
 export function NewUserForm({
-  teachingStaff,
+  listInstructors,
   currentUserRole,
 }: NewUserFormProps) {
-  const [isLoading, setIsLoading] = useState(false);
-  const [formData, setFormData] = useState<NewUserFormData>({
-    name: "",
-    username: "",
-    password: "",
-    role: "",
-    teacherId: "",
+  const { notify } = useNotify();
+
+  const {
+    register,
+    handleSubmit,
+    control,
+    setValue,
+    reset,
+    formState: { errors, isSubmitting, isValid },
+  } = useForm<CreateUserFormValues>({
+    resolver: zodResolver(createUserSchema),
+    mode: "onChange",
+    defaultValues: {
+      name: "",
+      username: "",
+      password: "",
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      role: "" as any, // A cast is necessary because the initial value is empty, but the type expects Enum.
+      teacherId: "",
+    },
   });
-  const { errors, validate } = useValidation(newUserValidator);
+
+  const selectedRole = useWatch({
+    control,
+    name: "role",
+  });
+
+  useEffect(() => {
+    if (selectedRole !== ROLES.STUDENT) {
+      setValue("teacherId", "");
+    }
+  }, [selectedRole, setValue]);
 
   const getAvailableRoles = (): Role[] => {
     return ROLE_CREATION_PERMISSIONS[currentUserRole];
   };
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => {
-      const newData = { ...prev, [name]: value };
+  const onSubmit = async (data: CreateUserFormValues) => {
+    try {
+      const newUser = await makeUserService().create(data);
 
-      if (name === "role" && value !== ROLES.STUDENT) {
-        newData.teacherId = "";
-      }
+      notify({
+        type: "success",
+        message: `${newUser.name} foi cadastrado com sucesso.`,
+        description: "As credenciais já estão ativas no sistema.",
+      });
 
-      return newData;
-    });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const isValid = validate(formData as unknown as NewUserSchema);
-
-    if (isValid) {
-      setIsLoading(true);
-
-      try {
-        const newUser = await makeUserService().create(formData);
-        notify({
-          type: "success",
-          message: `${newUser.name} foi cadastrado com sucesso.`,
-          description: "As credenciais já estão ativas no sistema.",
-        });
-        setFormData({
-          name: "",
-          username: "",
-          password: "",
-          role: "",
-          teacherId: "",
-        });
-      } catch {
-        notify({
-          type: "error",
-          message: "Erro ao cadastrar usuário.",
-          description: "Verifique os dados ou tente novamente mais tarde.",
-        });
-      } finally {
-        setIsLoading(false);
-      }
+      reset();
+    } catch {
+      notify({
+        type: "error",
+        message: "Erro ao cadastrar usuário.",
+        description: "Verifique os dados ou tente novamente mais tarde.",
+      });
     }
   };
 
   return (
-    <form className="space-y-4" onSubmit={handleSubmit}>
-      {/* Campo: Nome Completo */}
+    <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
+      {/* Full Name Field */}
       <div className="flex flex-col gap-1.5">
         <label
           className={`text-[10px] font-black uppercase tracking-wider ml-1 transition-colors ${
@@ -113,17 +104,14 @@ export function NewUserForm({
           Nome Completo
         </label>
         <input
-          required
           type="text"
-          name="name"
           className={`input outline-none transition-all ${
             errors.name
               ? "border-(--error) ring-1 ring-(--error) animate-shake focus:border-(--error)"
               : "focus:border-(--accent) focus:ring-4 ring-(--accent)/20"
           }`}
           placeholder="Digite o nome completo..."
-          value={formData.name}
-          onChange={handleChange}
+          {...register("name")}
         />
         <div
           className={`grid transition-all duration-300 ease-in-out ${
@@ -134,13 +122,13 @@ export function NewUserForm({
         >
           <div className="overflow-hidden">
             <p className="text-(--error) text-xs italic mt-1 ml-1">
-              {errors.name?.[0]}
+              {errors.name?.message}
             </p>
           </div>
         </div>
       </div>
 
-      {/* Campo: Username */}
+      {/* Username Field */}
       <div className="flex flex-col gap-1.5">
         <label
           className={`text-[10px] font-black uppercase tracking-wider ml-1 transition-colors ${
@@ -150,17 +138,14 @@ export function NewUserForm({
           Username
         </label>
         <input
-          required
           type="text"
-          name="username"
           className={`input outline-none transition-all ${
             errors.username
               ? "border-(--error) ring-1 ring-(--error) animate-shake focus:border-(--error)"
               : "focus:border-(--accent) focus:ring-4 ring-(--accent)/20"
           }`}
           placeholder="Ex: joao.silva"
-          value={formData.username}
-          onChange={handleChange}
+          {...register("username")}
         />
         <div
           className={`grid transition-all duration-300 ease-in-out ${
@@ -171,13 +156,13 @@ export function NewUserForm({
         >
           <div className="overflow-hidden">
             <p className="text-(--error) text-xs italic mt-1 ml-1">
-              {errors.username?.[0]}
+              {errors.username?.message}
             </p>
           </div>
         </div>
       </div>
 
-      {/* Campo: Senha */}
+      {/* Password Field */}
       <div className="flex flex-col gap-1.5">
         <label
           className={`text-[10px] font-black uppercase tracking-wider ml-1 transition-colors ${
@@ -187,17 +172,14 @@ export function NewUserForm({
           Senha
         </label>
         <input
-          required
           type="password"
-          name="password"
           className={`input outline-none transition-all ${
             errors.password
               ? "border-(--error) ring-1 ring-(--error) animate-shake focus:border-(--error)"
               : "focus:border-(--accent) focus:ring-4 ring-(--accent)/20"
           }`}
           placeholder="••••••••••••"
-          value={formData.password}
-          onChange={handleChange}
+          {...register("password")}
         />
         <div
           className={`grid transition-all duration-300 ease-in-out ${
@@ -208,13 +190,13 @@ export function NewUserForm({
         >
           <div className="overflow-hidden">
             <p className="text-(--error) text-xs italic mt-1 ml-1">
-              {errors.password?.[0]}
+              {errors.password?.message}
             </p>
           </div>
         </div>
       </div>
 
-      {/* Campo: Nível de Permissão */}
+      {/* Role Field */}
       <div className="flex flex-col gap-1.5">
         <label
           className={`text-[10px] font-black uppercase tracking-wider ml-1 transition-colors ${
@@ -224,15 +206,12 @@ export function NewUserForm({
           Nível de Permissão
         </label>
         <select
-          required
-          name="role"
           className={`input outline-none transition-all cursor-pointer ${
             errors.role
               ? "border-(--error) ring-1 ring-(--error) animate-shake focus:border-(--error)"
               : "focus:border-(--accent)"
           }`}
-          value={formData.role}
-          onChange={handleChange}
+          {...register("role")}
         >
           <option value="">Selecione um nível...</option>
           {getAvailableRoles().map((role) => (
@@ -250,14 +229,14 @@ export function NewUserForm({
         >
           <div className="overflow-hidden">
             <p className="text-(--error) text-xs italic mt-1 ml-1">
-              {errors.role?.[0]}
+              {errors.role?.message}
             </p>
           </div>
         </div>
       </div>
 
-      {/* Campo Condicional: Professor */}
-      {formData.role === ROLES.STUDENT && (
+      {/* Conditional Field: Professor */}
+      {selectedRole === ROLES.STUDENT && (
         <div className="flex flex-col gap-1.5 animate-in slide-in-from-top-4 duration-500">
           <label
             className={`text-[10px] font-black uppercase tracking-wider ml-1 transition-colors ${
@@ -267,21 +246,18 @@ export function NewUserForm({
             Vincular ao Professor
           </label>
           <select
-            required
-            name="teacherId"
             className={`input outline-none transition-all cursor-pointer bg-(--accent)/5 ${
               errors.teacherId
                 ? "border-(--error) ring-1 ring-(--error) animate-shake focus:border-(--error)"
                 : "border-(--accent)/50 focus:border-(--accent)"
             }`}
-            value={formData.teacherId}
-            onChange={handleChange}
+            {...register("teacherId")}
           >
             <option value="">Escolha um professor disponível...</option>
-            {teachingStaff.map(({ user, studentsCount }) => (
-              <option key={user.id} value={user.id}>
-                {user.name} | {ROLE_LABELS[user.role]} ({studentsCount}{" "}
-                {studentsCount === 1 ? "aluno" : "alunos"})
+            {listInstructors.map(({ instructor, studentsCount }) => (
+              <option key={instructor.id} value={instructor.id}>
+                {instructor.name} | {ROLE_LABELS[instructor.role]} (
+                {studentsCount} {studentsCount === 1 ? "aluno" : "alunos"})
               </option>
             ))}
           </select>
@@ -294,23 +270,23 @@ export function NewUserForm({
           >
             <div className="overflow-hidden">
               <p className="text-(--error) text-xs italic mt-1 ml-1">
-                {errors.teacherId?.[0]}
+                {errors.teacherId?.message}
               </p>
             </div>
           </div>
         </div>
       )}
 
-      {/* Botão Submeter */}
+      {/* Submit Button */}
       <div className="pt-2">
         <button
           type="submit"
-          disabled={isLoading}
+          disabled={!isValid || isSubmitting}
           className="button-primary w-full py-3 shadow-lg shadow-(--accent)/10 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isLoading ? (
+          {isSubmitting ? (
             <span className="flex items-center justify-center gap-2">
-              <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full ananimate-shakeimate-spin" />
+              <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
               Cadastrando...
             </span>
           ) : (

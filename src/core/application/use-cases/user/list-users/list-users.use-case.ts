@@ -17,14 +17,14 @@ export class ListUsersUseCase implements UseCase<Role, UserDto[]> {
   }
 
   async execute(role: Role): Promise<UserDto[]> {
-    if (hasExactRole(role, ROLES.ADMIN)) {
+    if (hasExactRole({ expectedRole: ROLES.ADMIN, userRole: role })) {
       return await this.listUsers.execute([
         ROLES.STUDENT,
         ROLES.TEACHER
       ]);
     }
 
-    if (hasExactRole(role, ROLES.SUPER_ADMIN)) {
+    if (hasExactRole({ expectedRole: ROLES.SUPER_ADMIN, userRole: role })) {
       return await this.listUsers.execute([]);
     }
 
