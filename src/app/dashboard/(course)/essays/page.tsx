@@ -15,10 +15,8 @@ export default async function EssayPage({
   const params = await searchParams;
   const isFormOpen = params.showForm === "true";
 
-  const listEssays = await makeEssayService().listUserEssaysStatistics();
-
-  const essays = listEssays.essays;
-  const summary = listEssays.statistics;
+  const { essays, statistics } =
+    await makeEssayService().listUserEssaysStatistics("me");
 
   return (
     <div className="min-h-screen bg-(--background) text-(--foreground) pb-20 transition-colors duration-500">
@@ -35,7 +33,7 @@ export default async function EssayPage({
 
       <main className="w-full max-w-6xl mx-auto py-8 space-y-8 px-4">
         {/* --- Statistics section --- */}
-        {essays.length > 0 && <StatsSection statistics={summary} />}
+        {essays.length > 0 && <StatsSection statistics={statistics} />}
 
         <hr className="border-(--foreground)/10" />
 
