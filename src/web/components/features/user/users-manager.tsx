@@ -12,7 +12,7 @@ export async function UsersManager() {
 
         <Link
           className="button-primary flex items-center gap-2"
-          href="/user/new"
+          href="/users/new"
         >
           <span>➕</span> Novo Usuário
         </Link>
