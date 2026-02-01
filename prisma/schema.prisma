@@ -59,6 +59,28 @@ model Essay {
   @@map("essays") // Nome da tabela no banco (snake_case)
 }
 
+model Subject {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  category  String?
+  topics    Topic[]
+  createdAt DateTime @default(now())
+
+  @@map("subjects")
+}
+
+model Topic {
+  id        String   @id @default(uuid())
+  title     String
+  position  Int
+  subjectId String
+  subject   Subject  @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@index([subjectId, position])
+  @@map("topics")
+}
+
 enum Role {
   STUDENT
   TEACHER
