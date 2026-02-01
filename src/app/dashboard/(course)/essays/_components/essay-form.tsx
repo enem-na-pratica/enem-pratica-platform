@@ -1,92 +1,58 @@
 "use client";
 
-import { useState } from "react";
-import { useValidation } from "@/src/ui/hooks/use-validation";
-import { ZodValidation } from "@/src/services/validation/zod/zod-validation";
-import {
-  newEssaySchema,
-  NewEssaySchema,
-} from "@/src/services/validation/zod/schemas/new-essay.schema";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { createEssaySchema, CreateEssayFormValues } from "@/src/web/validation";
 import { createEssayAction } from "../actions";
-
-type CompetencyKey = "c1" | "c2" | "c3" | "c4" | "c5"
+import { CompetencyKey } from "@/src/web/api/modules";
+import toast from "react-hot-toast";
 
 const COMPETENCIES: CompetencyKey[] = ["c1", "c2", "c3", "c4", "c5"];
 
-const schemaKeyMap: Record<CompetencyKey, keyof NewEssaySchema> = {
-  c1: "competency1",
-  c2: "competency2",
-  c3: "competency3",
-  c4: "competency4",
-  c5: "competency5",
-};
-
-const essayValidator = new ZodValidation(newEssaySchema);
-
 export function EssayForm() {
-  const [formData, setFormData] = useState({
-    theme: "",
-    scores: {
-      c1: 120,
-      c2: 120,
-      c3: 120,
-      c4: 120,
-      c5: 120,
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting, isValid },
+  } = useForm<CreateEssayFormValues>({
+    resolver: zodResolver(createEssaySchema),
+    mode: "onChange",
+    defaultValues: {
+      theme: "",
+      grades: {
+        c1: 120,
+        c2: 120,
+        c3: 120,
+        c4: 120,
+        c5: 120,
+      },
     },
   });
 
-  const { errors, validate } = useValidation(essayValidator);
+  const onSubmit = async (data: CreateEssayFormValues) => {
+    try {
+      await createEssayAction(data);
 
-  const handleScoreChange = (key: CompetencyKey, value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      scores: {
-        ...prev.scores,
-        [key]: Number(value),
-      },
-    }));
-  };
+      toast.success("Redação salva com sucesso!");
 
-  const handleThemeChange = (value: string) => {
-    setFormData((prev) => ({ ...prev, theme: value }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const dataToValidate = {
-      theme: formData.theme,
-      competency1: formData.scores.c1,
-      competency2: formData.scores.c2,
-      competency3: formData.scores.c3,
-      competency4: formData.scores.c4,
-      competency5: formData.scores.c5,
-    };
-
-    const isValid = validate(dataToValidate);
-
-    if (isValid) {
-      await createEssayAction(dataToValidate);
-
-      setFormData({
+      reset({
         theme: "",
-        scores: {
-          c1: 120,
-          c2: 120,
-          c3: 120,
-          c4: 120,
-          c5: 120,
-        },
+        grades: { c1: 120, c2: 120, c3: 120, c4: 120, c5: 120 },
       });
+    } catch (error) {
+      console.error(error);
+      toast.error("Erro ao salvar redação.");
     }
   };
 
   return (
     <form
-      onSubmit={handleSubmit}
+      onSubmit={handleSubmit(onSubmit)}
       className="card border-2 border-(--accent) animate-in zoom-in-95 duration-300 overflow-hidden"
     >
       <div className="flex flex-col lg:flex-row gap-6 items-start lg:items-end">
+        {/* Theme field */}
         <div className="flex-1 w-full group">
           <label
             className={`text-sm font-bold mb-1 block transition-colors ${
@@ -97,17 +63,13 @@ export function EssayForm() {
           </label>
           <input
             type="text"
-            required
             placeholder="Ex: Os estigmas associados..."
             className={`input transition-all ${
               errors.theme
                 ? "border-(--error) ring-1 ring-(--error) animate-shake"
                 : ""
             }`}
-            minLength={20}
-            maxLength={255}
-            value={formData.theme}
-            onChange={(e) => handleThemeChange(e.target.value)}
+            {...register("theme")}
           />
           {/* Theme Error */}
           <div
@@ -116,7 +78,7 @@ export function EssayForm() {
             }`}
           >
             <p className="text-(--error) text-xs font-medium italic">
-              {errors.theme?.[0]}
+              {errors.theme?.message}
             </p>
           </div>
         </div>
@@ -125,7 +87,8 @@ export function EssayForm() {
         <div className="flex flex-wrap sm:flex-nowrap items-end gap-4 w-full lg:w-auto">
           <div className="flex gap-2">
             {COMPETENCIES.map((key) => {
-              const fieldError = errors[schemaKeyMap[key]];
+              const fieldError = errors.grades?.[key];
+
               return (
                 <div key={key} className="w-14 sm:w-16 relative">
                   <label
@@ -140,7 +103,6 @@ export function EssayForm() {
                     min="0"
                     max="200"
                     step="40"
-                    required
                     className={`input text-center font-mono font-bold p-1 transition-all
                     ${
                       fieldError
@@ -148,9 +110,9 @@ export function EssayForm() {
                         : ""
                     }
                   `}
-                    value={formData.scores[key]}
-                    onChange={(e) => handleScoreChange(key, e.target.value)}
+                    {...register(`grades.${key}`, { valueAsNumber: true })}
                   />
+
                   {/* Floating Error Indicator (Tooltip-like) */}
                   {fieldError && (
                     <span className="absolute -top-1 -right-1 flex h-3 w-3">
@@ -166,14 +128,15 @@ export function EssayForm() {
 
         <button
           type="submit"
-          className="button-primary whitespace-nowrap h-[42px] w-full lg:w-auto active:scale-95 transition-transform"
+          disabled={!isValid || isSubmitting}
+          className="button-primary whitespace-nowrap h-[42px] w-full lg:w-auto active:scale-95 transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Salvar
+          {isSubmitting ? "Salvando..." : "Salvar"}
         </button>
       </div>
 
       {/* Global Error Message for Skills */}
-      {COMPETENCIES.some((key) => errors[schemaKeyMap[key]]) && (
+      {errors.grades && (
         <div className="mt-4 p-2 bg-(--error)/10 rounded-lg border border-(--error)/20 animate-in fade-in slide-in-from-top-1">
           <p className="text-(--error) text-[11px] text-center font-bold uppercase tracking-wider">
             As notas devem ser múltiplos de 40 (0, 40, 80, 120, 160, 200).
