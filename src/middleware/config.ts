@@ -20,6 +20,10 @@ export const ACL_RULES: Array<{
   methods?: HttpMethod[];
 }> = [
     {
+      pattern: new URLPattern({ pathname: "/api/users/:username/students" }),
+      minRole: ROLES.TEACHER,
+    },
+    {
       pattern: new URLPattern({ pathname: "/api/users" }),
       methods: ["GET"],
       minRole: ROLES.TEACHER

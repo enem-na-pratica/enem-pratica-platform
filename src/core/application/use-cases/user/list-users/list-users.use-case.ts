@@ -1,7 +1,7 @@
 import type { UseCase } from '@/src/core/application/common/interfaces';
 import type { Role } from '@/src/core/domain/auth';
 import type { ListUsersQuery } from './list-users.query';
-import type { UserDto } from "@/src/core/application//common/dtos";
+import type { UserDto } from "@/src/core/application/common/dtos";
 import { ROLES, hasExactRole } from '@/src/core/domain/auth';
 import { ForbiddenError } from '@/src/core/domain/errors';
 
