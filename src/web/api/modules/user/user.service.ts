@@ -54,4 +54,13 @@ export class UserService {
 
     return data.map((i) => UserMapper.toInstructorModel(i));
   }
+
+  async listStudentsByInstructor(username: string): Promise<User[]> {
+    const data = await this.httpClient.get<UserDto[]>({
+      endpoint: "/users/:username/students",
+      options: { params: { username } }
+    });
+
+    return data.map((s) => UserMapper.toModel(s));
+  }
 }
