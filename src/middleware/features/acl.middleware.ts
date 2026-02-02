@@ -32,7 +32,7 @@ export const aclMiddleware: MiddlewareHandler = async (request: NextRequest) => 
       // API routes return JSON errors instead of redirects.
       if (pathname.startsWith("/api/")) {
         return NextResponse.json(
-          { error: "Forbidden: Insufficient permissions." },
+          { message: "Forbidden: Insufficient permissions." },
           { status: 403 }
         );
       }
