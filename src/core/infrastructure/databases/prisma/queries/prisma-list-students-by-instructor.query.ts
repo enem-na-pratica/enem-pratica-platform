@@ -25,10 +25,10 @@ export class PrismaListStudentsByInstructorQuery
     this.mapper = mapper;
   }
 
-  async execute(instructorUsername: string): Promise<UserDto[]> {
+  async execute(instructorId: string): Promise<UserDto[]> {
     const students = await this.prisma.user.findUnique({
       where: {
-        username: instructorUsername,
+        id: instructorId,
       },
       select: {
         mentorshipsAsTeacher: {
@@ -44,7 +44,7 @@ export class PrismaListStudentsByInstructorQuery
     if (!students) {
       throw new UserNotFoundError({
         fieldName: 'username (Instructor)',
-        entityValue: instructorUsername
+        entityValue: instructorId
       });
     }
 
