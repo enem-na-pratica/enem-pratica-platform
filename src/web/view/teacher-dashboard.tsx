@@ -2,45 +2,10 @@ import Link from "next/link";
 import { UserCard as StudentCard, Header, Footer } from "@/src/web/components";
 import { User } from "@/src/web/api";
 import { COURSE_NAVIGATION_ITEMS } from "@/src/web/config";
-import { ROLES } from "@/src/web/config";
+import { makeUserService } from "@/src/web/api";
 
-const MOCK_STUDENTS: User[] = [
-  {
-    id: "1",
-    name: "Ana Silva",
-    username: "ana.silva",
-    role: ROLES.STUDENT,
-    createdAt: new Date("2024-01-10T10:30:00"),
-    updatedAt: new Date("2024-06-01T14:20:00"),
-  },
-  {
-    id: "2",
-    name: "Bruno Santos",
-    username: "bruno.santos",
-    role: ROLES.STUDENT,
-    createdAt: new Date("2024-02-05T09:15:00"),
-    updatedAt: new Date("2024-06-10T11:45:00"),
-  },
-  {
-    id: "3",
-    name: "Carla Oliveira",
-    username: "carla.oliveira",
-    role: ROLES.STUDENT,
-    createdAt: new Date("2024-03-12T16:00:00"),
-    updatedAt: new Date("2024-06-15T18:10:00"),
-  },
-  {
-    id: "4",
-    name: "Diego Pereira",
-    username: "diego.pereira",
-    role: ROLES.STUDENT,
-    createdAt: new Date("2024-04-01T08:40:00"),
-    updatedAt: new Date("2024-06-20T09:30:00"),
-  },
-];
-
-export function TeacherDashboard({ user }: { user: User }) {
-  const students = MOCK_STUDENTS;
+export async function TeacherDashboard({ user }: { user: User }) {
+  const students = await makeUserService().listStudentsByInstructor("me");
 
   return (
     <>
