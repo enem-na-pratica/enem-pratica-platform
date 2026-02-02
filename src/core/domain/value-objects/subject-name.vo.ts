@@ -1,4 +1,5 @@
 import { ValueObject } from "@/src/core/domain/shared";
+import { capitalizePTBR } from "@/src/core/domain/shared/utils";
 
 const NAME_CONFIG = { MIN: 3, MAX: 50 };
 
@@ -18,13 +19,6 @@ export class SubjectName extends ValueObject<string> {
   }
 
   public static create(name: string): SubjectName {
-    return new SubjectName(SubjectName.capitalize(name.trim()));
-  }
-
-  private static capitalize(text: string) {
-    return text
-      .split(" ")
-      .map(word => word[0]?.toUpperCase() + word.slice(1).toLowerCase())
-      .join(" ");
+    return new SubjectName(capitalizePTBR(name.trim()));
   }
 }

@@ -1,4 +1,5 @@
 import { ValueObject } from "@/src/core/domain/shared";
+import { capitalizePTBR } from "@/src/core/domain/shared/utils";
 
 const NAME_CONFIG = { MIN: 20, MAX: 255 };
 
@@ -18,6 +19,6 @@ export class Theme extends ValueObject<string> {
   }
 
   public static create(theme: string): Theme {
-    return new Theme(theme.trim());
+    return new Theme(capitalizePTBR(theme.trim()));
   }
 }
