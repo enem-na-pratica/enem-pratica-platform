@@ -43,7 +43,7 @@ export class PrismaListStudentsByInstructorQuery
 
     if (!students) {
       throw new UserNotFoundError({
-        fieldName: 'username (Instructor)',
+        fieldName: 'id (Instructor)',
         entityValue: instructorId
       });
     }

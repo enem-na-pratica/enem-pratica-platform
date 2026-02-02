@@ -1,10 +1,9 @@
-import type { UseCase } from '@/src/core/application/common/interfaces';
+import type { UseCase, Requester } from '@/src/core/application/common/interfaces';
 import type {
   UserEssaysOverviewDto,
   EssayStatisticsDto
 } from './user-essays-overview.dto';
 import type { ListEssaysByAuthorQuery } from './list-essays-by-author.query';
-import type { Role } from '@/src/core/domain/auth';
 import type {
   UserRepository,
   StudentTeacherRepository,
@@ -13,12 +12,6 @@ import type { User } from '@/src/core/domain/entities';
 import type { EssayDto } from "@/src/core/application/common/dtos";
 import { UserNotFoundError, ForbiddenError } from '@/src/core/domain/errors';
 import { hasHigherRole, hasExactRole, ROLES } from '@/src/core/domain/auth';
-
-type Requester = {
-  id: string;
-  username: string;
-  role: Role;
-};
 
 export type ListUserEssaysStatisticsInput = {
   authorUsername?: string;
