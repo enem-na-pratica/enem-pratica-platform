@@ -1,4 +1,4 @@
-import { Theme, EssayGrades } from "@/src/core/domain/value-objects";
+import { EssayTheme, EssayGrades } from "@/src/core/domain/value-objects";
 import type { CompetencyIndex, Grades } from "@/src/core/domain/value-objects";
 
 type EssayProps = {
@@ -20,14 +20,14 @@ type LoadEssayProps = Prettify<Required<EssayProps>>;
 export class Essay {
   private _id: string | undefined;
   private _authorId: string;
-  private _theme: Theme;
+  private _theme: EssayTheme;
   private _grades: EssayGrades;
   private _createdAt: Date;
 
   private constructor(props: EssayProps) {
     this._id = props.id;
     this._authorId = props.authorId;
-    this._theme = Theme.create(props.theme);
+    this._theme = EssayTheme.create(props.theme);
     this._grades = EssayGrades.createFromPrimitives({
       c1: props.competency1,
       c2: props.competency2,
@@ -67,7 +67,7 @@ export class Essay {
 
   // --- Mutations ---
   public changeTheme(newTheme: string): void {
-    this._theme = Theme.create(newTheme);
+    this._theme = EssayTheme.create(newTheme);
   }
 
   public changeGrades(
