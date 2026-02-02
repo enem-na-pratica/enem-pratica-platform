@@ -53,7 +53,7 @@ export class ListUserEssaysStatisticsController
 
       return ok(listEssays);
     } catch (error) {
-      return handleError(error)
+      return handleError(error);
     }
   }
 }
