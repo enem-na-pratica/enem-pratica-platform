@@ -1,7 +1,7 @@
 import { Theme, EssayGrades } from "@/src/core/domain/value-objects";
 import type { CompetencyIndex, Grades } from "@/src/core/domain/value-objects";
 
-interface EssayProps {
+type EssayProps = {
   id?: string;
   authorId: string;
   theme: string;
@@ -12,6 +12,10 @@ interface EssayProps {
   competency5: number;
   createdAt?: Date;
 }
+
+type CreateEssayProps = Prettify<Omit<EssayProps, "id" | "createdAt">>;
+
+type LoadEssayProps = Prettify<Required<EssayProps>>;
 
 export class Essay {
   private _id: string | undefined;
@@ -34,15 +38,11 @@ export class Essay {
     this._createdAt = props.createdAt || new Date();
   }
 
-  public static create(props: Omit<EssayProps, "id" | "createdAt">): Essay {
+  public static create(props: CreateEssayProps): Essay {
     return new Essay(props);
   }
 
-  public static load(props: EssayProps): Essay {
-    if (!props.id) {
-      // TODO: Implement custom errors
-      throw new Error('User ID is required for loading a persisted entity.');
-    }
+  public static load(props: LoadEssayProps): Essay {
     return new Essay(props);
   }
 
@@ -65,7 +65,7 @@ export class Essay {
     return this._grades.totalScore;
   }
 
-  // --- Mutações ---
+  // --- Mutations ---
   public changeTheme(newTheme: string): void {
     this._theme = Theme.create(newTheme);
   }

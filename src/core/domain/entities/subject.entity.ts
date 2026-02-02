@@ -23,11 +23,11 @@ export class Subject {
   }
 
   public static create(props: CreateSubjectProps): Subject {
-    return new Subject({ ...props });
+    return new Subject(props);
   }
 
   public static load(props: LoadSubjectProps): Subject {
-    return new Subject({ ...props });
+    return new Subject(props);
   }
 
   // --- Getters ---
