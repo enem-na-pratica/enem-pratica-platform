@@ -1,7 +1,7 @@
 import type { Role } from '@/src/core/domain/auth';
 import { PersonName, Username } from '@/src/core/domain/value-objects';
 
-interface UserProps {
+type UserProps = {
   id?: string; // Opcional ao criar a entidade, obrigatório ao carregar
   name: string;
   username: string;
@@ -10,6 +10,10 @@ interface UserProps {
   createdAt?: Date;
   updatedAt?: Date;
 }
+
+type CreateUserProps = Prettify<Omit<UserProps, "id" | "createdAt" | "updatedAt">>;
+
+type LoadUserProps = Prettify<Required<UserProps>>;
 
 export class User {
   private _id: string | undefined;
@@ -32,17 +36,11 @@ export class User {
     this._updatedAt = props.updatedAt || this._createdAt;
   }
 
-  public static create(props: Omit<UserProps, "id" | "createdAt" | "updatedAt">): User {
-    return new User({
-      ...props,
-    });
+  public static create(props: CreateUserProps): User {
+    return new User(props);
   }
 
-  public static load(props: UserProps): User {
-    if (!props.id) {
-      // TODO: Implement custom errors
-      throw new Error('User ID is required for loading a persisted entity.');
-    }
+  public static load(props: LoadUserProps): User {
     return new User(props);
   }
 
@@ -55,7 +53,7 @@ export class User {
   public get createdAt(): Date { return this._createdAt }
   public get updatedAt(): Date { return this._updatedAt }
 
-  // --- Métodos de Domínio (Mutações) ---
+  // --- Mutations ---
   public changeName(newName: string): void {
     this._name = PersonName.create(newName);
     this.updateTimestamp();
