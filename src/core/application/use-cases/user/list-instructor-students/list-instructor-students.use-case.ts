@@ -18,7 +18,7 @@ export type ListStudentsByInstructorInput = {
   requester: Requester;
 }
 
-export class ListStudentsByInstructorUsecase
+export class ListStudentsByInstructorUseCase
   implements UseCase<ListStudentsByInstructorInput, UserDto[]> {
   private readonly listStudentsByInstructor: ListStudentsByInstructorQuery;
   private readonly userRepository: UserRepository;
