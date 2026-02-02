@@ -9,7 +9,7 @@ export class SubjectName extends ValueObject<string> {
 
   protected validate(name: string): void {
     if (!name && typeof name !== "string") {
-      throw new Error("The theme must be a string.");
+      throw new Error("The subject name must be a string.");
     }
 
     if (name.length < NAME_CONFIG.MIN || name.length > NAME_CONFIG.MAX) {
