@@ -102,7 +102,7 @@ export function EssayForm() {
                     type="number"
                     min="0"
                     max="200"
-                    step="40"
+                    step="20"
                     className={`input text-center font-mono font-bold p-1 transition-all
                     ${
                       fieldError
@@ -139,7 +139,7 @@ export function EssayForm() {
       {errors.grades && (
         <div className="mt-4 p-2 bg-(--error)/10 rounded-lg border border-(--error)/20 animate-in fade-in slide-in-from-top-1">
           <p className="text-(--error) text-[11px] text-center font-bold uppercase tracking-wider">
-            As notas devem ser múltiplos de 40 (0, 40, 80, 120, 160, 200).
+            As notas devem estar entre 0 e 200 e ser múltiplos de 20.
           </p>
         </div>
       )}
