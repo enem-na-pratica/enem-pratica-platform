@@ -103,11 +103,12 @@ model AreaPerformance {
 
   area KnowledgeArea
 
-  correctCount        Int // Acertos
-  certaintyCount      Int // Certeza
-  doubtCount          Int // Dúvida
-  distractionCount    Int // Erro por Distração
-  interpretationCount Int // Erro por Interpretação
+  correctCount         Int // Acertos
+  certaintyCount       Int // Certeza
+  doubtHits            Int // Dúvida - Acerto
+  doubtErrors          Int // Dúvida - Erro
+  distractionErrors    Int // Erro por Distração
+  interpretationErrors Int // Erro por Interpretação
 
   @@unique([mockExamId, area])
   @@map("area_performances")
