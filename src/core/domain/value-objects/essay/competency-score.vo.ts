@@ -1,6 +1,6 @@
 import { ValueObject } from "@/src/core/domain/shared";
 
-const COMPETENCY_CONFIG = { MIN: 0, MAX: 200, STEP: 40 };
+const COMPETENCY_CONFIG = { MIN: 0, MAX: 200, STEP: 20 };
 
 export class CompetencyScore extends ValueObject<number> {
   private constructor(score: number) {
