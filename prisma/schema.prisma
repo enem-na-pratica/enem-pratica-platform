@@ -19,7 +19,8 @@ model User {
   mentorshipAsStudent  StudentTeacher[] @relation("StudentRelation")
   mentorshipsAsTeacher StudentTeacher[] @relation("TeacherRelation")
 
-  essays Essay[]
+  essays    Essay[]
+  mockExams MockExam[]
 
   @@index([username])
   @@map("users") // Garante que o nome da tabela no BD seja 'users' (plural snake_case)
@@ -29,10 +30,10 @@ model StudentTeacher {
   id String @id @default(uuid())
 
   studentId String
-  student   User   @relation("StudentRelation", fields: [studentId], references: [id])
+  student   User   @relation("StudentRelation", fields: [studentId], references: [id], onDelete: Cascade)
 
   teacherId String
-  teacher   User   @relation("TeacherRelation", fields: [teacherId], references: [id])
+  teacher   User   @relation("TeacherRelation", fields: [teacherId], references: [id], onDelete: Cascade)
 
   assignedAt DateTime @default(now())
 
@@ -44,7 +45,7 @@ model Essay {
   id String @id @default(uuid())
 
   authorId String
-  author   User   @relation(fields: [authorId], references: [id])
+  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
   theme String
 
@@ -81,9 +82,47 @@ model Topic {
   @@map("topics")
 }
 
+model MockExam {
+  id        String   @id @default(uuid())
+  title     String
+  createdAt DateTime @default(now())
+
+  performances AreaPerformance[]
+
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@map("mock_exams") // Nome da tabela no banco de dados (snake_case)
+}
+
+model AreaPerformance {
+  id String @id @default(uuid())
+
+  mockExamId String
+  mockExam   MockExam @relation(fields: [mockExamId], references: [id], onDelete: Cascade)
+
+  area KnowledgeArea
+
+  correctCount        Int // Acertos
+  certaintyCount      Int // Certeza
+  doubtCount          Int // Dúvida
+  distractionCount    Int // Erro por Distração
+  interpretationCount Int // Erro por Interpretação
+
+  @@unique([mockExamId, area])
+  @@map("area_performances")
+}
+
 enum Role {
   STUDENT
   TEACHER
   ADMIN
   SUPER_ADMIN
+}
+
+enum KnowledgeArea {
+  LANGUAGES // Linguagens
+  HUMANITIES // Ciências Humanas
+  NATURAL_SCIENCES // Ciências da Natureza
+  MATHEMATICS // Matemática
 }
