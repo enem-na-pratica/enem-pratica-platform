@@ -9,7 +9,7 @@ const THEME_CONFIG = {
 const COMPETENCY_CONFIG = {
   MIN: 0,
   MAX: 200,
-  STEP: 40,
+  STEP: 20,
 };
 
 const validCompetencyValues = Array.from(
