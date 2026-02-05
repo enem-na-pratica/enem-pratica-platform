@@ -1,16 +1,18 @@
 import { ScoreCount } from "@/src/core/domain/value-objects";
-// | Português     | Inglês                 |
-// | ------------- | ---------------------- |
-// | Acertos       | `correctAnswers`       |
-// | Erros         | `wrongAnswers`         |
-// | Rendimento    | `performanceRate`      |
-// | Certeza       | `certaintyHits`        |
-// | Confiança     | `confidenceRate`       |
-// | Dúvida        | `correctGuesses`       |
-// | Falha         | `criticalErrors`       |
-// | Distração     | `distractionErrors`    |
-// | Interpretação | `interpretationErrors` |
-// | Conteúdo      | `knowledgeGaps`        |
+// | Português        | Inglês                 |
+// | ---------------- | ---------------------- |
+// | Acertos*         | `correctAnswers`       |
+// | Erros            | `wrongAnswers`         |
+// | Rendimento       | `performanceRate`      |
+// | Certeza*         | `certaintyHits`        |
+// | Confiança        | `confidenceRate`       |
+// | Dúvida - Acerto* | `doubtHits`            |
+// | Dúvida - Erro*   | `doubtErrors`          |
+// | Falha            | `criticalErrors`       |
+// | Distração*       | `distractionErrors`    |
+// | Interpretação*   | `interpretationErrors` |
+// | Conteúdo         | `knowledgeGaps`        |
+// (*) Input fields (not system-calculated)
 
 export const KNOWLEDGE_AREA = {
   LANGUAGES: 'LANGUAGES',
@@ -40,8 +42,10 @@ export interface QualityAssessment {
   certaintyHits: number;
   /** Proportion of certain hits over total correct answers, from 0.0 to 1.0 */
   confidenceRate: number;
-  /** Hits achieved through elimination or educated guesses */
-  correctGuesses: number;
+  /** Hits achieved despite doubt (educated guesses that resulted in a correct answer) */
+  doubtHits: number;
+  /** Errors caused by doubt (educated guesses that resulted in a wrong answer) */
+  doubtErrors: number;
   /** Errors that weren't due to simple doubt, but technical/theoretical failure */
   criticalErrors: number;
 }
@@ -64,9 +68,10 @@ export type AreaPerformanceProps = {
 
   correctCount: number;
   certaintyCount: number;
-  doubtCount: number;
-  distractionCount: number;
-  interpretationCount: number;
+  doubtHits: number;
+  doubtErrors: number;
+  distractionErrors: number;
+  interpretationErrors: number;
 }
 
 export type CreateAreaPerformanceProps = Omit<
@@ -90,18 +95,20 @@ export class AreaPerformance {
 
   private _correctCount: ScoreCount;
   private _certaintyCount: ScoreCount;
-  private _doubtCount: ScoreCount;
-  private _distractionCount: ScoreCount;
-  private _interpretationCount: ScoreCount;
+  private _doubtHits: ScoreCount;
+  private _doubtErrors: ScoreCount;
+  private _distractionErrors: ScoreCount;
+  private _interpretationErrors: ScoreCount;
 
   private constructor(props: AreaPerformanceProps) {
     this._id = props.id;
     this._area = props.area;
     this._correctCount = ScoreCount.create(props.correctCount);
     this._certaintyCount = ScoreCount.create(props.certaintyCount);
-    this._doubtCount = ScoreCount.create(props.doubtCount);
-    this._distractionCount = ScoreCount.create(props.distractionCount);
-    this._interpretationCount = ScoreCount.create(props.interpretationCount);
+    this._doubtHits = ScoreCount.create(props.doubtHits);
+    this._doubtErrors = ScoreCount.create(props.doubtErrors);
+    this._distractionErrors = ScoreCount.create(props.distractionErrors);
+    this._interpretationErrors = ScoreCount.create(props.interpretationErrors);
   }
 
   static create(props: CreateAreaPerformanceProps): AreaPerformance {
@@ -131,24 +138,30 @@ export class AreaPerformance {
   public get qualityAssessment(): QualityAssessment {
     const correct = this._correctCount.value;
     const certainty = this._certaintyCount.value;
-    const doubt = this._doubtCount.value;
+    const doubtHits = this._doubtHits.value;
+    const doubtErrors = this._doubtErrors.value;
+    const doubt = doubtHits + doubtErrors;
 
     const wrong = QUESTIONS_PER_AREA - correct;
 
     return {
       certaintyHits: certainty,
       confidenceRate: correct > 0 ? certainty / correct : 0,
-      correctGuesses: doubt,
-      criticalErrors: wrong - doubt
+      doubtHits: doubtHits,
+      doubtErrors: doubtErrors,
+      criticalErrors: wrong - doubt,
     };
   }
 
   public get errorAnalysis(): ErrorAnalysis {
-    const distraction = this._distractionCount.value;
-    const interpretation = this._interpretationCount.value;
+    const distraction = this._distractionErrors.value;
+    const interpretation = this._interpretationErrors.value;
+    const doubtHits = this._doubtHits.value;
+    const doubtErrors = this._doubtErrors.value;
 
     const wrong = QUESTIONS_PER_AREA - this._correctCount.value;
-    const criticalErrors = wrong - this._doubtCount.value;
+    const doubt = doubtHits + doubtErrors;
+    const criticalErrors = wrong - doubt;
     const knowledgeGaps = criticalErrors - distraction - interpretation;
 
     return {
@@ -165,14 +178,17 @@ export class AreaPerformance {
     if (props.certaintyCount !== undefined) {
       this._certaintyCount = ScoreCount.create(props.certaintyCount);
     }
-    if (props.doubtCount !== undefined) {
-      this._doubtCount = ScoreCount.create(props.doubtCount);
+    if (props.doubtHits !== undefined) {
+      this._doubtHits = ScoreCount.create(props.doubtHits);
     }
-    if (props.distractionCount !== undefined) {
-      this._distractionCount = ScoreCount.create(props.distractionCount);
+    if (props.doubtErrors !== undefined) {
+      this._doubtErrors = ScoreCount.create(props.doubtErrors);
     }
-    if (props.interpretationCount !== undefined) {
-      this._interpretationCount = ScoreCount.create(props.interpretationCount);
+    if (props.distractionErrors !== undefined) {
+      this._distractionErrors = ScoreCount.create(props.distractionErrors);
+    }
+    if (props.interpretationErrors !== undefined) {
+      this._interpretationErrors = ScoreCount.create(props.interpretationErrors);
     }
   }
 }
