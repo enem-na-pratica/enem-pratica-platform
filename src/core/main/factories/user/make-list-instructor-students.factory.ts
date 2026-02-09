@@ -9,8 +9,8 @@ import {
   ListStudentsByInstructorUseCase
 } from "@/src/core/application/use-cases/user";
 import {
-  makePrismaUserRepository
-} from "@/src/core/main/factories/common/repositories";
+  makeUserAccessService
+} from "@/src/core/main/factories/common/services";
 import {
   PrismaListStudentsByInstructorQuery
 } from "@/src/core/infrastructure/databases/prisma/queries";
@@ -25,7 +25,7 @@ export function makeListInstructorStudents() {
 
   const listStudentsByInstructorUseCase = new ListStudentsByInstructorUseCase({
     listStudentsByInstructor: prismaListStudentsByInstructorQuery,
-    userRepository: makePrismaUserRepository(),
+    userAccessService: makeUserAccessService(),
   });
 
   const zodValidator = new ZodValidator(usernameSchema);
