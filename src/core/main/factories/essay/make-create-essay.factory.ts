@@ -1,10 +1,7 @@
 import { CreateEssayController } from "@/src/core/presentation/controllers/essay";
 import { CreateEssayUseCase } from "@/src/core/application/use-cases/essay";
-import {
-  makePrismaUserRepository,
-  makePrismaEssayRepository,
-  makePrismaStudentTeacherRepository
-} from "@/src/core/main/factories/common/repositories";
+import { makePrismaEssayRepository } from "@/src/core/main/factories/common/repositories";
+import { makeUserAccessService } from "@/src/core/main/factories/common/services";
 import {
   ZodValidator,
   createEssaySchema
@@ -14,8 +11,7 @@ import { makeEssayDtoMapper } from "@/src/core/main/factories/common/mappers";
 export function makeCreateEssay() {
   const createEssayUseCase = new CreateEssayUseCase({
     essayRepository: makePrismaEssayRepository(),
-    userRepository: makePrismaUserRepository(),
-    studentTeacherRepository: makePrismaStudentTeacherRepository(),
+    userAccessService: makeUserAccessService(),
     mapper: makeEssayDtoMapper(),
   });
 
