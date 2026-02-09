@@ -1,17 +1,11 @@
-import type { UseCase, Requester } from '@/src/core/application/common/interfaces';
+import type { UseCase } from '@/src/core/application/common/interfaces';
 import type {
   UserEssaysOverviewDto,
   EssayStatisticsDto
 } from './user-essays-overview.dto';
 import type { ListEssaysByAuthorQuery } from './list-essays-by-author.query';
-import type {
-  UserRepository,
-  StudentTeacherRepository,
-} from '@/src/core/domain/contracts/repositories';
-import type { User } from '@/src/core/domain/entities';
 import type { EssayDto } from "@/src/core/application/common/dtos";
-import { UserNotFoundError, ForbiddenError } from '@/src/core/domain/errors';
-import { hasHigherRole, hasExactRole, ROLES } from '@/src/core/domain/auth';
+import type { UserAccessService, Requester } from '@/src/core/domain/services';
 
 export type ListUserEssaysStatisticsInput = {
   authorUsername?: string;
@@ -19,24 +13,20 @@ export type ListUserEssaysStatisticsInput = {
 };
 
 type ListUserEssaysStatisticsUseCaseDeps = {
-  userRepository: UserRepository;
-  studentTeacherRepository: StudentTeacherRepository;
+  userAccessService: UserAccessService;
   listEssaysByAuthorQuery: ListEssaysByAuthorQuery;
 }
 
 export class ListUserEssaysStatisticsUseCase
   implements UseCase<ListUserEssaysStatisticsInput, UserEssaysOverviewDto> {
-  private readonly userRepository: UserRepository;
-  private readonly studentTeacherRepository: StudentTeacherRepository;
+  private readonly userAccessService: UserAccessService;
   private readonly listEssaysByAuthorQuery: ListEssaysByAuthorQuery;
 
   constructor({
-    userRepository,
-    studentTeacherRepository,
+    userAccessService,
     listEssaysByAuthorQuery,
   }: ListUserEssaysStatisticsUseCaseDeps) {
-    this.userRepository = userRepository;
-    this.studentTeacherRepository = studentTeacherRepository;
+    this.userAccessService = userAccessService;
     this.listEssaysByAuthorQuery = listEssaysByAuthorQuery;
   }
 
@@ -44,9 +34,9 @@ export class ListUserEssaysStatisticsUseCase
     authorUsername,
     requester
   }: ListUserEssaysStatisticsInput): Promise<UserEssaysOverviewDto> {
-    const authorId = await this.getValidatedAuthorId({
+    const authorId = await this.userAccessService.resolveManagedTargetId({
       requester,
-      authorUsername
+      targetUsername: authorUsername
     });
 
     const essays = await this.listEssaysByAuthorQuery.execute(authorId);
@@ -54,24 +44,6 @@ export class ListUserEssaysStatisticsUseCase
     const statistics = this.calculateStatistics(essays);
 
     return { statistics, essays };
-  }
-
-  private async getValidatedAuthorId({
-    requester,
-    authorUsername,
-  }: {
-    requester: Requester;
-    authorUsername?: string;
-  }): Promise<string> {
-    if (!authorUsername || authorUsername === requester.username) {
-      return requester.id;
-    }
-
-    const author = await this.findAuthorOrThrow(authorUsername);
-
-    await this.ensureRequesterHasPermission({ requester, author });
-
-    return author.id!;
   }
 
   private calculateStatistics(essays: EssayDto[]): EssayStatisticsDto {
@@ -105,65 +77,5 @@ export class ListUserEssaysStatisticsUseCase
         c5: totals.c5 / totalCount,
       },
     };
-  }
-
-  private async findAuthorOrThrow(authorUsername: string) {
-    const author = await this.userRepository.findByUsername(authorUsername);
-    if (!author) {
-      throw new UserNotFoundError({
-        fieldName: 'username',
-        entityValue: authorUsername,
-      });
-    }
-    return author;
-  }
-
-  private async ensureRequesterHasPermission({
-    requester,
-    author
-  }: {
-    requester: Requester;
-    author: User;
-  }) {
-    if (
-      !hasHigherRole({
-        userRole: requester.role,
-        targetRole: author.role,
-      })
-    ) {
-      throw new ForbiddenError(
-        "You do not have permission to view the statistics of a user with a higher or equal role."
-      );
-    }
-
-    if (
-      hasExactRole({
-        userRole: requester.role,
-        expectedRole: ROLES.TEACHER,
-      })
-    ) {
-      await this.validateTeacherStudentLink({
-        studentId: author.id!,
-        teacherId: requester.id,
-      });
-    }
-  }
-
-  private async validateTeacherStudentLink({
-    studentId,
-    teacherId
-  }: {
-    studentId: string;
-    teacherId: string;
-  }) {
-    const canAccessStudent = await this.studentTeacherRepository.
-      isStudentAssignedToTeacher({
-        studentId,
-        teacherId
-      });
-
-    if (!canAccessStudent) {
-      throw new ForbiddenError("You can only access statistics for students who are assigned to you.");
-    }
   }
 }

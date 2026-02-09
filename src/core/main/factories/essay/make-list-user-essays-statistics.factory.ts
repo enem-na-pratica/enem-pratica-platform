@@ -1,9 +1,6 @@
 import { ListUserEssaysStatisticsController } from "@/src/core/presentation/controllers/essay";
 import { ListUserEssaysStatisticsUseCase } from "@/src/core/application/use-cases/essay";
-import {
-  makePrismaStudentTeacherRepository,
-  makePrismaUserRepository
-} from "@/src/core/main/factories/common/repositories";
+import { makeUserAccessService } from "@/src/core/main/factories/common/services";
 import { PrismaListEssaysByAuthorQuery } from "@/src/core/infrastructure/databases/prisma/queries";
 import {
   ZodValidator,
@@ -19,8 +16,7 @@ export function makeListUserEssaysStatistics() {
   });
   const listUserEssaysStatisticsUseCase = new ListUserEssaysStatisticsUseCase({
     listEssaysByAuthorQuery: prismaListEssaysByAuthorQuery,
-    studentTeacherRepository: makePrismaStudentTeacherRepository(),
-    userRepository: makePrismaUserRepository(),
+    userAccessService: makeUserAccessService(),
   });
 
   const zodValidator = new ZodValidator(usernameSchema);
