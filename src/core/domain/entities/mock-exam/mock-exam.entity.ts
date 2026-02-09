@@ -15,7 +15,7 @@ export const KNOWLEDGE_AREA_MAP = {
   "mathematics": KNOWLEDGE_AREA.MATHEMATICS,
 } as const satisfies Record<string, KnowledgeArea>;
 
-type KnowledgeAreaLabelKey = keyof typeof KNOWLEDGE_AREA_MAP;
+export type KnowledgeAreaLabelKey = keyof typeof KNOWLEDGE_AREA_MAP;
 
 type MockExamProps = {
   id?: string,
