@@ -1,7 +1,7 @@
 import { KnowledgeAreaLabelKey } from "@/src/core/domain/entities";
 
 export type CreateMockExamDto = {
-  authorId: string;
+  authorUsername?: string;
   title: string;
   performances: Record<
     KnowledgeAreaLabelKey,
