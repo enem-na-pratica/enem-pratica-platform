@@ -12,7 +12,7 @@ type CreateMockExamUseCaseDeps = {
   mapper: Mapper<MockExam, MockExamDto>;
 }
 
-type CreateMockExamInput = {
+export type CreateMockExamInput = {
   data: CreateMockExamDto;
   requester: Requester;
 }
