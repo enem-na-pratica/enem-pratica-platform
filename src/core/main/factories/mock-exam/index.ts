@@ -1,0 +1,1 @@
+export * from './make-create-mock-exam.factory';
