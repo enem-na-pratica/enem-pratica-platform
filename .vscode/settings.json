@@ -1,0 +1,20 @@
+{
+  // 1. Disable formatting on save (auto-save would format too often and get in the way)
+  "editor.formatOnSave": false,
+
+  // 2. REQUIRED: Ensures Shift + Alt + F uses Prettier without asking which formatter to use
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+
+  // 3. Optional: Lets ESLint fix the code (like removing unused imports) on save
+  // If auto-save annoys you by fixing code while you type, change this to "off"
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ]
+}
