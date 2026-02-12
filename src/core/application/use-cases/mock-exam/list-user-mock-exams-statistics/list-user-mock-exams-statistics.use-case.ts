@@ -8,7 +8,7 @@ import type { ListMockExamsByAuthorQuery } from './list-mock-exams-by-author.que
 import type { MockExamDto } from "@/src/core/application/common/dtos";
 import { KNOWLEDGE_AREA_MAP, KnowledgeAreaLabelKey } from '@/src/core/domain/entities';
 
-export type ListUserEssaysStatisticsInput = {
+export type ListUserMockExamsStatisticsInput = {
   authorUsername?: string;
   requester: Requester;
 };
@@ -23,7 +23,7 @@ const KNOWLEDGE_AREA_KEYS = Object.keys(
 ) as KnowledgeAreaLabelKey[];
 
 export class ListUserMockExamsStatisticsUseCase
-  implements UseCase<ListUserEssaysStatisticsInput, UserMockExamsOverviewDto> {
+  implements UseCase<ListUserMockExamsStatisticsInput, UserMockExamsOverviewDto> {
   private readonly userAccessService: UserAccessService;
   private readonly listMockExamsByAuthorQuery: ListMockExamsByAuthorQuery;
 
@@ -38,7 +38,7 @@ export class ListUserMockExamsStatisticsUseCase
   async execute({
     requester,
     authorUsername
-  }: ListUserEssaysStatisticsInput
+  }: ListUserMockExamsStatisticsInput
   ): Promise<UserMockExamsOverviewDto> {
     const authorId = await this.userAccessService.resolveManagedTargetId({
       requester,
