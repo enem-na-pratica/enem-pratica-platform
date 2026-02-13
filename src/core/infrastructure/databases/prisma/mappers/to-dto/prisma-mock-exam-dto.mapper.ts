@@ -12,7 +12,7 @@ import type { PrismaMockExamFull } from '@/src/core/infrastructure/databases/pri
 const QUESTIONS_PER_AREA = 45;
 
 const REVERSE_KNOWLEDGE_AREA_MAP: Record<KnowledgeArea, KnowledgeAreaLabelKey> =
-   {
+  {
     LANGUAGES: 'languages',
     HUMANITIES: 'humanities',
     NATURAL_SCIENCES: 'naturalSciences',
@@ -24,18 +24,16 @@ export class PrismaMockExamMapper implements Mapper<
   MockExamDto
 > {
   map(input: PrismaMockExamFull): MockExamDto {
-    const performances = {} as Record<
-      KnowledgeAreaLabelKey,
-      AreaPerformanceDto
-    >;
-
-    input.performances.forEach((p) => {
-      const dtoKey = REVERSE_KNOWLEDGE_AREA_MAP[p.area];
-
-      if (dtoKey) {
-        performances[dtoKey] = this.calculateStatistics(p);
-      }
-    });
+    const performances = input.performances.reduce(
+      (acc, p) => {
+        const dtoKey = REVERSE_KNOWLEDGE_AREA_MAP[p.area];
+        if (dtoKey) {
+          acc[dtoKey] = this.calculateStatistics(p);
+        }
+        return acc;
+      },
+      {} as Record<KnowledgeAreaLabelKey, AreaPerformanceDto>,
+    );
 
     return {
       id: input.id,
