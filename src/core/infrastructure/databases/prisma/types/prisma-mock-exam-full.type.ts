@@ -1,4 +1,4 @@
-import { Prisma } from "@/src/generated/prisma/client";
+import { Prisma } from '@/src/generated/prisma/client';
 
 // Define o que o "Include" deve conter
 export const prismaMockExamFullInclude = {
@@ -6,6 +6,8 @@ export const prismaMockExamFullInclude = {
 } satisfies Prisma.MockExamInclude;
 
 // Extrai o tipo baseado no include acima
-export type PrismaMockExamFull = Prettify<Prisma.MockExamGetPayload<{
-  include: typeof prismaMockExamFullInclude;
-}>>;
+export type PrismaMockExamFull = Prettify<
+  Prisma.MockExamGetPayload<{
+    include: typeof prismaMockExamFullInclude;
+  }>
+>;
