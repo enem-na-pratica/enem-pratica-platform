@@ -49,6 +49,7 @@ const eslintConfig = defineConfig([
 
       '@typescript-eslint/no-explicit-any': 'error',
       'react/destructuring-assignment': ['error', 'always'],
+      'no-console': 'warn',
     },
   },
   prettierConfig,
