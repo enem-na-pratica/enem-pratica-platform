@@ -19,7 +19,7 @@ const REVERSE_KNOWLEDGE_AREA_MAP: Record<KnowledgeArea, KnowledgeAreaLabelKey> =
     MATHEMATICS: 'mathematics',
   };
 
-export class PrismaMockExamMapper implements Mapper<
+export class PrismaMockExamDtoMapper implements Mapper<
   PrismaMockExamFull,
   MockExamDto
 > {
