@@ -50,7 +50,7 @@ export class PrismaMockExamMapper implements Mapper<
     const correct = p.correctCount;
     const wrong = QUESTIONS_PER_AREA - correct;
     const doubtTotal = p.doubtHits + p.doubtErrors;
-    const criticalErrors = wrong - doubtTotal;
+    const criticalErrors = Math.max(0, wrong - doubtTotal);
 
     const knowledgeGaps = Math.max(
       0,
