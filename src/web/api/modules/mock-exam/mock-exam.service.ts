@@ -1,8 +1,12 @@
 import type { HttpClient } from '@/src/web/api/shared';
 
-import type { MockExamDto } from './mock-exam.dto';
+import type { MockExamDto, UserMockExamsOverviewDto } from './mock-exam.dto';
 import { MockExamMapper } from './mock-exam.mapper';
-import type { KnowledgeAreaLabelKey, MockExam } from './mock-exam.model';
+import type {
+  KnowledgeAreaLabelKey,
+  MockExam,
+  UserMockExamsOverview,
+} from './mock-exam.model';
 
 type MockExamServiceDeps = {
   httpClient: HttpClient;
@@ -37,6 +41,17 @@ export class MockExamService {
       options: { data: dataMockExam },
     });
 
-    return MockExamMapper.toDomain(data);
+    return MockExamMapper.toModel(data);
+  }
+
+  async listUserMockExamsStatistics(
+    username: string,
+  ): Promise<UserMockExamsOverview> {
+    const data = await this.httpClient.get<UserMockExamsOverviewDto>({
+      endpoint: '/mock-exams/:username',
+      options: { params: { username } },
+    });
+
+    return MockExamMapper.toOverviewModel(data);
   }
 }
