@@ -45,7 +45,7 @@ type AreaSummary = {
   totalCriticalErrors: number;
 };
 
-type MockExamStatistics = {
+export type MockExamStatistics = {
   totalMockExams: number;
 
   globalAveragePerformance: number;
