@@ -1,18 +1,4 @@
-// const KNOWLEDGE_AREA = {
-//   LANGUAGES: 'LANGUAGES',
-//   HUMANITIES: 'HUMANITIES',
-//   NATURAL_SCIENCES: 'NATURAL_SCIENCES',
-//   MATHEMATICS: 'MATHEMATICS',
-// } as const;
-
-// type KnowledgeArea =
-//   (typeof KNOWLEDGE_AREA)[keyof typeof KNOWLEDGE_AREA];
-
-export type KnowledgeArea =
-  | 'LANGUAGES'
-  | 'HUMANITIES'
-  | 'NATURAL_SCIENCES'
-  | 'MATHEMATICS';
+import type { KnowledgeArea } from '@/src/web/config';
 
 export type AreaPerformance = {
   id: string;
