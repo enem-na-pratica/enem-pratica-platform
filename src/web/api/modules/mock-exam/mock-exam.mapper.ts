@@ -12,7 +12,7 @@ import type {
 } from './mock-exam.model';
 
 export const MockExamMapper = {
-  toDomain(dto: MockExamDto): MockExam {
+  toModel(dto: MockExamDto): MockExam {
     const mappedPerformances = Object.fromEntries(
       Object.entries(dto.performances).map(([key, value]) => [
         key,
@@ -34,10 +34,10 @@ export const MockExamMapper = {
     };
   },
 
-  toOverviewDomain(dto: UserMockExamsOverviewDto): UserMockExamsOverview {
+  toOverviewModel(dto: UserMockExamsOverviewDto): UserMockExamsOverview {
     return {
       ...dto,
-      mockExams: dto.mockExams.map((exam) => this.toDomain(exam)),
+      mockExams: dto.mockExams.map((exam) => this.toModel(exam)),
     };
   },
 };
