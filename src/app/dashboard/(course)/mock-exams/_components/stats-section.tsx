@@ -24,6 +24,8 @@ const ERROR_THRESHOLDS = [
   { max: Infinity, color: 'text-red-500' }, // Critical (collapse zone)
 ];
 
+const PERCENTAGE_MULTIPLIER = 100;
+
 export function MockStatsSection({ stats }: { stats: MockExamStatistics }) {
   function getBarColor(rate: number) {
     return RATE_THRESHOLDS.find((t) => rate <= t.max)!.color;
@@ -40,7 +42,7 @@ export function MockStatsSection({ stats }: { stats: MockExamStatistics }) {
           Rendimento Global
         </span>
         <strong className="mt-2 text-5xl font-black text-(--accent)">
-          {stats.globalAveragePerformance.toFixed(1)}%
+          {(stats.globalAveragePerformance * PERCENTAGE_MULTIPLIER).toFixed(1)}%
         </strong>
         <span className="mt-2 text-[10px] font-bold uppercase opacity-40">
           Média de Acertos
@@ -56,8 +58,10 @@ export function MockStatsSection({ stats }: { stats: MockExamStatistics }) {
           {(
             Object.keys(stats.performancePerArea) as KnowledgeAreaLabelKey[]
           ).map((key) => {
-            const areaStats = stats.performancePerArea[key];
-            const barColor = getBarColor(areaStats.averagePerformanceRate);
+            const averagePerformanceRate =
+              stats.performancePerArea[key].averagePerformanceRate *
+              PERCENTAGE_MULTIPLIER;
+            const barColor = getBarColor(averagePerformanceRate);
 
             return (
               <div
@@ -71,7 +75,7 @@ export function MockStatsSection({ stats }: { stats: MockExamStatistics }) {
                   <div
                     className="h-full transition-all duration-1000"
                     style={{
-                      width: `${areaStats.averagePerformanceRate}%`,
+                      width: `${averagePerformanceRate}%`,
                       backgroundColor: barColor,
                     }}
                   />
@@ -80,7 +84,7 @@ export function MockStatsSection({ stats }: { stats: MockExamStatistics }) {
                   className="w-10 text-right text-xs font-bold"
                   style={{ color: barColor }}
                 >
-                  {areaStats.averagePerformanceRate.toFixed(0)}%
+                  {averagePerformanceRate.toFixed(0)}%
                 </span>
               </div>
             );

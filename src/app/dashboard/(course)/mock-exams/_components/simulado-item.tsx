@@ -131,7 +131,11 @@ export function MockExamItem({ mock }: { mock: MockExam }) {
                   </td>
                   {/* Rendimento */}
                   <td className="p-2 font-bold">
-                    {stats.overallResult.performanceRate.toFixed(1)}%
+                    {(
+                      stats.overallResult.performanceRate *
+                      PERCENTAGE_MULTIPLIER
+                    ).toFixed(1)}
+                    %
                   </td>
                   {/* Certeza */}
                   <td className="p-2 text-(--success) opacity-80">
@@ -139,7 +143,11 @@ export function MockExamItem({ mock }: { mock: MockExam }) {
                   </td>
                   {/* Confiança */}
                   <td className="p-2 opacity-70">
-                    {stats.qualityAssessment.confidenceRate.toFixed(1)}%
+                    {(
+                      stats.qualityAssessment.confidenceRate *
+                      PERCENTAGE_MULTIPLIER
+                    ).toFixed(1)}
+                    %
                   </td>
                   {/* Dúvida Acerto */}
                   <td className="p-2 text-(--accent)">
