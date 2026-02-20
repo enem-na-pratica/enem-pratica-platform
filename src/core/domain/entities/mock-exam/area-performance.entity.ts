@@ -1,10 +1,11 @@
-import { ScoreCount } from "@/src/core/domain/value-objects";
+import { ScoreCount } from '@/src/core/domain/value-objects';
+
 // | Português        | Inglês                 |
 // | ---------------- | ---------------------- |
-// | Acertos*         | `correctAnswers`       |
+// | Acertos*         | `correctCount`         |
 // | Erros            | `wrongAnswers`         |
 // | Rendimento       | `performanceRate`      |
-// | Certeza*         | `certaintyHits`        |
+// | Certeza*         | `certaintyCount`       |
 // | Confiança        | `confidenceRate`       |
 // | Dúvida - Acerto* | `doubtHits`            |
 // | Dúvida - Erro*   | `doubtErrors`          |
@@ -21,7 +22,8 @@ export const KNOWLEDGE_AREA = {
   MATHEMATICS: 'MATHEMATICS',
 } as const;
 
-export type KnowledgeArea = typeof KNOWLEDGE_AREA[keyof typeof KNOWLEDGE_AREA];
+export type KnowledgeArea =
+  (typeof KNOWLEDGE_AREA)[keyof typeof KNOWLEDGE_AREA];
 
 /**
  * Macro quantitative performance metrics.
@@ -72,19 +74,15 @@ export type AreaPerformanceProps = {
   doubtErrors: number;
   distractionErrors: number;
   interpretationErrors: number;
-}
+};
 
-export type CreateAreaPerformanceProps = Omit<
-  AreaPerformanceProps,
-  "id"
->;
+export type CreateAreaPerformanceProps = Omit<AreaPerformanceProps, 'id'>;
 
 export type LoadAreaPerformanceProps = Required<AreaPerformanceProps>;
 
-export type UpdateAreaPerformanceProps = Partial<Omit<
-  AreaPerformanceProps,
-  "id" | "area"
->>;
+export type UpdateAreaPerformanceProps = Partial<
+  Omit<AreaPerformanceProps, 'id' | 'area'>
+>;
 
 const QUESTIONS_PER_AREA = 45;
 
@@ -120,9 +118,15 @@ export class AreaPerformance {
   }
 
   // --- Getters ---
-  public get id(): string | undefined { return this._id }
-  public get mockExamId(): string | undefined { return this._mockExamId }
-  public get area(): KnowledgeArea { return this._area }
+  public get id(): string | undefined {
+    return this._id;
+  }
+  public get mockExamId(): string | undefined {
+    return this._mockExamId;
+  }
+  public get area(): KnowledgeArea {
+    return this._area;
+  }
 
   public get overallResult(): OverallResult {
     const correct = this._correctCount.value;
@@ -167,7 +171,7 @@ export class AreaPerformance {
     return {
       distractionErrors: distraction,
       interpretationErrors: interpretation,
-      knowledgeGaps: Math.max(0, knowledgeGaps)
+      knowledgeGaps: Math.max(0, knowledgeGaps),
     };
   }
 
@@ -188,7 +192,28 @@ export class AreaPerformance {
       this._distractionErrors = ScoreCount.create(props.distractionErrors);
     }
     if (props.interpretationErrors !== undefined) {
-      this._interpretationErrors = ScoreCount.create(props.interpretationErrors);
+      this._interpretationErrors = ScoreCount.create(
+        props.interpretationErrors,
+      );
     }
+  }
+
+  private calculateMetrics() {
+    const correct = this._correctCount.value;
+    const certainty = this._certaintyCount.value;
+    const doubtHits = this._doubtHits.value;
+    const doubtErrors = this._doubtErrors.value;
+    const distractionErrors = this._distractionErrors.value;
+    const interpretationErrors = this._interpretationErrors.value;
+
+    const wrong = QUESTIONS_PER_AREA - correct;
+    const performanceRate = correct / QUESTIONS_PER_AREA;
+    const confidenceRate = correct > 0 ? certainty / correct : 0;
+    const doubt = doubtHits + doubtErrors;
+    const criticalErrors = Math.max(0, wrong - doubt);
+    const knowledgeGaps = Math.max(
+      0,
+      criticalErrors - distractionErrors - interpretationErrors,
+    ); 
   }
 }
