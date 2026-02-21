@@ -1,6 +1,6 @@
 import { MockExam } from '@/src/web/api';
 
-import { MockExamItem } from './simulado-item';
+import { MockExamItem } from './mock-exam-item';
 
 export function MockExamListSection({ mockExams }: { mockExams: MockExam[] }) {
   return (
