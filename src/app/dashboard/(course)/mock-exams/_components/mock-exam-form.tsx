@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  type FieldError,
   type FieldPath,
   type UseFormRegister,
   useForm,
@@ -137,6 +138,7 @@ export function MockExamForm() {
     reset,
     formState: { errors, isSubmitting, isValid },
   } = useForm<CreateMockExamFormValues>({
+    mode: 'onChange',
     resolver: zodResolver(createMockExamSchema),
     defaultValues: DEFAULT_FORM_VALUES,
   });
@@ -194,19 +196,40 @@ export function MockExamForm() {
       </div>
 
       {/* Input de Título */}
-      <div className="max-w-md">
-        <label className="mb-1 block text-sm font-bold opacity-70">
+      <div className="group max-w-md">
+        <label
+          htmlFor="title"
+          className={`mb-1 block text-sm font-bold transition-colors ${
+            errors.title
+              ? 'text-(--error)'
+              : 'opacity-70 group-focus-within:opacity-100'
+          }`}
+        >
           Título / Instituição
         </label>
+
         <input
+          id="title"
           {...register('title')}
-          className="input text-lg font-bold"
+          className={`input text-lg font-bold transition-all outline-none focus:border-(--accent) focus:ring-2 focus:ring-(--accent) focus:ring-offset-1 ${
+            errors.title
+              ? 'animate-shake border-(--error) ring-1 ring-(--error) focus:border-(--error) focus:ring-(--error)'
+              : ''
+          }`}
           placeholder="Ex: Simulado SAS 1º dia"
           autoFocus
         />
-        {errors.title && (
-          <span className="text-xs text-(--error)">{errors.title.message}</span>
-        )}
+
+        {/* Animated Error Message */}
+        <div
+          className={`overflow-hidden transition-all duration-300 ${
+            errors.title ? 'mt-1 max-h-10' : 'max-h-0'
+          }`}
+        >
+          <p className="text-xs font-medium text-(--error) italic">
+            {errors.title?.message}
+          </p>
+        </div>
       </div>
 
       {/* Tabela de Inputs */}
@@ -249,6 +272,7 @@ export function MockExamForm() {
           <tbody className="divide-y divide-(--foreground)/5">
             {AREAS.map(({ key, label }) => {
               const stats = calculatedData[key];
+              const areaErrors = errors.performances?.[key];
               return (
                 <tr
                   key={key}
@@ -261,6 +285,7 @@ export function MockExamForm() {
                     <RHFInputCell
                       register={register}
                       name={`performances.${key}.correctCount`}
+                      error={areaErrors?.correctCount}
                     />
                   </td>
 
@@ -277,6 +302,7 @@ export function MockExamForm() {
                     <RHFInputCell
                       register={register}
                       name={`performances.${key}.certaintyCount`}
+                      error={areaErrors?.certaintyCount}
                     />
                   </td>
 
@@ -290,12 +316,14 @@ export function MockExamForm() {
                     <RHFInputCell
                       register={register}
                       name={`performances.${key}.doubtHits`}
+                      error={areaErrors?.doubtHits}
                     />
                   </td>
                   <td className="p-1">
                     <RHFInputCell
                       register={register}
                       name={`performances.${key}.doubtErrors`}
+                      error={areaErrors?.doubtErrors}
                     />
                   </td>
 
@@ -309,12 +337,14 @@ export function MockExamForm() {
                     <RHFInputCell
                       register={register}
                       name={`performances.${key}.distractionErrors`}
+                      error={areaErrors?.distractionErrors}
                     />
                   </td>
                   <td className="p-1">
                     <RHFInputCell
                       register={register}
                       name={`performances.${key}.interpretationErrors`}
+                      error={areaErrors?.interpretationErrors}
                     />
                   </td>
 
@@ -374,18 +404,42 @@ export function MockExamForm() {
 function RHFInputCell({
   register,
   name,
+  error,
 }: {
   register: UseFormRegister<CreateMockExamFormValues>;
   name: FieldPath<CreateMockExamFormValues>;
+  error?: FieldError;
 }) {
   return (
-    <input
-      type="number"
-      min="0"
-      max="45"
-      {...register(name, { valueAsNumber: true })}
-      onFocus={(e) => e.target.select()}
-      className="h-8 w-full rounded border border-(--foreground)/20 bg-(--background) text-center font-mono text-sm font-bold transition-all outline-none focus:border-(--accent) focus:ring-1 focus:ring-(--accent)"
-    />
+    <div className="group/cell relative w-full">
+      <input
+        type="number"
+        min="0"
+        max="45"
+        {...register(name, { valueAsNumber: true })}
+        onFocus={(e) => e.target.select()}
+        className={`h-8 w-full rounded border bg-(--background) text-center font-mono text-sm font-bold transition-all outline-none focus:border-(--accent) focus:ring-1 focus:ring-(--accent) ${
+          error
+            ? 'animate-shake border-(--error) text-(--error) ring-1 ring-(--error)'
+            : 'border-(--foreground)/20'
+        }`}
+      />
+
+      {error && (
+        <div className="absolute -top-1 -right-1 z-20">
+          <span className="flex h-3 w-3 cursor-help">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-(--error) opacity-75"></span>
+            <span className="relative inline-flex h-3 w-3 rounded-full bg-(--error)"></span>
+          </span>
+
+          <div className="animate-in fade-in zoom-in-95 absolute right-0 bottom-full mb-2 hidden duration-200 group-hover/cell:block">
+            <div className="rounded bg-(--foreground) px-2 py-1 text-[10px] font-bold whitespace-nowrap text-(--background) shadow-lg">
+              {error.message}
+              <div className="absolute top-full right-1 border-4 border-transparent border-t-(--foreground)"></div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
