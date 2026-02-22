@@ -184,7 +184,21 @@ export function MockExamForm() {
       {/* Header */}
       <div className="flex items-center justify-between border-b border-(--foreground)/10 pb-4">
         <h2 className="text-xl font-bold">Novo Simulado</h2>
-        <div className="flex gap-2">
+        <div className="flex items-center gap-4">
+          {/* Botão Reset */}
+          <button
+            type="button"
+            onClick={() => {
+              if (confirm('Tem certeza que deseja limpar todos os dados?')) {
+                reset(DEFAULT_FORM_VALUES);
+              }
+            }}
+            className="text-sm font-medium text-(--foreground)/60 transition-colors hover:text-(--error)"
+          >
+            Limpar
+          </button>
+
+          {/* Botão Submit */}
           <button
             type="submit"
             disabled={!isValid || isSubmitting}
