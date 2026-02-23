@@ -31,6 +31,6 @@ export class PrismaListMockExamsByAuthorQuery implements ListMockExamsByAuthorQu
       },
     });
 
-    return mockExams.map(this.mapper.map);
+    return mockExams.map((mockExam) => this.mapper.map(mockExam));
   }
 }
