@@ -19,8 +19,9 @@ model User {
   mentorshipAsStudent  StudentTeacher[] @relation("StudentRelation")
   mentorshipsAsTeacher StudentTeacher[] @relation("TeacherRelation")
 
-  essays    Essay[]
-  mockExams MockExam[]
+  essays              Essay[]
+  mockExams           MockExam[]
+  userTopicProgresses UserTopicProgress[]
 
   @@index([username])
   @@map("users") // Garante que o nome da tabela no BD seja 'users' (plural snake_case)
@@ -71,12 +72,15 @@ model Subject {
 }
 
 model Topic {
-  id        String   @id @default(uuid())
-  title     String
-  position  Int
+  id       String @id @default(uuid())
+  title    String
+  position Int
+
   subjectId String
-  subject   Subject  @relation(fields: [subjectId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
+  subject   Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+
+  createdAt           DateTime            @default(now())
+  userTopicProgresses UserTopicProgress[]
 
   @@index([subjectId, position])
   @@map("topics")
@@ -114,6 +118,23 @@ model AreaPerformance {
   @@map("area_performances")
 }
 
+model UserTopicProgress {
+  id String @id @default(uuid())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  topicId String
+  topic   Topic  @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  status    TopicStatus
+  updatedAt DateTime    @updatedAt
+  createdAt DateTime    @default(now())
+
+  @@unique([userId, topicId])
+  @@map("user_topic_progress")
+}
+
 enum Role {
   STUDENT
   TEACHER
@@ -126,4 +147,10 @@ enum KnowledgeArea {
   HUMANITIES // Ciências Humanas
   NATURAL_SCIENCES // Ciências da Natureza
   MATHEMATICS // Matemática
+}
+
+enum TopicStatus {
+  COMPREHENDED // Compreendido
+  PRACTICE // Praticar
+  REVIEW // Revisar
 }
