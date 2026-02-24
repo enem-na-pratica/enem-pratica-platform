@@ -1,12 +1,13 @@
 import type { ZodType } from 'zod';
+
 import type {
+  FieldErrors,
   Validator,
-  FieldErrors
 } from '@/src/core/domain/contracts/validation';
 import { ValidationError } from '@/src/core/domain/errors';
 
 export class ZodValidator<T> implements Validator<T> {
-  constructor(private readonly schema: ZodType<T>) { }
+  constructor(private readonly schema: ZodType<T>) {}
 
   validate(input: T): T {
     const result = this.schema.safeParse(input);
