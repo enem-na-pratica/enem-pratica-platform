@@ -1,4 +1,5 @@
-import { z } from "zod";
+import { z } from 'zod';
+
 import { usernameSchema } from './common';
 
 const THEME_CONFIG = {
@@ -13,41 +14,48 @@ const COMPETENCY_CONFIG = {
 };
 
 const validCompetencyValues = Array.from(
-  { length: (COMPETENCY_CONFIG.MAX - COMPETENCY_CONFIG.MIN) / COMPETENCY_CONFIG.STEP + 1 },
-  (_, index) => COMPETENCY_CONFIG.MIN + index * COMPETENCY_CONFIG.STEP
+  {
+    length:
+      (COMPETENCY_CONFIG.MAX - COMPETENCY_CONFIG.MIN) / COMPETENCY_CONFIG.STEP +
+      1,
+  },
+  (_, index) => COMPETENCY_CONFIG.MIN + index * COMPETENCY_CONFIG.STEP,
 );
 
 const competencySchema = z
-  .number()
-  .min(
-    COMPETENCY_CONFIG.MIN,
-    `Score must be at least ${COMPETENCY_CONFIG.MIN}`
-  )
-  .max(
-    COMPETENCY_CONFIG.MAX,
-    `Score must be at most ${COMPETENCY_CONFIG.MAX}`
-  )
-  .refine(
-    (value) => value % COMPETENCY_CONFIG.STEP === 0,
-    {
-      message: `Score must be a multiple of ${COMPETENCY_CONFIG.STEP} (e.g., ${validCompetencyValues.join(", ")})`,
-    }
-  );
+  .number({
+    error: (issue) =>
+      issue.input === undefined
+        ? 'This competency is required'
+        : 'Score must be a number',
+  })
+  .min(COMPETENCY_CONFIG.MIN, {
+    error: `Score must be at least ${COMPETENCY_CONFIG.MIN}`,
+  })
+  .max(COMPETENCY_CONFIG.MAX, {
+    error: `Score must be at most ${COMPETENCY_CONFIG.MAX}`,
+  })
+  .refine((value) => value % COMPETENCY_CONFIG.STEP === 0, {
+    error: `Score must be a multiple of ${COMPETENCY_CONFIG.STEP} (e.g., ${validCompetencyValues.join(', ')})`,
+  });
 
 export const createEssaySchema = z.object({
   authorUsername: usernameSchema.optional(),
 
   theme: z
-    .string()
+    .string({
+      error: (issue) =>
+        issue.input === undefined
+          ? 'The theme is required'
+          : 'Theme must be a string',
+    })
     .trim()
-    .min(
-      THEME_CONFIG.MIN,
-      `Theme must be at least ${THEME_CONFIG.MIN} characters long`
-    )
-    .max(
-      THEME_CONFIG.MAX,
-      `Theme must be at most ${THEME_CONFIG.MAX} characters long`
-    ),
+    .min(THEME_CONFIG.MIN, {
+      error: `Theme must be at least ${THEME_CONFIG.MIN} characters long`,
+    })
+    .max(THEME_CONFIG.MAX, {
+      error: `Theme must be at most ${THEME_CONFIG.MAX} characters long`,
+    }),
 
   grades: z.object({
     c1: competencySchema,
