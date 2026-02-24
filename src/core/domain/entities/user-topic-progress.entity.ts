@@ -5,7 +5,7 @@ export const TOPIC_STATUS = {
 } as const;
 export type TopicStatus = (typeof TOPIC_STATUS)[keyof typeof TOPIC_STATUS];
 
-type TopicProgressProps = {
+type UserTopicProgressProps = {
   id?: string;
   userId: string;
   topicId: string;
@@ -14,13 +14,13 @@ type TopicProgressProps = {
   createdAt?: Date;
 };
 
-type CreateTopicProgressProps = Prettify<
-  Omit<TopicProgressProps, 'id' | 'updatedAt' | 'createdAt'>
+type CreateUserTopicProgressProps = Prettify<
+  Omit<UserTopicProgressProps, 'id' | 'updatedAt' | 'createdAt'>
 >;
 
-type LoadTopicProgressProps = Required<TopicProgressProps>;
+type LoadUserTopicProgressProps = Required<UserTopicProgressProps>;
 
-export class TopicProgress {
+export class UserTopicProgress {
   private _id: string | undefined;
   private _userId: string;
   private _topicId: string;
@@ -28,7 +28,7 @@ export class TopicProgress {
   private _updatedAt: Date;
   private _createdAt: Date;
 
-  private constructor(props: TopicProgressProps) {
+  private constructor(props: UserTopicProgressProps) {
     this._id = props.id;
     this._userId = props.userId;
     this._topicId = props.topicId;
@@ -38,12 +38,12 @@ export class TopicProgress {
     this._updatedAt = props.updatedAt || this._createdAt;
   }
 
-  public static create(props: CreateTopicProgressProps): TopicProgress {
-    return new TopicProgress(props);
+  public static create(props: CreateUserTopicProgressProps): UserTopicProgress {
+    return new UserTopicProgress(props);
   }
 
-  public static load(props: LoadTopicProgressProps): TopicProgress {
-    return new TopicProgress(props);
+  public static load(props: LoadUserTopicProgressProps): UserTopicProgress {
+    return new UserTopicProgress(props);
   }
 
   // Getters
