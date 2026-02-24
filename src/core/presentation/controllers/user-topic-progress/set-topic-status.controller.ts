@@ -36,9 +36,9 @@ export class SetTopicStatusController implements Controller<
     try {
       const validatedData = this.validator.validate(request.body);
 
-      const newUser = await this.setTopicStatusUseCase.execute(validatedData);
+      const topicStatus = await this.setTopicStatusUseCase.execute(validatedData);
 
-      return ok(newUser);
+      return ok(topicStatus);
     } catch (error) {
       return handleError(error);
     }
