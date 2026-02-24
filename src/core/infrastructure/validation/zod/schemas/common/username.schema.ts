@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 const USERNAME_CONFIG = { MIN: 3, MAX: 30 };
 const USERNAME_REGEX = {
@@ -7,26 +7,30 @@ const USERNAME_REGEX = {
   SEQUENTIAL: /[._-]{2,}/,
 };
 
-export const usernameSchema = z.string()
+export const usernameSchema = z
+  .string({
+    error: (issue) =>
+      issue.input === undefined
+        ? 'Username is required'
+        : 'Username must be a string',
+  })
   .trim()
   .toLowerCase()
-  .min(
-    USERNAME_CONFIG.MIN,
-    `Username must be at least ${USERNAME_CONFIG.MIN} characters long`
-  )
-  .max(
-    USERNAME_CONFIG.MAX,
-    `Username must be at most ${USERNAME_CONFIG.MAX} characters long`
-  )
-  .regex(
-    USERNAME_REGEX.ALLOWED,
-    "Use only lowercase letters, numbers, periods, hyphens, or underscores"
-  )
+  .min(USERNAME_CONFIG.MIN, {
+    error: `Username must be at least ${USERNAME_CONFIG.MIN} characters long`,
+  })
+  .max(USERNAME_CONFIG.MAX, {
+    error: `Username must be at most ${USERNAME_CONFIG.MAX} characters long`,
+  })
+  .regex(USERNAME_REGEX.ALLOWED, {
+    error:
+      'Use only lowercase letters, numbers, periods, hyphens, or underscores',
+  })
   .refine((val) => !USERNAME_REGEX.BOUNDARIES.test(val), {
-    message: "Username cannot start or end with symbols",
+    error: 'Username cannot start or end with symbols',
   })
   .refine((val) => !USERNAME_REGEX.SEQUENTIAL.test(val), {
-    message: "Username cannot contain sequential symbols (e.g., '..', '--')",
+    error: "Username cannot contain sequential symbols (e.g., '..', '--')",
   });
 
 export type UsernameSchema = z.infer<typeof usernameSchema>;
