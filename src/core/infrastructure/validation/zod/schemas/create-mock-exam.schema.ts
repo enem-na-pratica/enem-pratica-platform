@@ -53,12 +53,12 @@ export const createMockExamSchema = z.object({
       `Title is too long (max ${EXAM_CONFIG.TITLE_MAX})`,
     ),
 
-  performances: z.record(
-    z.enum(['languages', 'humanities', 'naturalSciences', 'mathematics'], {
-      error: 'Please select a valid subject category',
-    }),
-    performanceSchema,
-  ),
+  performances: z.object({
+    languages: performanceSchema,
+    humanities: performanceSchema,
+    naturalSciences: performanceSchema,
+    mathematics: performanceSchema,
+  }),
 });
 
 export type CreateMockExamSchema = z.infer<typeof createMockExamSchema>;
