@@ -19,7 +19,7 @@ type SetTopicStatusDeps = {
 };
 
 export class SetTopicStatusController implements Controller<
-  SetTopicStatusInput,
+  SetTopicStatusDto,
   UserTopicProgressDto
 > {
   private readonly setTopicStatusUseCase: UseCase<
@@ -34,7 +34,7 @@ export class SetTopicStatusController implements Controller<
   }
 
   async handle(
-    request: AuthenticatedRequest<SetTopicStatusInput>,
+    request: AuthenticatedRequest<SetTopicStatusDto>,
   ): Promise<HttpResponse<UserTopicProgressDto | ErrorResponse>> {
     try {
       const validatedData = this.validator.validate(request.body);
