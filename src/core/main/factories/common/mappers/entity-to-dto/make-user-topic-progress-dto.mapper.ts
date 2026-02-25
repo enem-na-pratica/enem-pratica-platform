@@ -1,5 +1,5 @@
-import { UserTopicProgressMapper } from '@/src/core/application/mapper';
+import { UserTopicProgressDtoMapper } from '@/src/core/application/mapper';
 
-export function makeUserTopicProgressMapper() {
-  return new UserTopicProgressMapper();
+export function makeUserTopicProgressDtoMapper() {
+  return new UserTopicProgressDtoMapper();
 }
