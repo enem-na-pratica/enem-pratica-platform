@@ -2,7 +2,7 @@ import type { UserTopicProgressDto } from '@/src/core/application/common/dtos';
 import type { Mapper } from '@/src/core/domain/contracts/mappers/mapper.interface';
 import type { UserTopicProgress } from '@/src/core/domain/entities';
 
-export class UserTopicProgressMapper implements Mapper<
+export class UserTopicProgressDtoMapper implements Mapper<
   UserTopicProgress,
   UserTopicProgressDto
 > {
