@@ -1,16 +1,16 @@
 import type { UseCase } from '@/src/core/application/common/interfaces';
 import type {
   ListUserEssaysStatisticsInput,
-  UserEssaysOverviewDto
+  UserEssaysOverviewDto,
 } from '@/src/core/application/use-cases/essay';
+import type { Validator } from '@/src/core/domain/contracts/validation';
+import { handleError, ok } from '@/src/core/presentation/helpers';
 import type {
+  AuthenticatedRequest,
   Controller,
   ErrorResponse,
   HttpResponse,
-  AuthenticatedRequest
 } from '@/src/core/presentation/protocols';
-import type { Validator } from '@/src/core/domain/contracts/validation';
-import { handleError, ok } from '@/src/core/presentation/helpers';
 
 type ListUserEssaysStatisticsControllerDeps = {
   listUserEssaysStatisticsUseCase: UseCase<
@@ -18,10 +18,12 @@ type ListUserEssaysStatisticsControllerDeps = {
     UserEssaysOverviewDto
   >;
   validator: Validator<string>;
-}
+};
 
-export class ListUserEssaysStatisticsController
-  implements Controller<void, UserEssaysOverviewDto> {
+export class ListUserEssaysStatisticsController implements Controller<
+  void,
+  UserEssaysOverviewDto
+> {
   private readonly listUserEssaysStatisticsUseCase: UseCase<
     ListUserEssaysStatisticsInput,
     UserEssaysOverviewDto
@@ -30,21 +32,22 @@ export class ListUserEssaysStatisticsController
 
   constructor({
     listUserEssaysStatisticsUseCase,
-    validator
+    validator,
   }: ListUserEssaysStatisticsControllerDeps) {
     this.listUserEssaysStatisticsUseCase = listUserEssaysStatisticsUseCase;
     this.validator = validator;
   }
 
   async handle(
-    request: AuthenticatedRequest<void>
+    request: AuthenticatedRequest<void>,
   ): Promise<HttpResponse<UserEssaysOverviewDto | ErrorResponse>> {
     try {
-      const { username: rawUsername } = request.params ?? {};
+      const { username: rawUsername } = request.params!;
 
-      const authorUsername = rawUsername
-        ? this.validator.validate(rawUsername)
-        : undefined;
+      const authorUsername =
+        rawUsername === 'me'
+          ? request.requester.username
+          : this.validator.validate(rawUsername);
 
       const listEssays = await this.listUserEssaysStatisticsUseCase.execute({
         authorUsername,
