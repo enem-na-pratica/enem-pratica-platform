@@ -43,11 +43,12 @@ export class ListUserMockExamsStatisticsController implements Controller<
     request: AuthenticatedRequest<void>,
   ): Promise<HttpResponse<UserMockExamsOverviewDto | ErrorResponse>> {
     try {
-      const { username: rawUsername } = request.params ?? {};
+      const { username: rawUsername } = request.params!;
 
-      const authorUsername = rawUsername
-        ? this.validator.validate(rawUsername)
-        : undefined;
+      const authorUsername =
+        rawUsername === 'me'
+          ? request.requester.username
+          : this.validator.validate(rawUsername);
 
       const listMockExamsWithStatistics =
         await this.listUserMockExamsStatisticsUseCase.execute({
