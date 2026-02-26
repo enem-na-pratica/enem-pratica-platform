@@ -1,10 +1,9 @@
+import { prisma } from '@/src/core/infrastructure/databases/prisma/prisma';
 import {
   KnowledgeArea,
   Role,
   TopicStatus,
 } from '@/src/generated/prisma/client';
-
-import { prisma } from '../src/core/infrastructure/databases/prisma/prisma';
 
 // Senha padrão: 0123456789
 const DEFAULT_PASSWORD =
