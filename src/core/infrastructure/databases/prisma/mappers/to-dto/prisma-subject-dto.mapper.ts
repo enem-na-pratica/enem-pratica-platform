@@ -10,7 +10,7 @@ export class PrismaSubjectDtoMapper implements Mapper<
     return {
       id: subject.id,
       name: subject.name,
-      category: subject.category ?? undefined,
+      category: subject.category,
       createdAt: subject.createdAt.toISOString(),
     };
   }
