@@ -1,11 +1,11 @@
 import type { Role } from '@/src/core/domain/auth';
+import { ROLES, hasExactRole, hasHigherRole } from '@/src/core/domain/auth';
 import type {
-  UserRepository,
   StudentTeacherRepository,
+  UserRepository,
 } from '@/src/core/domain/contracts/repositories';
 import type { User } from '@/src/core/domain/entities';
-import { UserNotFoundError, ForbiddenError } from '@/src/core/domain/errors';
-import { hasHigherRole, hasExactRole, ROLES } from '@/src/core/domain/auth';
+import { ForbiddenError, UserNotFoundError } from '@/src/core/domain/errors';
 
 export type Requester = {
   id: string;
@@ -16,7 +16,7 @@ export type Requester = {
 type UserAccessServiceDeps = {
   userRepository: UserRepository;
   studentTeacherRepository: StudentTeacherRepository;
-}
+};
 
 /**
  * Service responsible for resolving target users and validating
@@ -42,10 +42,10 @@ export class UserAccessService {
    */
   async resolveTargetId({
     requester,
-    targetUsername
+    targetUsername,
   }: {
-    requester: Requester,
-    targetUsername?: string
+    requester: Requester;
+    targetUsername?: string;
   }): Promise<string> {
     return this.resolveTargetUser({
       requester,
@@ -62,23 +62,26 @@ export class UserAccessService {
    */
   async resolveManagedTargetId({
     requester,
-    targetUsername
+    targetUsername,
   }: {
-    requester: Requester,
-    targetUsername?: string
+    requester: Requester;
+    targetUsername?: string;
   }): Promise<string> {
     const authorId = await this.resolveTargetUser({
       requester,
-      targetUsername
+      targetUsername,
     });
 
-    if (authorId !== requester.id && hasExactRole({
-      userRole: requester.role,
-      expectedRole: ROLES.TEACHER
-    })) {
+    if (
+      authorId !== requester.id &&
+      hasExactRole({
+        userRole: requester.role,
+        expectedRole: ROLES.TEACHER,
+      })
+    ) {
       await this.validateTeacherStudentLink({
         studentId: authorId,
-        teacherId: requester.id
+        teacherId: requester.id,
       });
     }
 
@@ -87,7 +90,7 @@ export class UserAccessService {
 
   private async resolveTargetUser({
     requester,
-    targetUsername
+    targetUsername,
   }: {
     requester: Requester;
     targetUsername?: string;
@@ -115,35 +118,42 @@ export class UserAccessService {
     return author;
   }
 
-  private async ensureRequesterHasPermission({
+  private ensureRequesterHasPermission({
     requester,
-    targetUser
+    targetUser,
   }: {
     requester: Requester;
     targetUser: User;
   }) {
-    if (!hasHigherRole({
-      userRole: requester.role,
-      targetRole: targetUser.role,
-    })) {
-      throw new ForbiddenError("You do not have permission to perform actions for users with an equivalent or higher role.");
+    if (
+      !hasHigherRole({
+        userRole: requester.role,
+        targetRole: targetUser.role,
+      })
+    ) {
+      throw new ForbiddenError(
+        'You do not have permission to perform actions for users with an equivalent or higher role.',
+      );
     }
   }
 
   private async validateTeacherStudentLink({
     studentId,
-    teacherId
+    teacherId,
   }: {
     studentId: string;
     teacherId: string;
   }): Promise<void> {
-    const canAccessStudent = await this.studentTeacherRepository.isStudentAssignedToTeacher({
-      studentId,
-      teacherId
-    });
+    const canAccessStudent =
+      await this.studentTeacherRepository.isStudentAssignedToTeacher({
+        studentId,
+        teacherId,
+      });
 
     if (!canAccessStudent) {
-      throw new ForbiddenError("You do not have permission to perform this action for students who are not assigned to you.");
+      throw new ForbiddenError(
+        'You do not have permission to perform this action for students who are not assigned to you.',
+      );
     }
   }
 }

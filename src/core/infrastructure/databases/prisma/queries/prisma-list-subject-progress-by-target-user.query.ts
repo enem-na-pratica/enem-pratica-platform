@@ -1,30 +1,33 @@
 import type {
-  ListSubjectProgressByTargetQuery,
+  ListSubjectProgressByTargetUserQuery,
   TopicProgressDto,
 } from '@/src/core/application/use-cases/subject';
 import type { Mapper } from '@/src/core/domain/contracts';
 import type { PrismaTopicWithProgress } from '@/src/core/infrastructure/databases/prisma/types';
 import type { PrismaClient } from '@/src/generated/prisma/client';
 
-type PrismaListSubjectProgressByTargetQueryDeps = {
+type PrismaListSubjectProgressByTargetUserQueryDeps = {
   prisma: PrismaClient;
   mapper: Mapper<PrismaTopicWithProgress, TopicProgressDto>;
 };
 
-export class PrismaListSubjectProgressByTargetQuery implements ListSubjectProgressByTargetQuery {
+export class PrismaListSubjectProgressByTargetUserQuery implements ListSubjectProgressByTargetUserQuery {
   private readonly prisma: PrismaClient;
   private readonly mapper: Mapper<PrismaTopicWithProgress, TopicProgressDto>;
 
-  constructor({ prisma, mapper }: PrismaListSubjectProgressByTargetQueryDeps) {
+  constructor({
+    prisma,
+    mapper,
+  }: PrismaListSubjectProgressByTargetUserQueryDeps) {
     this.prisma = prisma;
     this.mapper = mapper;
   }
 
   async execute({
-    targetId,
+    targetUserId,
     subjectName,
   }: {
-    targetId: string;
+    targetUserId: string;
     subjectName: string;
   }): Promise<TopicProgressDto[]> {
     const topics = await this.prisma.topic.findMany({
@@ -39,7 +42,7 @@ export class PrismaListSubjectProgressByTargetQuery implements ListSubjectProgre
       include: {
         userTopicProgresses: {
           where: {
-            userId: targetId,
+            userId: targetUserId,
           },
         },
       },
