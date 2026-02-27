@@ -115,7 +115,7 @@ export class UserAccessService {
     return author;
   }
 
-  private async ensureRequesterHasPermission({
+  private ensureRequesterHasPermission({
     requester,
     targetUser
   }: {
