@@ -12,7 +12,7 @@ export type ListSubjectProgressInput = {
 
 type ListSubjectProgressUseCaseDeps = {
   userAccessService: UserAccessService;
-  listSubjectProgressByTargetQuery: ListSubjectProgressByTargetUserQuery;
+  listSubjectProgressByTargetUserQuery: ListSubjectProgressByTargetUserQuery;
 };
 
 export class ListSubjectProgressUseCase implements UseCase<
@@ -20,14 +20,15 @@ export class ListSubjectProgressUseCase implements UseCase<
   TopicProgressDto[]
 > {
   private readonly userAccessService: UserAccessService;
-  private readonly listSubjectProgressByTargetQuery: ListSubjectProgressByTargetUserQuery;
+  private readonly listSubjectProgressByTargetUserQuery: ListSubjectProgressByTargetUserQuery;
 
   constructor({
     userAccessService,
-    listSubjectProgressByTargetQuery,
+    listSubjectProgressByTargetUserQuery,
   }: ListSubjectProgressUseCaseDeps) {
     this.userAccessService = userAccessService;
-    this.listSubjectProgressByTargetQuery = listSubjectProgressByTargetQuery;
+    this.listSubjectProgressByTargetUserQuery =
+      listSubjectProgressByTargetUserQuery;
   }
 
   async execute({
@@ -40,7 +41,7 @@ export class ListSubjectProgressUseCase implements UseCase<
       targetUsername,
     });
 
-    return this.listSubjectProgressByTargetQuery.execute({
+    return this.listSubjectProgressByTargetUserQuery.execute({
       targetUserId,
       subjectName,
     });
