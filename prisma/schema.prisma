@@ -64,10 +64,12 @@ model Essay {
 model Subject {
   id        String   @id @default(uuid())
   name      String   @unique
+  slug      String   @unique
   category  String?
   topics    Topic[]
   createdAt DateTime @default(now())
 
+  @@index([slug])
   @@map("subjects")
 }
 
