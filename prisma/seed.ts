@@ -9,20 +9,30 @@ import {
 const DEFAULT_PASSWORD =
   '$2b$12$8QHdhZ8bP4tLH.ZjaOKNpuCQUt5plrgKfbCUKEGX1Gc2hDmSGewkC';
 
+async function clearDatabase() {
+  console.log('🧹 Limpando todas as tabelas...');
+  const tableNames = await prisma.$queryRaw<Array<{ tableName: string }>>`
+    SELECT tablename AS "tableName" FROM pg_tables WHERE schemaname='public'
+  `;
+
+  const tables = tableNames
+    .map(({ tableName }) => tableName)
+    .filter((name) => name !== '_prisma_migrations')
+    .map((name) => `"${name}"`)
+    .join(', ');
+
+  try {
+    await prisma.$executeRawUnsafe(
+      `TRUNCATE TABLE ${tables} RESTART IDENTITY CASCADE;`,
+    );
+    console.log('✅ Banco de dados resetado com sucesso.');
+  } catch (error) {
+    console.error('❌ Erro ao limpar banco:', error);
+  }
+}
+
 async function main() {
-  console.log('🧹 Limpando banco...');
-
-  // Ordem importa: deletar dependentes antes dos pais
-  await prisma.userTopicProgress.deleteMany();
-  await prisma.areaPerformance.deleteMany();
-  await prisma.mockExam.deleteMany();
-  await prisma.essay.deleteMany();
-  await prisma.studentTeacher.deleteMany();
-  await prisma.topic.deleteMany();
-  await prisma.subject.deleteMany();
-  await prisma.user.deleteMany();
-
-  console.log('✅ Banco limpo');
+  await clearDatabase();
 
   console.log('🌱 Iniciando seed...');
 
@@ -159,6 +169,7 @@ async function main() {
   const subject1 = await prisma.subject.create({
     data: {
       name: 'Matemática',
+      slug: 'matematica',
       category: 'Exatas',
       topics: {
         create: [
@@ -174,6 +185,7 @@ async function main() {
   const subject2 = await prisma.subject.create({
     data: {
       name: 'Português',
+      slug: 'portugues',
       category: 'Linguagens',
       topics: {
         create: [
