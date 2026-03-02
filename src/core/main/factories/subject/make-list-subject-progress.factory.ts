@@ -3,6 +3,7 @@ import { prisma } from '@/src/core/infrastructure/databases/prisma/prisma';
 import { PrismaListSubjectProgressByTargetUserQuery } from '@/src/core/infrastructure/databases/prisma/queries';
 import {
   ZodValidator,
+  slugSchema,
   usernameSchema,
 } from '@/src/core/infrastructure/validation/zod';
 import { makePrismaTopicProgressDtoMapper } from '@/src/core/main/factories/common/mappers/db-to-dto';
@@ -21,10 +22,12 @@ export function makeListSubjectProgress() {
     listSubjectProgressByTargetUserQuery,
   });
 
-  const zodValidator = new ZodValidator(usernameSchema);
+  const usernameValidator = new ZodValidator(usernameSchema);
+  const subjectSlugValidator = new ZodValidator(slugSchema);
 
   return new ListSubjectProgressController({
-    validator: zodValidator,
+    usernameValidator,
+    subjectSlugValidator,
     listSubjectProgressUseCase,
   });
 }
