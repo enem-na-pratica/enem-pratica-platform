@@ -6,7 +6,7 @@ import type { TopicProgressDto } from './topic-progress.dto';
 
 export type ListSubjectProgressInput = {
   targetUsername?: string;
-  subjectName: string;
+  subjectSlug: string;
   requester: Requester;
 };
 
@@ -33,7 +33,7 @@ export class ListSubjectProgressUseCase implements UseCase<
 
   async execute({
     requester,
-    subjectName,
+    subjectSlug,
     targetUsername,
   }: ListSubjectProgressInput): Promise<TopicProgressDto[]> {
     const targetUserId = await this.userAccessService.resolveManagedTargetId({
@@ -43,7 +43,7 @@ export class ListSubjectProgressUseCase implements UseCase<
 
     return this.listSubjectProgressByTargetUserQuery.execute({
       targetUserId,
-      subjectName,
+      subjectSlug,
     });
   }
 }

@@ -42,7 +42,7 @@ export class ListSubjectProgressController implements Controller<
     request: AuthenticatedRequest<void>,
   ): Promise<HttpResponse<TopicProgressDto[] | ErrorResponse>> {
     try {
-      const { subjectName } = request.params! as { subjectName: string };
+      const { subjectSlug } = request.params! as { subjectSlug: string };
       const { username: rawUsername } = request.query ?? {};
 
       const targetUsername =
@@ -52,7 +52,7 @@ export class ListSubjectProgressController implements Controller<
 
       const listSubjectProgress = await this.listSubjectProgressUseCase.execute(
         {
-          subjectName,
+          subjectSlug,
           targetUsername,
           requester: request.requester,
         },
