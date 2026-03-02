@@ -17,7 +17,8 @@ type ListSubjectProgressControllerDeps = {
     ListSubjectProgressInput,
     TopicProgressDto[]
   >;
-  validator: Validator<string>;
+  usernameValidator: Validator<string>;
+  subjectSlugValidator: Validator<string>;
 };
 
 export class ListSubjectProgressController implements Controller<
@@ -28,31 +29,35 @@ export class ListSubjectProgressController implements Controller<
     ListSubjectProgressInput,
     TopicProgressDto[]
   >;
-  private readonly validator: Validator<string>;
+  private readonly usernameValidator: Validator<string>;
+  private readonly subjectSlugValidator: Validator<string>;
 
   constructor({
     listSubjectProgressUseCase,
-    validator,
+    usernameValidator,
+    subjectSlugValidator,
   }: ListSubjectProgressControllerDeps) {
     this.listSubjectProgressUseCase = listSubjectProgressUseCase;
-    this.validator = validator;
+    this.usernameValidator = usernameValidator;
+    this.subjectSlugValidator = subjectSlugValidator;
   }
 
   async handle(
     request: AuthenticatedRequest<void>,
   ): Promise<HttpResponse<TopicProgressDto[] | ErrorResponse>> {
     try {
-      const { subjectName } = request.params! as { subjectName: string };
-      const { username: rawUsername } = request.query ?? {};
+      const { subjectSlug: rawSubjectSlug } = request.params ?? {};
+      const subjectSlug = this.subjectSlugValidator.validate(rawSubjectSlug);
 
+      const { username: rawUsername } = request.query ?? {};
       const targetUsername =
         rawUsername === 'me'
           ? request.requester.username
-          : this.validator.validate(rawUsername);
+          : this.usernameValidator.validate(rawUsername);
 
       const listSubjectProgress = await this.listSubjectProgressUseCase.execute(
         {
-          subjectName,
+          subjectSlug,
           targetUsername,
           requester: request.requester,
         },

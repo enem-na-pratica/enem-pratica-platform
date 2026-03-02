@@ -3,3 +3,4 @@ export * from './subject';
 export * from './topic';
 export * from './user';
 export * from './mock-exam';
+export * from './common';

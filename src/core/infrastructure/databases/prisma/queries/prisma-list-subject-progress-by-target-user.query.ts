@@ -25,15 +25,15 @@ export class PrismaListSubjectProgressByTargetUserQuery implements ListSubjectPr
 
   async execute({
     targetUserId,
-    subjectName,
+    subjectSlug,
   }: {
     targetUserId: string;
-    subjectName: string;
+    subjectSlug: string;
   }): Promise<TopicProgressDto[]> {
     const topics = await this.prisma.topic.findMany({
       where: {
         subject: {
-          name: subjectName,
+          slug: subjectSlug,
         },
       },
       orderBy: {
