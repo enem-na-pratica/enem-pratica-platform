@@ -1,5 +1,7 @@
 import { ValueObject } from '@/src/core/domain/shared';
 
+const SLUG_CONFIG = { MIN: 3, MAX: 50 };
+
 export class Slug extends ValueObject<string> {
   private constructor(value: string) {
     super(value);
@@ -14,8 +16,14 @@ export class Slug extends ValueObject<string> {
   protected validate(value: string): void {
     const slugRegex = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
-    if (!value || value.trim().length === 0) {
-      throw new Error('Slug cannot be empty.');
+    if (!value && typeof value !== 'string') {
+      throw new Error('The slug must be a string.');
+    }
+
+    if (value.length < SLUG_CONFIG.MIN || value.length > SLUG_CONFIG.MAX) {
+      throw new Error(
+        `The slug must be between ${SLUG_CONFIG.MIN} and ${SLUG_CONFIG.MAX} characters long.`,
+      );
     }
 
     if (!slugRegex.test(value)) {
