@@ -46,10 +46,11 @@ export class ListSubjectProgressController implements Controller<
     request: AuthenticatedRequest<void>,
   ): Promise<HttpResponse<TopicProgressDto[] | ErrorResponse>> {
     try {
-      const { subjectSlug: rawSubjectSlug } = request.params ?? {};
+      const { subjectSlug: rawSubjectSlug, username: rawUsername } =
+        request.params ?? {};
+
       const subjectSlug = this.subjectSlugValidator.validate(rawSubjectSlug);
 
-      const { username: rawUsername } = request.query ?? {};
       const targetUsername =
         rawUsername === 'me'
           ? request.requester.username
