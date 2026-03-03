@@ -4,6 +4,7 @@ import { PrismaListSubjectProgressByTargetUserQuery } from '@/src/core/infrastru
 import {
   ZodValidator,
   slugSchema,
+  topicStatusSchema,
   usernameSchema,
 } from '@/src/core/infrastructure/validation/zod';
 import { makePrismaTopicProgressDtoMapper } from '@/src/core/main/factories/common/mappers/db-to-dto';
@@ -24,10 +25,12 @@ export function makeListSubjectProgress() {
 
   const usernameValidator = new ZodValidator(usernameSchema);
   const subjectSlugValidator = new ZodValidator(slugSchema);
+  const statusValidator = new ZodValidator(topicStatusSchema);
 
   return new ListSubjectProgressController({
     usernameValidator,
     subjectSlugValidator,
+    statusValidator,
     listSubjectProgressUseCase,
   });
 }

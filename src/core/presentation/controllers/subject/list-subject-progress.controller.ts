@@ -4,6 +4,7 @@ import type {
   TopicProgressDto,
 } from '@/src/core/application/use-cases/subject/list-subject-progress';
 import { Validator } from '@/src/core/domain/contracts';
+import type { TopicStatus } from '@/src/core/domain/entities';
 import { handleError, ok } from '@/src/core/presentation/helpers';
 import type {
   AuthenticatedRequest,
@@ -19,6 +20,7 @@ type ListSubjectProgressControllerDeps = {
   >;
   usernameValidator: Validator<string>;
   subjectSlugValidator: Validator<string>;
+  statusValidator: Validator<TopicStatus[] | undefined>;
 };
 
 export class ListSubjectProgressController implements Controller<
@@ -31,15 +33,18 @@ export class ListSubjectProgressController implements Controller<
   >;
   private readonly usernameValidator: Validator<string>;
   private readonly subjectSlugValidator: Validator<string>;
+  private readonly statusValidator: Validator<TopicStatus[] | undefined>;
 
   constructor({
     listSubjectProgressUseCase,
     usernameValidator,
     subjectSlugValidator,
+    statusValidator,
   }: ListSubjectProgressControllerDeps) {
     this.listSubjectProgressUseCase = listSubjectProgressUseCase;
     this.usernameValidator = usernameValidator;
     this.subjectSlugValidator = subjectSlugValidator;
+    this.statusValidator = statusValidator;
   }
 
   async handle(
@@ -48,6 +53,11 @@ export class ListSubjectProgressController implements Controller<
     try {
       const { subjectSlug: rawSubjectSlug, username: rawUsername } =
         request.params ?? {};
+
+      const { status: rawStatus } = request.query ?? {};
+
+      const statusArray = rawStatus ? [rawStatus].flat() : undefined;
+      const status = this.statusValidator.validate(statusArray);
 
       const subjectSlug = this.subjectSlugValidator.validate(rawSubjectSlug);
 
@@ -61,6 +71,7 @@ export class ListSubjectProgressController implements Controller<
           subjectSlug,
           targetUsername,
           requester: request.requester,
+          status,
         },
       );
       return ok(listSubjectProgress);
