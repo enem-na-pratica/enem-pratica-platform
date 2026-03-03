@@ -8,7 +8,7 @@ export type Subject = {
   createdAt: Date;
 };
 
-type Topic = {
+export type Topic = {
   id: string;
   title: string;
   position: number;
