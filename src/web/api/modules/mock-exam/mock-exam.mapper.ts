@@ -1,3 +1,5 @@
+import type { KnowledgeArea } from '@/src/web/config';
+
 import type {
   AreaPerformanceDto,
   MockExamDto,
@@ -5,7 +7,6 @@ import type {
 } from './mock-exam.dto';
 import type {
   AreaPerformance,
-  KnowledgeArea,
   KnowledgeAreaLabelKey,
   MockExam,
   UserMockExamsOverview,
