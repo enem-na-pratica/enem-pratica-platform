@@ -1,6 +1,6 @@
 import { TopicStatus } from '@/src/web/config';
 
-export type SubjectDto = {
+export type Subject = {
   id: string;
   name: string;
   slug: string;
@@ -8,7 +8,7 @@ export type SubjectDto = {
   createdAt: Date;
 };
 
-type TopicDto = {
+type Topic = {
   id: string;
   title: string;
   position: number;
@@ -16,7 +16,7 @@ type TopicDto = {
   createdAt: Date;
 };
 
-export type UserTopicProgressDto = {
+export type UserTopicProgress = {
   id: string;
   userId: string;
   topicId: string;
@@ -25,7 +25,7 @@ export type UserTopicProgressDto = {
   createdAt: Date;
 };
 
-export type TopicProgressDto = {
-  topic: TopicDto;
-  progress: UserTopicProgressDto | null;
+export type TopicProgress = {
+  topic: Topic;
+  progress: UserTopicProgress | null;
 };
