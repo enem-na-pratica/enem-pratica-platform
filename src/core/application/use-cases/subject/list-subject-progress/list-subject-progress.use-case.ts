@@ -1,4 +1,5 @@
 import type { UseCase } from '@/src/core/application/common/interfaces';
+import type { TopicStatus } from '@/src/core/domain/entities';
 import type { Requester, UserAccessService } from '@/src/core/domain/services';
 
 import { ListSubjectProgressByTargetUserQuery } from './list-subject-progress-by-target-user.query';
@@ -8,6 +9,7 @@ export type ListSubjectProgressInput = {
   targetUsername?: string;
   subjectSlug: string;
   requester: Requester;
+  status?: TopicStatus[];
 };
 
 type ListSubjectProgressUseCaseDeps = {
@@ -35,6 +37,7 @@ export class ListSubjectProgressUseCase implements UseCase<
     requester,
     subjectSlug,
     targetUsername,
+    status,
   }: ListSubjectProgressInput): Promise<TopicProgressDto[]> {
     const targetUserId = await this.userAccessService.resolveManagedTargetId({
       requester,
@@ -44,6 +47,7 @@ export class ListSubjectProgressUseCase implements UseCase<
     return this.listSubjectProgressByTargetUserQuery.execute({
       targetUserId,
       subjectSlug,
+      status,
     });
   }
 }
