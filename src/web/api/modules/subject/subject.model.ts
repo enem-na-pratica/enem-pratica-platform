@@ -8,7 +8,7 @@ export type SubjectDto = {
   createdAt: Date;
 };
 
-export type TopicDto = {
+type TopicDto = {
   id: string;
   title: string;
   position: number;
