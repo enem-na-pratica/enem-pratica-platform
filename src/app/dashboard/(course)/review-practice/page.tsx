@@ -1,13 +1,30 @@
-import { cookies } from "next/headers";
+import Link from 'next/link';
 
-export default async function MyToBeReviewed() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("auth_token")!;
+import { BackArrow } from '@/src/app/dashboard/(course)/study-tracker/_components/icons';
+import { Header } from '@/src/web/components';
+
+import { ReviewPracticeClient } from './_components/review-practice-client';
+import { fetchSubjects } from './api';
+
+export default async function ReviewPracticePage() {
+  const subjects = await fetchSubjects();
 
   return (
-    <div>
-      <div>Course To Be Reviewed Page / MyToBeReviewed</div>
-      <div>Token: {token.value}</div>
-    </div>
+    <>
+      <Header>
+        <div className="flex items-center gap-4">
+          <Link
+            href="/dashboard"
+            aria-label="Voltar para Dashboard"
+          >
+            <BackArrow />
+          </Link>
+          <h1 className="text-xl font-bold tracking-tight">
+            Revisão e <span className="text-(--accent)">Prática</span>
+          </h1>
+        </div>
+      </Header>
+      <ReviewPracticeClient subjects={subjects} />
+    </>
   );
 }
