@@ -1,13 +1,30 @@
-import { cookies } from "next/headers";
+import Link from 'next/link';
 
-export default async function MyContent() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("auth_token")!;
+import { Header } from '@/src/web/components';
+
+import { BackArrow } from './_components/icons';
+import { StudyTrackerClient } from './_components/study-tracker-client';
+import { fetchSubjects } from './api';
+
+export default async function StudyTrackerPage() {
+  const subjects = await fetchSubjects();
 
   return (
-    <div>
-      <div>Course Content Page / MyContent</div>
-      <div>Token: {token.value}</div>
-    </div>
+    <>
+      <Header>
+        <div className="flex items-center gap-4">
+          <Link
+            href="/dashboard"
+            aria-label="Voltar para Dashboard"
+          >
+            <BackArrow />
+          </Link>
+          <h1 className="text-xl font-bold tracking-tight">
+            Study <span className="text-(--accent)">Tracker</span>
+          </h1>
+        </div>
+      </Header>
+      <StudyTrackerClient subjects={subjects} />
+    </>
   );
 }
