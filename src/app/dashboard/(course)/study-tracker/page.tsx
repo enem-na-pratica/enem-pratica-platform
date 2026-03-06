@@ -20,7 +20,7 @@ export default async function StudyTrackerPage() {
             <BackArrow />
           </Link>
           <h1 className="text-xl font-bold tracking-tight">
-            Study <span className="text-(--accent)">Tracker</span>
+            Acompanhamento de <span className="text-(--accent)">Estudos</span>
           </h1>
         </div>
       </Header>

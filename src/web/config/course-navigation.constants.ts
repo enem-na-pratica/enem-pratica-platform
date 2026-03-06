@@ -1,7 +1,7 @@
 export const COURSE_NAVIGATION_ITEMS = [
   {
-    key: 'content',
-    label: 'Conteúdos',
+    key: 'study-tracker',
+    label: 'Acompanhamento de Estudos',
     icon: '📚',
     description: 'Material de estudo',
   },
