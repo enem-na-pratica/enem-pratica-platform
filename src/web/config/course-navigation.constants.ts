@@ -6,8 +6,8 @@ export const COURSE_NAVIGATION_ITEMS = [
     description: 'Material de estudo',
   },
   {
-    key: 'to-be-reviewed',
-    label: 'Para Revisar',
+    key: 'review-practice',
+    label: 'Revisar & Praticar',
     icon: '⏳',
     description: 'Tópicos pendentes',
   },
