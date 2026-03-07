@@ -11,7 +11,8 @@
     "format": "prettier --check \"src/**/*.{ts,tsx,js,jsx,css,json}\"",
     "format:fix": "prettier --write \"src/**/*.{ts,tsx,js,jsx,css,json}\"",
     "check-all": "npm run format && npm run lint",
-    "stats": "npx tsx scripts/count-lines.ts"
+    "stats": "npx tsx scripts/count-lines.ts",
+    "check": "npx tsx scripts/check-health.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
