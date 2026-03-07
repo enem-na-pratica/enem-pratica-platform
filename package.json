@@ -12,6 +12,7 @@
     "format:fix": "prettier --write \"src/**/*.{ts,tsx,js,jsx,css,json}\"",
     "check-all": "npm run format && npm run lint",
     "stats": "npx tsx scripts/count-lines.ts",
+    "clean": "npx tsx scripts/clean.ts",
     "check": "npx tsx scripts/check-health.ts"
   },
   "dependencies": {
