@@ -22,6 +22,7 @@ model User {
   essays              Essay[]
   mockExams           MockExam[]
   userTopicProgresses UserTopicProgress[]
+  questionSessions    QuestionSession[]
 
   @@index([username])
   @@map("users") // Garante que o nome da tabela no BD seja 'users' (plural snake_case)
@@ -83,6 +84,7 @@ model Topic {
 
   createdAt           DateTime            @default(now())
   userTopicProgresses UserTopicProgress[]
+  questionSessions    QuestionSession[]
 
   @@index([subjectId, position])
   @@map("topics")
@@ -135,6 +137,26 @@ model UserTopicProgress {
 
   @@unique([userId, topicId])
   @@map("user_topic_progress")
+}
+
+model QuestionSession {
+  id String @id @default(uuid())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  topicId String
+  topic   Topic  @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  date        DateTime @default(now())
+  total       Int
+  correct     Int
+  isReviewing Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("question_sessions")
 }
 
 enum Role {
