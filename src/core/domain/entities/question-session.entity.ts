@@ -2,10 +2,10 @@ type QuestionSessionProps = {
   id?: string;
   authorId: string;
   topicId: string;
-  date: Date;
+  date?: Date;
   total: number;
   correct: number;
-  isReviewing: boolean;
+  isReviewing?: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 };
