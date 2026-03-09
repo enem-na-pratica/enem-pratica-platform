@@ -9,7 +9,7 @@ export class UserTopicProgressDtoMapper implements Mapper<
   public map(userTopicProgress: UserTopicProgress): UserTopicProgressDto {
     return {
       id: userTopicProgress.id!,
-      userId: userTopicProgress.userId,
+      authorId: userTopicProgress.authorId,
       topicId: userTopicProgress.topicId,
       status: userTopicProgress.status,
       updatedAt: userTopicProgress.updatedAt.toISOString(),

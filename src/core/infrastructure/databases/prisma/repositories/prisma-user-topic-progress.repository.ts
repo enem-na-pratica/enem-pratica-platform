@@ -28,14 +28,14 @@ export class PrismaUserTopicProgressRepository implements UserTopicProgressRepos
     try {
       const persistedProgress = await this.prisma.userTopicProgress.upsert({
         where: {
-          userId_topicId: {
-            userId: userTopicProgress.userId,
+          authorId_topicId: {
+            authorId: userTopicProgress.authorId,
             topicId: userTopicProgress.topicId,
           },
         },
         update: { status: userTopicProgress.status },
         create: {
-          userId: userTopicProgress.userId,
+          authorId: userTopicProgress.authorId,
           topicId: userTopicProgress.topicId,
           status: userTopicProgress.status,
         },
@@ -71,10 +71,10 @@ export class PrismaUserTopicProgressRepository implements UserTopicProgressRepos
         });
       }
 
-      if (target.includes('userId')) {
+      if (target.includes('authorId')) {
         throw new UserNotFoundError({
-          fieldName: 'userId',
-          entityValue: data.userId,
+          fieldName: 'authorId',
+          entityValue: data.authorId,
         });
       }
     }

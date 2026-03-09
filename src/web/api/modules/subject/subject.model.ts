@@ -18,7 +18,7 @@ export type Topic = {
 
 export type UserTopicProgress = {
   id: string;
-  userId: string;
+  authorId: string;
   topicId: string;
   status: TopicStatus;
   updatedAt: Date;

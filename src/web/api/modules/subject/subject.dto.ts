@@ -16,7 +16,7 @@ export type TopicDto = {
 
 export type UserTopicProgressDto = {
   id: string;
-  userId: string;
+  authorId: string;
   topicId: string;
   status: string;
   updatedAt: string;

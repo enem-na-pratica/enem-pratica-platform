@@ -36,7 +36,7 @@ export class PrismaListSubjectProgressByTargetUserQuery implements ListSubjectPr
     const statusFilter = status
       ? {
           some: {
-            userId: targetUserId,
+            authorId: targetUserId,
             status: { in: status },
           },
         }
@@ -55,7 +55,7 @@ export class PrismaListSubjectProgressByTargetUserQuery implements ListSubjectPr
       include: {
         userTopicProgresses: {
           where: {
-            userId: targetUserId,
+            authorId: targetUserId,
           },
         },
       },

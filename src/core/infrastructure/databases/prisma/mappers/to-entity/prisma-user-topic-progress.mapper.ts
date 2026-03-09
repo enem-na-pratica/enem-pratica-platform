@@ -12,7 +12,7 @@ export class UserTopicProgressEntityMapper implements Mapper<
   map(input: PrismaUserTopicProgress): UserTopicProgress {
     return UserTopicProgress.load({
       id: input.id,
-      userId: input.userId,
+      authorId: input.authorId,
       topicId: input.topicId,
       status: input.status as TopicStatus,
       createdAt: input.createdAt,
