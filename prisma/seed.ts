@@ -216,7 +216,7 @@ async function main() {
     for (let i = 0; i < allTopics.length; i++) {
       await prisma.userTopicProgress.create({
         data: {
-          userId: student.id,
+          authorId: student.id,
           topicId: allTopics[i].id,
           status: statuses[i % statuses.length],
         },

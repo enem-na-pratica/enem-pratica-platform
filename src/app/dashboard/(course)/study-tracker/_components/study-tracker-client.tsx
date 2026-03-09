@@ -50,7 +50,7 @@ export function StudyTrackerClient({ subjects }: { subjects: Subject[] }) {
                 ? { ...tp.progress, status: newStatus, updatedAt: new Date() }
                 : {
                     id: `p-${topicId}`,
-                    userId: 'me',
+                    authorId: 'me',
                     topicId,
                     status: newStatus,
                     updatedAt: new Date(),

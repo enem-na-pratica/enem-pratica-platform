@@ -58,7 +58,7 @@ export class SetTopicStatusUseCase implements UseCase<
     authorId: string;
   }): Promise<UserTopicProgressDto> {
     const topicProgress = UserTopicProgress.create({
-      userId: authorId,
+      authorId: authorId,
       topicId: setTopicStatus.topicId,
       status: setTopicStatus.status,
     });

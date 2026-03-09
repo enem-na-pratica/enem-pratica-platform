@@ -7,7 +7,7 @@ export type TopicStatus = (typeof TOPIC_STATUS)[keyof typeof TOPIC_STATUS];
 
 type UserTopicProgressProps = {
   id?: string;
-  userId: string;
+  authorId: string;
   topicId: string;
   status: TopicStatus;
   updatedAt?: Date;
@@ -22,7 +22,7 @@ type LoadUserTopicProgressProps = Required<UserTopicProgressProps>;
 
 export class UserTopicProgress {
   private _id: string | undefined;
-  private _userId: string;
+  private _authorId: string;
   private _topicId: string;
   private _status: TopicStatus;
   private _updatedAt: Date;
@@ -30,7 +30,7 @@ export class UserTopicProgress {
 
   private constructor(props: UserTopicProgressProps) {
     this._id = props.id;
-    this._userId = props.userId;
+    this._authorId = props.authorId;
     this._topicId = props.topicId;
     this._status = props.status;
     const now = new Date();
@@ -50,8 +50,8 @@ export class UserTopicProgress {
   public get id() {
     return this._id;
   }
-  public get userId() {
-    return this._userId;
+  public get authorId() {
+    return this._authorId;
   }
   public get topicId() {
     return this._topicId;

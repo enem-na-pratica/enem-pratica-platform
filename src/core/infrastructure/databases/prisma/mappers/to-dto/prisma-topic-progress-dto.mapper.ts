@@ -20,7 +20,7 @@ export class PrismaTopicProgressDtoMapper implements Mapper<
       progress: userProgress
         ? {
             id: userProgress.id,
-            userId: userProgress.userId,
+            authorId: userProgress.authorId,
             topicId: userProgress.topicId,
             status: userProgress.status,
             updatedAt: userProgress.updatedAt.toISOString(),
