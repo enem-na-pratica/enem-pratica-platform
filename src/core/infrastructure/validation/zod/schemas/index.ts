@@ -5,3 +5,4 @@ export * from './login.schema';
 export * from './create-mock-exam.schema';
 export * from './set-topic-status.schema';
 export * from './topic-status.schema';
+export * from './create-question-session.schema';
