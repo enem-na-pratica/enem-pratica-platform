@@ -3,3 +3,4 @@ export * from './prisma-user.repository';
 export * from './prisma-student-teacher.repository';
 export * from './prisma-mock-exam.repository';
 export * from './prisma-user-topic-progress.repository';
+export * from './prisma-question-session.repository';
