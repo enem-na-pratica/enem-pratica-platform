@@ -151,7 +151,7 @@ model QuestionSession {
   date        DateTime @default(now())
   total       Int
   correct     Int
-  isReviewing Boolean  @default(false)
+  isReviewed Boolean  @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

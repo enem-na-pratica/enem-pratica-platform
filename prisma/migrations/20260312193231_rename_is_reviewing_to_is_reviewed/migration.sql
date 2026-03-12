@@ -1,0 +1,1 @@
+ALTER TABLE "question_sessions" RENAME COLUMN "isReviewing" TO "isReviewed";
