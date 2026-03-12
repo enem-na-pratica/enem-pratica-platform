@@ -64,7 +64,7 @@ export class CreateQuestionSessionUseCase implements UseCase<
       date: questionSessionData.date,
       total: questionSessionData.total,
       correct: questionSessionData.correct,
-      isReviewing: questionSessionData.isReviewing,
+      isReviewed: questionSessionData.isReviewed,
     });
 
     const createdQuestionSession =

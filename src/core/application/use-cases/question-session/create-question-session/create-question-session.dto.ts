@@ -4,5 +4,5 @@ export type CreateQuestionSessionDto = {
   date?: Date;
   total: number;
   correct: number;
-  isReviewing?: boolean;
+  isReviewed?: boolean;
 };

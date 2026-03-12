@@ -5,7 +5,7 @@ type QuestionSessionProps = {
   date?: Date;
   total: number;
   correct: number;
-  isReviewing?: boolean;
+  isReviewed?: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 };
@@ -34,7 +34,7 @@ export class QuestionSession {
   private _date: Date;
   private _total: number;
   private _correct: number;
-  private _isReviewing: boolean;
+  private _isReviewed: boolean;
   private _createdAt: Date;
   private _updatedAt: Date;
 
@@ -48,7 +48,7 @@ export class QuestionSession {
     this._date = props.date || now;
     this._total = props.total;
     this._correct = props.correct;
-    this._isReviewing = props.isReviewing ?? false;
+    this._isReviewed = props.isReviewed ?? false;
     this._createdAt = props.createdAt || now;
     this._updatedAt = props.updatedAt || this._createdAt;
   }
@@ -80,8 +80,8 @@ export class QuestionSession {
   public get correct(): number {
     return this._correct;
   }
-  public get isReviewing(): boolean {
-    return this._isReviewing;
+  public get isReviewed(): boolean {
+    return this._isReviewed;
   }
   public get createdAt(): Date {
     return this._createdAt;
@@ -101,7 +101,7 @@ export class QuestionSession {
   }
 
   public get nextReviewDate(): Date | null {
-    if (this._total === 0 || this._isReviewing) {
+    if (this._total === 0 || this._isReviewed) {
       return null;
     }
 

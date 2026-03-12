@@ -26,7 +26,7 @@ export class PrismaQuestionSessionRepository implements QuestionSessionRepositor
         date: questionSession.date,
         total: questionSession.total,
         correct: questionSession.correct,
-        isReviewing: questionSession.isReviewing,
+        isReviewed: questionSession.isReviewed,
         author: { connect: { id: questionSession.authorId } },
         topic: { connect: { id: questionSession.topicId } },
       },

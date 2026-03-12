@@ -14,7 +14,7 @@ export class QuestionSessionEntityMapper implements Mapper<
       date: input.date,
       total: input.total,
       correct: input.correct,
-      isReviewing: input.isReviewing,
+      isReviewed: input.isReviewed,
       createdAt: input.createdAt,
       updatedAt: input.updatedAt,
     });

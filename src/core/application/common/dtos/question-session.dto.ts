@@ -5,7 +5,7 @@ export type QuestionSessionDto = {
   date: string;
   total: number;
   correct: number;
-  isReviewing: boolean;
+  isReviewed: boolean;
   incorrect: number;
   performance: number;
   nextReviewDate: string | null;
