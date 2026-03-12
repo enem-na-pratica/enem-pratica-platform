@@ -15,6 +15,9 @@ export class QuestionSessionDtoMapper implements Mapper<
       total: questionSession.total,
       correct: questionSession.correct,
       isReviewing: questionSession.isReviewing,
+      incorrect: questionSession.incorrect,
+      performance: questionSession.performance,
+      nextReviewDate: questionSession.nextReviewDate?.toISOString() ?? null,
       createdAt: questionSession.createdAt.toISOString(),
       updatedAt: questionSession.updatedAt.toISOString(),
     };
