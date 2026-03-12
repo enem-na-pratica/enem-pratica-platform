@@ -6,6 +6,9 @@ export type QuestionSessionDto = {
   total: number;
   correct: number;
   isReviewing: boolean;
+  incorrect: number;
+  performance: number;
+  nextReviewDate: string | null;
   createdAt: string;
   updatedAt: string;
 };
