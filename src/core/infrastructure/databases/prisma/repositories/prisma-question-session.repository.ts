@@ -1,6 +1,7 @@
 import type { Mapper } from '@/src/core/domain/contracts/mappers';
 import type { QuestionSessionRepository } from '@/src/core/domain/contracts/repositories';
 import type { QuestionSession } from '@/src/core/domain/entities';
+import { NotFoundError } from '@/src/core/domain/errors';
 import type {
   PrismaClient,
   QuestionSession as PrismaQuestionSession,
@@ -35,8 +36,19 @@ export class PrismaQuestionSessionRepository implements QuestionSessionRepositor
     return this.mapper.map(newQuestionSession);
   }
 
-  getById(questionSessionId: string): Promise<QuestionSession> {
-    throw new Error('Method not implemented.');
+  async getById(questionSessionId: string): Promise<QuestionSession> {
+    const questionSession = await this.prisma.questionSession.findUnique({
+      where: { id: questionSessionId },
+    });
+
+    if (!questionSession)
+      throw new NotFoundError({
+        entityName: 'QuestionSession',
+        fieldName: 'id',
+        entityValue: questionSessionId,
+      });
+
+    return this.mapper.map(questionSession);
   }
 
   setIsReviewed({
