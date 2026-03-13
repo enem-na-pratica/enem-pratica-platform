@@ -6,10 +6,16 @@ import type {
 } from '@/src/core/domain/contracts/validation';
 import { ValidationError } from '@/src/core/domain/errors';
 
-export class ZodValidator<T> implements Validator<T> {
-  constructor(private readonly schema: ZodType<T>) {}
+/**
+ * {@link Validator} backed by a Zod schema.
+ *
+ * All field errors are collected and thrown together as a single
+ * {@link ValidationError} — callers receive every problem at once.
+ */
+export class ZodValidator<TOutput> implements Validator<TOutput> {
+  constructor(private readonly schema: ZodType<TOutput>) {}
 
-  validate(input: T): T {
+  validate(input: unknown): TOutput {
     const result = this.schema.safeParse(input);
 
     if (result.success) return result.data;
