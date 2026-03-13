@@ -43,11 +43,18 @@ export class SetIsReviewedUseCase implements UseCase<
     const questionSession = await this.questionSessionRepository.getById(
       data.questionSessionId,
     );
+
     const authorId = await this.userAccessService.resolveManagedTargetId({
       requester,
       targetUsername: questionSession.authorId,
     });
 
-    throw new Error('Method not implemented.');
+    const questionSessionNew =
+      await this.questionSessionRepository.setIsReviewed({
+        questionSessionId: authorId,
+        status: data.isReviewed,
+      });
+
+    return this.mapper.map(questionSessionNew);
   }
 }
