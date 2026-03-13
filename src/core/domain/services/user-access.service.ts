@@ -13,6 +13,12 @@ export type Requester = {
   role: Role;
 };
 
+type ResolveTargetParams = {
+  requester: Requester;
+  targetUsername?: string;
+  targetId?: string;
+};
+
 type UserAccessServiceDeps = {
   userRepository: UserRepository;
   studentTeacherRepository: StudentTeacherRepository;
@@ -40,17 +46,8 @@ export class UserAccessService {
    * Useful for read-only or administrative operations where
    * higher roles are allowed to access any subordinate user.
    */
-  async resolveTargetId({
-    requester,
-    targetUsername,
-  }: {
-    requester: Requester;
-    targetUsername?: string;
-  }): Promise<string> {
-    return this.resolveTargetUser({
-      requester,
-      targetUsername,
-    });
+  async resolveTargetId(params: ResolveTargetParams): Promise<string> {
+    return this.resolveTargetUser(params);
   }
 
   /**
@@ -60,17 +57,9 @@ export class UserAccessService {
    * If the requester is a Teacher, they are only allowed to act
    * on students explicitly assigned to them.
    */
-  async resolveManagedTargetId({
-    requester,
-    targetUsername,
-  }: {
-    requester: Requester;
-    targetUsername?: string;
-  }): Promise<string> {
-    const authorId = await this.resolveTargetUser({
-      requester,
-      targetUsername,
-    });
+  async resolveManagedTargetId(params: ResolveTargetParams): Promise<string> {
+    const authorId = await this.resolveTargetUser(params);
+    const { requester } = params;
 
     if (
       authorId !== requester.id &&
@@ -91,16 +80,16 @@ export class UserAccessService {
   private async resolveTargetUser({
     requester,
     targetUsername,
-  }: {
-    requester: Requester;
-    targetUsername?: string;
-  }): Promise<string> {
+    targetId,
+  }: ResolveTargetParams): Promise<string> {
     // Use case: the requester is acting on their own behalf
-    if (!targetUsername || targetUsername === requester.username) {
-      return requester.id;
-    }
+    if (!targetUsername && !targetId) return requester.id;
+    if (targetUsername === requester.username) return requester.id;
+    if (targetId === requester.id) return requester.id;
 
-    const targetUser = await this.findUserByUsernameOrThrow(targetUsername);
+    const targetUser = targetId
+      ? await this.userRepository.getById(targetId)
+      : await this.findUserByUsernameOrThrow(targetUsername!);
 
     this.ensureRequesterHasPermission({ requester, targetUser });
 

@@ -34,4 +34,18 @@ export class PrismaQuestionSessionRepository implements QuestionSessionRepositor
 
     return this.mapper.map(newQuestionSession);
   }
+
+  getById(questionSessionId: string): Promise<QuestionSession> {
+    throw new Error('Method not implemented.');
+  }
+
+  setIsReviewed({
+    questionSessionId,
+    status,
+  }: {
+    questionSessionId: string;
+    status: boolean;
+  }): Promise<QuestionSession> {
+    throw new Error('Method not implemented.');
+  }
 }
