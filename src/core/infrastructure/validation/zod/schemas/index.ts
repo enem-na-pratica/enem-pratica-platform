@@ -6,3 +6,4 @@ export * from './create-mock-exam.schema';
 export * from './set-topic-status.schema';
 export * from './topic-status.schema';
 export * from './create-question-session.schema';
+export * from './set-is-reviewed.schema';
