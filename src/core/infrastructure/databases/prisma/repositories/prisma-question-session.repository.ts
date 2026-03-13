@@ -51,13 +51,18 @@ export class PrismaQuestionSessionRepository implements QuestionSessionRepositor
     return this.mapper.map(questionSession);
   }
 
-  setIsReviewed({
+  async setIsReviewed({
     questionSessionId,
     status,
   }: {
     questionSessionId: string;
     status: boolean;
   }): Promise<QuestionSession> {
-    throw new Error('Method not implemented.');
+    const questionSession = await this.prisma.questionSession.update({
+      where: { id: questionSessionId },
+      data: { isReviewed: status },
+    });
+
+    return this.mapper.map(questionSession);
   }
 }
