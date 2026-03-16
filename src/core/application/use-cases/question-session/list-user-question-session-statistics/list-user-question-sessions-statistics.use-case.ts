@@ -29,9 +29,16 @@ export class ListUserQuestionSessionsStatisticsUseCase implements UseCase<
     this.listQuestionSessionsByAuthorQuery = listQuestionSessionsByAuthorQuery;
   }
 
-  async execute(
-    input: ListUserQuestionSessionsStatisticsInput,
-  ): Promise<UserQuestionSessionsOverviewDto> {
+  async execute({
+    requester,
+    authorUsername,
+  }: ListUserQuestionSessionsStatisticsInput): Promise<UserQuestionSessionsOverviewDto> {
+    const authorId = await this.userAccessService.resolveManagedTargetId({
+      requester,
+      targetUsername: authorUsername,
+    });
+    const listQuestionSessions =
+      await this.listQuestionSessionsByAuthorQuery.execute(authorId);
     throw new Error('Method not implemented.');
   }
 }
