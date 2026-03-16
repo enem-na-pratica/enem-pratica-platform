@@ -13,8 +13,16 @@ export type QuestionSessionWithTopicAndSubjectDto = DeepPrettify<
 >;
 
 export type QuestionSessionStatisticsDto = {
-  totalCount: number;
-  globalAverage: number;
+  totalSessions: number;
+  totalQuestions: number;
+  totalCorrect: number;
+  overallAccuracy: number;
+  weeklyProgress: {
+    totalQuestions: number;
+    accuracy: number;
+  };
+  studyStreak: number;
+  pendingReviewsCount: number;
 };
 
 export type UserQuestionSessionsOverviewDto = {
