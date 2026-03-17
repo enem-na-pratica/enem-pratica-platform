@@ -16,12 +16,12 @@ type CreateQuestionSessionProps = Prettify<
 
 type LoadQuestionSessionProps = Prettify<Required<QuestionSessionProps>>;
 
-const REVIEW_THRESHOLDS = {
+export const REVIEW_THRESHOLDS = {
   EXCELLENT: 0.9, // 90%
   GOOD: 0.75, // 75%
 } as const;
 
-const REVIEW_DAYS = {
+export const REVIEW_DAYS = {
   EXCELLENT: 21,
   GOOD: 14,
   DEFAULT: 7,

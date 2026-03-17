@@ -5,3 +5,4 @@ export * from './prisma-list-students-by-instructor.query';
 export * from './prisma-list-mock-exams-by-author.query';
 export * from './prisma-list-subjects.query';
 export * from './prisma-list-subject-progress-by-target-user.query';
+export * from './prisma-list-question-session-by-author.query';
