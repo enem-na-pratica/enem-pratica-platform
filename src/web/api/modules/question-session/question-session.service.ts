@@ -1,7 +1,20 @@
 import { HttpClient } from '@/src/web/api/shared';
 
+import { QuestionSessionDto } from './question-session.dto';
+import { QuestionSessionMapper } from './question-session.mapper';
+import { QuestionSession } from './question-session.model';
+
 type QuestionSessionServiceDeps = {
   httpClient: HttpClient;
+};
+
+type CreateQuestionSessionDto = {
+  authorUsername?: string;
+  topicId: string;
+  date?: Date;
+  total: number;
+  correct: number;
+  isReviewed?: boolean;
 };
 
 export class QuestionSessionService {
@@ -9,5 +22,16 @@ export class QuestionSessionService {
 
   constructor(deps: QuestionSessionServiceDeps) {
     this.httpClient = deps.httpClient;
+  }
+
+  async create(
+    dataQuestionSession: CreateQuestionSessionDto,
+  ): Promise<QuestionSession> {
+    const data = await this.httpClient.post<QuestionSessionDto>({
+      endpoint: '/question-sessions',
+      options: { data: dataQuestionSession },
+    });
+
+    return QuestionSessionMapper.toModel(data);
   }
 }
