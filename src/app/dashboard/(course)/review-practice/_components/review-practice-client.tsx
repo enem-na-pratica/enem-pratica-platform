@@ -2,13 +2,10 @@
 
 import { useState } from 'react';
 
-import {
-  ChevronIcon,
-  SpinnerIcon,
-} from '@/src/app/dashboard/(course)/study-tracker/_components/icons';
 import type { Subject, TopicProgress } from '@/src/web/api';
 
 import { fetchTopicsBySubjectAndStatus } from '../api';
+import { ChevronIcon, SpinnerIcon } from './icons';
 
 function EmptyColumn({ message }: { message: string }) {
   return (
