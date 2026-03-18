@@ -17,6 +17,11 @@ type CreateQuestionSessionDto = {
   isReviewed?: boolean;
 };
 
+type SetIsReviewedDto = {
+  questionSessionId: string;
+  isReviewed: boolean;
+};
+
 export class QuestionSessionService {
   private readonly httpClient: HttpClient;
 
@@ -30,6 +35,18 @@ export class QuestionSessionService {
     const data = await this.httpClient.post<QuestionSessionDto>({
       endpoint: '/question-sessions',
       options: { data: dataQuestionSession },
+    });
+
+    return QuestionSessionMapper.toModel(data);
+  }
+
+  async setIsReviewed({
+    isReviewed,
+    questionSessionId,
+  }: SetIsReviewedDto): Promise<QuestionSession> {
+    const data = await this.httpClient.post<QuestionSessionDto>({
+      endpoint: '/question-sessions/:questionSessionId',
+      options: { data: { isReviewed }, params: { questionSessionId } },
     });
 
     return QuestionSessionMapper.toModel(data);
