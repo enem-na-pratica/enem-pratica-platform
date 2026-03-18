@@ -12,7 +12,7 @@ export const COURSE_NAVIGATION_ITEMS = [
     description: 'Tópicos pendentes',
   },
   {
-    key: 'review',
+    key: 'question-sessions',
     label: 'Revisão',
     icon: '🔄',
     description: 'Praticar o que aprendeu',
