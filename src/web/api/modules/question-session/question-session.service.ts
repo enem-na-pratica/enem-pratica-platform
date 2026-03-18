@@ -1,8 +1,14 @@
 import { HttpClient } from '@/src/web/api/shared';
 
-import { QuestionSessionDto } from './question-session.dto';
+import {
+  QuestionSessionDto,
+  UserQuestionSessionsOverviewDto,
+} from './question-session.dto';
 import { QuestionSessionMapper } from './question-session.mapper';
-import { QuestionSession } from './question-session.model';
+import {
+  QuestionSession,
+  UserQuestionSessionsOverview,
+} from './question-session.model';
 
 type QuestionSessionServiceDeps = {
   httpClient: HttpClient;
@@ -44,11 +50,22 @@ export class QuestionSessionService {
     isReviewed,
     questionSessionId,
   }: SetIsReviewedDto): Promise<QuestionSession> {
-    const data = await this.httpClient.post<QuestionSessionDto>({
+    const data = await this.httpClient.patch<QuestionSessionDto>({
       endpoint: '/question-sessions/:questionSessionId',
       options: { data: { isReviewed }, params: { questionSessionId } },
     });
 
     return QuestionSessionMapper.toModel(data);
+  }
+
+  async listUserQuestionSessionsStatistics(
+    username: string,
+  ): Promise<UserQuestionSessionsOverview> {
+    const data = await this.httpClient.get<UserQuestionSessionsOverviewDto>({
+      endpoint: '/question-sessions/users/:username',
+      options: { params: { username } },
+    });
+
+    return QuestionSessionMapper.toOverviewModel(data);
   }
 }
