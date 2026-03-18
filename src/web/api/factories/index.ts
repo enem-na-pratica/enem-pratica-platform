@@ -5,3 +5,4 @@ export * from './make-user-service.factory';
 export * from './make-mock-exam-service.factory';
 export * from './make-subject-service.factory';
 export * from './make-user-topic-progress-service.factory';
+export * from './make-question-session-service.factory';
