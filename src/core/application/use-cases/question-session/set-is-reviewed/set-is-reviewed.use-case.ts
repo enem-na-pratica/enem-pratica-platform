@@ -46,7 +46,7 @@ export class SetIsReviewedUseCase implements UseCase<
 
     const authorId = await this.userAccessService.resolveManagedTargetId({
       requester,
-      targetUsername: questionSession.authorId,
+      targetId: questionSession.authorId,
     });
 
     const questionSessionNew =
