@@ -1,11 +1,12 @@
+import type { EssayDto } from '@/src/core/application/common/dtos';
 import type { UseCase } from '@/src/core/application/common/interfaces';
-import type {
-  UserEssaysOverviewDto,
-  EssayStatisticsDto
-} from './user-essays-overview.dto';
+import type { Requester, UserAccessService } from '@/src/core/domain/services';
+
 import type { ListEssaysByAuthorQuery } from './list-essays-by-author.query';
-import type { EssayDto } from "@/src/core/application/common/dtos";
-import type { UserAccessService, Requester } from '@/src/core/domain/services';
+import type {
+  EssayStatisticsDto,
+  UserEssaysOverviewDto,
+} from './user-essays-overview.dto';
 
 export type ListUserEssaysStatisticsInput = {
   authorUsername?: string;
@@ -15,10 +16,12 @@ export type ListUserEssaysStatisticsInput = {
 type ListUserEssaysStatisticsUseCaseDeps = {
   userAccessService: UserAccessService;
   listEssaysByAuthorQuery: ListEssaysByAuthorQuery;
-}
+};
 
-export class ListUserEssaysStatisticsUseCase
-  implements UseCase<ListUserEssaysStatisticsInput, UserEssaysOverviewDto> {
+export class ListUserEssaysStatisticsUseCase implements UseCase<
+  ListUserEssaysStatisticsInput,
+  UserEssaysOverviewDto
+> {
   private readonly userAccessService: UserAccessService;
   private readonly listEssaysByAuthorQuery: ListEssaysByAuthorQuery;
 
@@ -32,11 +35,11 @@ export class ListUserEssaysStatisticsUseCase
 
   async execute({
     authorUsername,
-    requester
+    requester,
   }: ListUserEssaysStatisticsInput): Promise<UserEssaysOverviewDto> {
     const authorId = await this.userAccessService.resolveManagedTargetId({
       requester,
-      targetUsername: authorUsername
+      targetIdentifier: authorUsername,
     });
 
     const essays = await this.listEssaysByAuthorQuery.execute(authorId);
@@ -59,12 +62,15 @@ export class ListUserEssaysStatisticsUseCase
 
     const initialTotals = { total: 0, c1: 0, c2: 0, c3: 0, c4: 0, c5: 0 };
 
-    const totals = essays.reduce((acc, curr) => {
-      (Object.keys(acc) as (keyof typeof acc)[]).forEach(key => {
-        acc[key] += curr.grades[key];
-      });
-      return acc;
-    }, { ...initialTotals });
+    const totals = essays.reduce(
+      (acc, curr) => {
+        (Object.keys(acc) as (keyof typeof acc)[]).forEach((key) => {
+          acc[key] += curr.grades[key];
+        });
+        return acc;
+      },
+      { ...initialTotals },
+    );
 
     return {
       totalCount,

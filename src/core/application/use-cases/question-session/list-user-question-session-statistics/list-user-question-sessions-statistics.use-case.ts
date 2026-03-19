@@ -42,7 +42,7 @@ export class ListUserQuestionSessionsStatisticsUseCase implements UseCase<
   }: ListUserQuestionSessionsStatisticsInput): Promise<UserQuestionSessionsOverviewDto> {
     const authorId = await this.userAccessService.resolveManagedTargetId({
       requester,
-      targetUsername: authorUsername,
+      targetIdentifier: authorUsername,
     });
 
     const sessions =

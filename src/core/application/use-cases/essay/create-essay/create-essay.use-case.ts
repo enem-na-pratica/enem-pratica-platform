@@ -1,10 +1,11 @@
+import type { EssayDto } from '@/src/core/application/common/dtos';
 import type { UseCase } from '@/src/core/application/common/interfaces';
-import type { CreateEssayDto } from './create-essay.dto';
-import type { EssayDto } from "@/src/core/application/common/dtos";
-import type { EssayRepository } from '@/src/core/domain/contracts/repositories';
 import type { Mapper } from '@/src/core/domain/contracts/mappers';
+import type { EssayRepository } from '@/src/core/domain/contracts/repositories';
 import { Essay } from '@/src/core/domain/entities';
-import type { UserAccessService, Requester } from '@/src/core/domain/services';
+import type { Requester, UserAccessService } from '@/src/core/domain/services';
+
+import type { CreateEssayDto } from './create-essay.dto';
 
 export type CreateEssayInput = {
   data: CreateEssayDto;
@@ -15,7 +16,7 @@ type CreateEssayUseCaseDeps = {
   essayRepository: EssayRepository;
   userAccessService: UserAccessService;
   mapper: Mapper<Essay, EssayDto>;
-}
+};
 
 export class CreateEssayUseCase implements UseCase<CreateEssayInput, EssayDto> {
   private readonly essayRepository: EssayRepository;
@@ -25,7 +26,7 @@ export class CreateEssayUseCase implements UseCase<CreateEssayInput, EssayDto> {
   constructor({
     essayRepository,
     userAccessService,
-    mapper
+    mapper,
   }: CreateEssayUseCaseDeps) {
     this.essayRepository = essayRepository;
     this.userAccessService = userAccessService;
@@ -35,7 +36,7 @@ export class CreateEssayUseCase implements UseCase<CreateEssayInput, EssayDto> {
   async execute({ data, requester }: CreateEssayInput): Promise<EssayDto> {
     const authorId = await this.userAccessService.resolveManagedTargetId({
       requester,
-      targetUsername: data.authorUsername
+      targetIdentifier: data.authorUsername,
     });
 
     return await this.persistEssay({ essayData: data, authorId });
@@ -43,7 +44,7 @@ export class CreateEssayUseCase implements UseCase<CreateEssayInput, EssayDto> {
 
   private async persistEssay({
     essayData,
-    authorId
+    authorId,
   }: {
     essayData: CreateEssayDto;
     authorId: string;

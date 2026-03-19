@@ -41,7 +41,7 @@ export class ListSubjectProgressUseCase implements UseCase<
   }: ListSubjectProgressInput): Promise<TopicProgressDto[]> {
     const targetUserId = await this.userAccessService.resolveManagedTargetId({
       requester,
-      targetUsername,
+      targetIdentifier: targetUsername,
     });
 
     return this.listSubjectProgressByTargetUserQuery.execute({
