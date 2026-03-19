@@ -44,14 +44,14 @@ export class SetIsReviewedUseCase implements UseCase<
       data.questionSessionId,
     );
 
-    const authorId = await this.userAccessService.resolveManagedTargetId({
+    await this.userAccessService.resolveManagedTargetId({
       requester,
-      targetId: questionSession.authorId,
+      targetIdentifier: questionSession.authorId,
     });
 
     const questionSessionNew =
       await this.questionSessionRepository.setIsReviewed({
-        questionSessionId: authorId,
+        questionSessionId: data.questionSessionId,
         status: data.isReviewed,
       });
 
