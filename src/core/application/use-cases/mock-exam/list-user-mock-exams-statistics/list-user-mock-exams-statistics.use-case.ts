@@ -1,12 +1,16 @@
+import type { MockExamDto } from '@/src/core/application/common/dtos';
 import type { UseCase } from '@/src/core/application/common/interfaces';
-import type { UserAccessService, Requester } from '@/src/core/domain/services';
-import type {
-  UserMockExamsOverviewDto,
-  MockExamStatisticsDto
-} from './user-mock-exams-overview.dto';
+import {
+  KNOWLEDGE_AREA_MAP,
+  KnowledgeAreaLabelKey,
+} from '@/src/core/domain/entities';
+import type { Requester, UserAccessService } from '@/src/core/domain/services';
+
 import type { ListMockExamsByAuthorQuery } from './list-mock-exams-by-author.query';
-import type { MockExamDto } from "@/src/core/application/common/dtos";
-import { KNOWLEDGE_AREA_MAP, KnowledgeAreaLabelKey } from '@/src/core/domain/entities';
+import type {
+  MockExamStatisticsDto,
+  UserMockExamsOverviewDto,
+} from './user-mock-exams-overview.dto';
 
 export type ListUserMockExamsStatisticsInput = {
   authorUsername?: string;
@@ -16,14 +20,16 @@ export type ListUserMockExamsStatisticsInput = {
 type ListUserMockExamsStatisticsUseCaseDeps = {
   userAccessService: UserAccessService;
   listMockExamsByAuthorQuery: ListMockExamsByAuthorQuery;
-}
+};
 
 const KNOWLEDGE_AREA_KEYS = Object.keys(
-  KNOWLEDGE_AREA_MAP
+  KNOWLEDGE_AREA_MAP,
 ) as KnowledgeAreaLabelKey[];
 
-export class ListUserMockExamsStatisticsUseCase
-  implements UseCase<ListUserMockExamsStatisticsInput, UserMockExamsOverviewDto> {
+export class ListUserMockExamsStatisticsUseCase implements UseCase<
+  ListUserMockExamsStatisticsInput,
+  UserMockExamsOverviewDto
+> {
   private readonly userAccessService: UserAccessService;
   private readonly listMockExamsByAuthorQuery: ListMockExamsByAuthorQuery;
 
@@ -37,12 +43,11 @@ export class ListUserMockExamsStatisticsUseCase
 
   async execute({
     requester,
-    authorUsername
-  }: ListUserMockExamsStatisticsInput
-  ): Promise<UserMockExamsOverviewDto> {
+    authorUsername,
+  }: ListUserMockExamsStatisticsInput): Promise<UserMockExamsOverviewDto> {
     const authorId = await this.userAccessService.resolveManagedTargetId({
       requester,
-      targetUsername: authorUsername
+      targetIdentifier: authorUsername,
     });
 
     const mockExams = await this.listMockExamsByAuthorQuery.execute(authorId);
@@ -64,18 +69,27 @@ export class ListUserMockExamsStatisticsUseCase
     let sumInterpretation = 0;
     let sumKnowledgeGap = 0;
 
-    const areaTotals = KNOWLEDGE_AREA_KEYS.reduce((acc, area) => {
-      acc[area] = { performanceSum: 0, correctSum: 0, criticalSum: 0 };
-      return acc;
-    }, {} as Record<KnowledgeAreaLabelKey, { performanceSum: number; correctSum: number; criticalSum: number }>);
+    const areaTotals = KNOWLEDGE_AREA_KEYS.reduce(
+      (acc, area) => {
+        acc[area] = { performanceSum: 0, correctSum: 0, criticalSum: 0 };
+        return acc;
+      },
+      {} as Record<
+        KnowledgeAreaLabelKey,
+        { performanceSum: number; correctSum: number; criticalSum: number }
+      >,
+    );
 
     mockExams.forEach((exam) => {
       KNOWLEDGE_AREA_KEYS.forEach((areaKey) => {
         const data = exam.performances[areaKey];
 
-        areaTotals[areaKey].performanceSum += data.statistics.overallResult.performanceRate;
-        areaTotals[areaKey].correctSum += data.statistics.overallResult.correctAnswers;
-        areaTotals[areaKey].criticalSum += data.statistics.qualityAssessment.criticalErrors;
+        areaTotals[areaKey].performanceSum +=
+          data.statistics.overallResult.performanceRate;
+        areaTotals[areaKey].correctSum +=
+          data.statistics.overallResult.correctAnswers;
+        areaTotals[areaKey].criticalSum +=
+          data.statistics.qualityAssessment.criticalErrors;
 
         sumGlobalPerformance += data.statistics.overallResult.performanceRate;
         sumDistraction += data.statistics.errorAnalysis.distractionErrors;
@@ -89,14 +103,18 @@ export class ListUserMockExamsStatisticsUseCase
     return {
       totalMockExams,
       globalAveragePerformance: sumGlobalPerformance / totalDataPoints,
-      performancePerArea: KNOWLEDGE_AREA_KEYS.reduce((acc, area) => {
-        acc[area] = {
-          averagePerformanceRate: areaTotals[area].performanceSum / totalMockExams,
-          averageCorrectAnswers: areaTotals[area].correctSum / totalMockExams,
-          totalCriticalErrors: areaTotals[area].criticalSum,
-        };
-        return acc;
-      }, {} as MockExamStatisticsDto["performancePerArea"]),
+      performancePerArea: KNOWLEDGE_AREA_KEYS.reduce(
+        (acc, area) => {
+          acc[area] = {
+            averagePerformanceRate:
+              areaTotals[area].performanceSum / totalMockExams,
+            averageCorrectAnswers: areaTotals[area].correctSum / totalMockExams,
+            totalCriticalErrors: areaTotals[area].criticalSum,
+          };
+          return acc;
+        },
+        {} as MockExamStatisticsDto['performancePerArea'],
+      ),
       errorPrevalence: {
         distractionAverage: sumDistraction / totalMockExams,
         interpretationAverage: sumInterpretation / totalMockExams,
@@ -110,14 +128,17 @@ export class ListUserMockExamsStatisticsUseCase
       totalMockExams: 0,
       globalAveragePerformance: 0,
 
-      performancePerArea: KNOWLEDGE_AREA_KEYS.reduce((acc, area) => {
-        acc[area] = {
-          averagePerformanceRate: 0,
-          averageCorrectAnswers: 0,
-          totalCriticalErrors: 0,
-        };
-        return acc;
-      }, {} as MockExamStatisticsDto["performancePerArea"]),
+      performancePerArea: KNOWLEDGE_AREA_KEYS.reduce(
+        (acc, area) => {
+          acc[area] = {
+            averagePerformanceRate: 0,
+            averageCorrectAnswers: 0,
+            totalCriticalErrors: 0,
+          };
+          return acc;
+        },
+        {} as MockExamStatisticsDto['performancePerArea'],
+      ),
 
       errorPrevalence: {
         distractionAverage: 0,

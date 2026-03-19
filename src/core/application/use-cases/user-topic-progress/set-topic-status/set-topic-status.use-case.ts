@@ -44,7 +44,7 @@ export class SetTopicStatusUseCase implements UseCase<
   }: SetTopicStatusInput): Promise<UserTopicProgressDto> {
     const authorId = await this.userAccessService.resolveManagedTargetId({
       requester,
-      targetUsername: data.authorUsername,
+      targetIdentifier: data.authorUsername,
     });
 
     return await this.persistEssay({ setTopicStatus: data, authorId });

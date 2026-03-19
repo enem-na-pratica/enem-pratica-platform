@@ -42,7 +42,7 @@ export class CreateQuestionSessionUseCase implements UseCase<
   }: CreateQuestionSessionInput): Promise<QuestionSessionDto> {
     const authorId = await this.userAccessService.resolveManagedTargetId({
       requester,
-      targetUsername: data.authorUsername,
+      targetIdentifier: data.authorUsername,
     });
 
     return await this.persistQuestionSession({

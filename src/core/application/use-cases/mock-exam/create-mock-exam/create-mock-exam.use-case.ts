@@ -1,21 +1,22 @@
-import type { UseCase } from '@/src/core/application/common/interfaces';
 import type { MockExamDto } from '@/src/core/application/common/dtos';
-import type { CreateMockExamDto } from './create-mock-exam.dto';
+import type { UseCase } from '@/src/core/application/common/interfaces';
 import type { MockExamRepository } from '@/src/core/domain/contracts';
 import type { Mapper } from '@/src/core/domain/contracts/mappers';
-import type { UserAccessService, Requester } from '@/src/core/domain/services';
 import { MockExam } from '@/src/core/domain/entities';
+import type { Requester, UserAccessService } from '@/src/core/domain/services';
+
+import type { CreateMockExamDto } from './create-mock-exam.dto';
 
 type CreateMockExamUseCaseDeps = {
   mockExamRepository: MockExamRepository;
   userAccessService: UserAccessService;
   mapper: Mapper<MockExam, MockExamDto>;
-}
+};
 
 export type CreateMockExamInput = {
   data: CreateMockExamDto;
   requester: Requester;
-}
+};
 
 export class CreateMockExamUseCase implements UseCase<
   CreateMockExamInput,
@@ -28,17 +29,20 @@ export class CreateMockExamUseCase implements UseCase<
   constructor({
     mockExamRepository,
     userAccessService,
-    mapper
+    mapper,
   }: CreateMockExamUseCaseDeps) {
     this.mockExamRepository = mockExamRepository;
     this.userAccessService = userAccessService;
     this.mapper = mapper;
   }
 
-  async execute({ data, requester }: CreateMockExamInput): Promise<MockExamDto> {
+  async execute({
+    data,
+    requester,
+  }: CreateMockExamInput): Promise<MockExamDto> {
     const authorId = await this.userAccessService.resolveManagedTargetId({
       requester,
-      targetUsername: data.authorUsername
+      targetIdentifier: data.authorUsername,
     });
 
     return await this.persistMockExam({ mockExamData: data, authorId });
@@ -46,7 +50,7 @@ export class CreateMockExamUseCase implements UseCase<
 
   private async persistMockExam({
     mockExamData,
-    authorId
+    authorId,
   }: {
     mockExamData: CreateMockExamDto;
     authorId: string;
@@ -54,7 +58,7 @@ export class CreateMockExamUseCase implements UseCase<
     const mockExam = MockExam.create({
       authorId,
       title: mockExamData.title,
-      performances: mockExamData.performances
+      performances: mockExamData.performances,
     });
 
     const createdMockExam = await this.mockExamRepository.create(mockExam);

@@ -15,8 +15,7 @@ export type Requester = {
 
 type ResolveTargetParams = {
   requester: Requester;
-  targetUsername?: string;
-  targetId?: string;
+  targetIdentifier?: string;
 };
 
 type UserAccessServiceDeps = {
@@ -79,21 +78,26 @@ export class UserAccessService {
 
   private async resolveTargetUser({
     requester,
-    targetUsername,
-    targetId,
+    targetIdentifier,
   }: ResolveTargetParams): Promise<string> {
     // Use case: the requester is acting on their own behalf
-    if (!targetUsername && !targetId) return requester.id;
-    if (targetUsername === requester.username) return requester.id;
-    if (targetId === requester.id) return requester.id;
+    if (!targetIdentifier) return requester.id;
+    if (targetIdentifier === requester.username) return requester.id;
+    if (targetIdentifier === requester.id) return requester.id;
 
-    const targetUser = targetId
-      ? await this.userRepository.getById(targetId)
-      : await this.findUserByUsernameOrThrow(targetUsername!);
+    const targetUser = this.isUUID(targetIdentifier)
+      ? await this.userRepository.getById(targetIdentifier)
+      : await this.findUserByUsernameOrThrow(targetIdentifier);
 
     this.ensureRequesterHasPermission({ requester, targetUser });
 
     return targetUser.id!;
+  }
+
+  private isUUID(value: string): boolean {
+    const uuidRegex =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    return uuidRegex.test(value);
   }
 
   private async findUserByUsernameOrThrow(authorUsername: string) {
