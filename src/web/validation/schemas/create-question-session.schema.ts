@@ -15,15 +15,6 @@ const createCountSchema = (fieldName: string) =>
       error: `${fieldName} deve ser no mínimo 0`,
     });
 
-const optionalDateSchema = z.coerce
-  .date({
-    error: (issue) =>
-      issue.input === undefined
-        ? 'A data é obrigatória'
-        : 'A data deve ser válida',
-  })
-  .optional();
-
 export const createQuestionSessionSchema = z
   .object({
     authorUsername: usernameSchema.optional(),
@@ -35,7 +26,12 @@ export const createQuestionSessionSchema = z
           : 'O tópico deve ser um UUID válido',
     }),
 
-    date: optionalDateSchema,
+    date: z
+      .string()
+      .optional()
+      .refine((val) => !val || !isNaN(new Date(val).getTime()), {
+        message: 'Data inválida',
+      }),
     total: createCountSchema('Total'),
     correct: createCountSchema('Acertos'),
     isReviewed: z
