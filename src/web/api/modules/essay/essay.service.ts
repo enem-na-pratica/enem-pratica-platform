@@ -1,11 +1,12 @@
 import { HttpClient } from '@/src/web/api/shared';
+
 import type { EssayDto, UserEssaysOverviewDto } from './essay.dto';
 import { EssayMapper } from './essay.mapper';
 import type { Essay, UserEssaysOverview } from './essay.model';
 
 type EssayServiceDeps = {
-  httpClient: HttpClient,
-}
+  httpClient: HttpClient;
+};
 
 type CreateEssayDto = {
   authorUsername?: string;
@@ -17,7 +18,7 @@ type CreateEssayDto = {
     c4: number;
     c5: number;
   };
-}
+};
 
 export class EssayService {
   private readonly httpClient: HttpClient;
@@ -28,17 +29,19 @@ export class EssayService {
 
   async create(dataEssay: CreateEssayDto): Promise<Essay> {
     const data = await this.httpClient.post<EssayDto>({
-      endpoint: "/essays",
-      options: { data: dataEssay }
+      endpoint: '/essays',
+      options: { data: dataEssay },
     });
 
     return EssayMapper.toModel(data);
   }
 
-  async listUserEssaysStatistics(username: string): Promise<UserEssaysOverview> {
+  async listUserEssaysStatistics(
+    username: string,
+  ): Promise<UserEssaysOverview> {
     const data = await this.httpClient.get<UserEssaysOverviewDto>({
-      endpoint: "/essays/:username",
-      options: { params: { username } }
+      endpoint: '/essays/users/:username',
+      options: { params: { username } },
     });
 
     return EssayMapper.toOverviewModel(data);
