@@ -24,7 +24,7 @@ export class PrismaQuestionSessionWithTopicAndSubjectDtoMapper implements Mapper
       }),
       performance: this.accuracy({
         correct: prismaQuestionSession.correct,
-        total: prismaQuestionSession.correct,
+        total: prismaQuestionSession.total,
       }),
       nextReviewDate: this.nextReviewDate({
         correct: prismaQuestionSession.correct,
