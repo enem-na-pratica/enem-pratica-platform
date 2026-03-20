@@ -1,11 +1,12 @@
 import { HttpClient } from '@/src/web/api/shared';
+
 import type { InstructorWithStudentCountDto, UserDto } from './user.dto';
 import { UserMapper } from './user.mapper';
 import type { InstructorWithStudentCount, User } from './user.model';
 
 type UserServiceDeps = {
-  httpClient: HttpClient,
-}
+  httpClient: HttpClient;
+};
 
 type CreateUserDto = {
   name: string;
@@ -13,7 +14,7 @@ type CreateUserDto = {
   password: string;
   role: string;
   teacherId?: string | undefined;
-}
+};
 
 export class UserService {
   private readonly httpClient: HttpClient;
@@ -24,8 +25,8 @@ export class UserService {
 
   async create(dataUser: CreateUserDto): Promise<User> {
     const data = await this.httpClient.post<UserDto>({
-      endpoint: "/users",
-      options: { data: dataUser }
+      endpoint: '/users',
+      options: { data: dataUser },
     });
 
     return UserMapper.toModel(data);
@@ -33,7 +34,7 @@ export class UserService {
 
   async list(): Promise<User[]> {
     const data = await this.httpClient.get<UserDto[]>({
-      endpoint: "/users"
+      endpoint: '/users',
     });
 
     return data.map((u) => UserMapper.toModel(u));
@@ -41,7 +42,7 @@ export class UserService {
 
   async getAuthenticated(): Promise<User> {
     const data = await this.httpClient.get<UserDto>({
-      endpoint: "/users/me"
+      endpoint: '/users/me',
     });
 
     return UserMapper.toModel(data);
@@ -49,7 +50,7 @@ export class UserService {
 
   async listAvailableInstructors(): Promise<InstructorWithStudentCount[]> {
     const data = await this.httpClient.get<InstructorWithStudentCountDto[]>({
-      endpoint: "/users/instructors"
+      endpoint: '/users/instructors',
     });
 
     return data.map((i) => UserMapper.toInstructorModel(i));
@@ -57,8 +58,8 @@ export class UserService {
 
   async listStudentsByInstructor(username: string): Promise<User[]> {
     const data = await this.httpClient.get<UserDto[]>({
-      endpoint: "/users/:username/students",
-      options: { params: { username } }
+      endpoint: '/users/instructors/:username/students',
+      options: { params: { username } },
     });
 
     return data.map((s) => UserMapper.toModel(s));
