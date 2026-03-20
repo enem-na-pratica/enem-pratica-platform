@@ -3,7 +3,7 @@ export const COURSE_NAVIGATION_ITEMS = [
     key: 'study-tracker',
     label: 'Acompanhamento de Estudos',
     icon: '📚',
-    description: 'Material de estudo',
+    description: 'Progresso por assunto',
   },
   {
     key: 'review-practice',
@@ -13,9 +13,9 @@ export const COURSE_NAVIGATION_ITEMS = [
   },
   {
     key: 'question-sessions',
-    label: 'Revisão',
-    icon: '🔄',
-    description: 'Praticar o que aprendeu',
+    label: 'Questões & Desempenho',
+    icon: '🎯',
+    description: 'Histórico e estatísticas',
   },
   {
     key: 'mock-exams',
