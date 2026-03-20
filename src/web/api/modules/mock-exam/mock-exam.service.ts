@@ -48,7 +48,7 @@ export class MockExamService {
     username: string,
   ): Promise<UserMockExamsOverview> {
     const data = await this.httpClient.get<UserMockExamsOverviewDto>({
-      endpoint: '/mock-exams/:username',
+      endpoint: '/mock-exams/users/:username',
       options: { params: { username } },
     });
 
