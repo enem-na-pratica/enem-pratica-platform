@@ -17,7 +17,7 @@ type QuestionSessionServiceDeps = {
 type CreateQuestionSessionDto = {
   authorUsername?: string;
   topicId: string;
-  date?: Date;
+  date?: string;
   total: number;
   correct: number;
   isReviewed?: boolean;
