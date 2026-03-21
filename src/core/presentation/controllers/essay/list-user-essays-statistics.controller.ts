@@ -42,12 +42,11 @@ export class ListUserEssaysStatisticsController implements Controller<
     request: AuthenticatedRequest<void>,
   ): Promise<HttpResponse<UserEssaysOverviewDto | ErrorResponse>> {
     try {
-      const { username: rawUsername } = request.params!;
+      const rawUsername = request.params?.username;
 
-      const authorUsername =
-        rawUsername === 'me'
-          ? request.requester.username
-          : this.validator.validate(rawUsername);
+      const authorUsername = rawUsername
+        ? this.validator.validate(rawUsername)
+        : undefined;
 
       const listEssays = await this.listUserEssaysStatisticsUseCase.execute({
         authorUsername,
