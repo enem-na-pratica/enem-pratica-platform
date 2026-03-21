@@ -9,7 +9,6 @@ type EssayServiceDeps = {
 };
 
 type CreateEssayDto = {
-  authorUsername?: string;
   theme: string;
   grades: {
     c1: number;
@@ -27,7 +26,7 @@ export class EssayService {
     this.httpClient = deps.httpClient;
   }
 
-  async create(dataEssay: CreateEssayDto): Promise<Essay> {
+  async createOwn(dataEssay: CreateEssayDto): Promise<Essay> {
     const data = await this.httpClient.post<EssayDto>({
       endpoint: '/essays',
       options: { data: dataEssay },
@@ -36,7 +35,22 @@ export class EssayService {
     return EssayMapper.toModel(data);
   }
 
-  async listMyEssaysStatistics(): Promise<UserEssaysOverview> {
+  async createForUser({
+    username,
+    dataEssay,
+  }: {
+    username: string;
+    dataEssay: CreateEssayDto;
+  }): Promise<Essay> {
+    const data = await this.httpClient.post<EssayDto>({
+      endpoint: '/essays/users/:username',
+      options: { data: dataEssay, params: { username } },
+    });
+
+    return EssayMapper.toModel(data);
+  }
+
+  async listMyEssaysOverview(): Promise<UserEssaysOverview> {
     const data = await this.httpClient.get<UserEssaysOverviewDto>({
       endpoint: '/essays',
     });
@@ -44,9 +58,7 @@ export class EssayService {
     return EssayMapper.toOverviewModel(data);
   }
 
-  async listUserEssaysStatistics(
-    username: string,
-  ): Promise<UserEssaysOverview> {
+  async listUserEssaysOverview(username: string): Promise<UserEssaysOverview> {
     const data = await this.httpClient.get<UserEssaysOverviewDto>({
       endpoint: '/essays/users/:username',
       options: { params: { username } },

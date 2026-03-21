@@ -18,9 +18,13 @@ type CreateEssayControllerDeps = {
   validator: Validator<CreateEssayDto>;
 };
 
+type CreateEssayRequestBody = Prettify<Omit<CreateEssayDto, 'authorUsername'>>;
+type CreateEssayRequestParam = { username: string };
+
 export class CreateEssayController implements Controller<
-  CreateEssayDto,
-  EssayDto
+  CreateEssayRequestBody,
+  EssayDto,
+  CreateEssayRequestParam
 > {
   private readonly createEssayUseCase: UseCase<CreateEssayInput, EssayDto>;
   private readonly validator: Validator<CreateEssayDto>;
@@ -31,10 +35,21 @@ export class CreateEssayController implements Controller<
   }
 
   async handle(
-    request: AuthenticatedRequest<CreateEssayDto>,
+    request: AuthenticatedRequest<
+      CreateEssayRequestBody,
+      CreateEssayRequestParam
+    >,
   ): Promise<HttpResponse<EssayDto | ErrorResponse>> {
     try {
-      const validatedData = this.validator.validate(request.body);
+      const rawUsername = request.params?.username;
+      const rawCreateEssay = request.body;
+
+      const rawData: CreateEssayDto = {
+        authorUsername: rawUsername,
+        ...rawCreateEssay,
+      };
+
+      const validatedData = this.validator.validate(rawData);
 
       const newEssay = await this.createEssayUseCase.execute({
         data: validatedData,

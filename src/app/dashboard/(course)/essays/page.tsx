@@ -16,7 +16,7 @@ export default async function EssayPage({
   const isFormOpen = params.showForm === "true";
 
   const { essays, statistics } =
-    await makeEssayService().listMyEssaysStatistics();
+    await makeEssayService().listMyEssaysOverview();
 
   return (
     <div className="min-h-screen bg-(--background) text-(--foreground) pb-20 transition-colors duration-500">

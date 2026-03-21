@@ -5,7 +5,7 @@ import { makeEssayService } from '@/src/web/api';
 import { CreateEssayFormValues } from '@/src/web/validation';
 
 export async function createEssayAction(data: CreateEssayFormValues) {
-  await makeEssayService().create(data);
+  await makeEssayService().createOwn(data);
 
   revalidatePath('/dashboard/essays');
 }

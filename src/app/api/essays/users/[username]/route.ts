@@ -3,3 +3,6 @@ import { EssayFactories } from '@/src/core/main/factories';
 
 const listUserEssaysStatistics = EssayFactories.makeListUserEssaysStatistics();
 export const GET = nextRouteAdapter(listUserEssaysStatistics);
+
+const createEssay = EssayFactories.makeCreateEssay();
+export const POST = nextRouteAdapter(createEssay);
