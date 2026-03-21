@@ -6,13 +6,23 @@ type Requester = {
   role: Role;
 };
 
-export type HttpRequest<T = unknown> = {
-  body: T;
-  params?: Record<string, string | string[]>;
-  query?: Record<string, string | string[]>;
+export type SafeRecord = Record<string, string | string[]>;
+
+export type HttpRequest<
+  Body = unknown,
+  Param extends SafeRecord = SafeRecord,
+  Query extends SafeRecord = SafeRecord,
+> = {
+  body: Body;
+  params?: Param;
+  query?: Query;
 };
 
-export type AuthenticatedRequest<T = unknown> = HttpRequest<T> & {
+export type AuthenticatedRequest<
+  Body = unknown,
+  Param extends SafeRecord = SafeRecord,
+  Query extends SafeRecord = SafeRecord,
+> = HttpRequest<Body, Param, Query> & {
   requester: Requester;
 };
 

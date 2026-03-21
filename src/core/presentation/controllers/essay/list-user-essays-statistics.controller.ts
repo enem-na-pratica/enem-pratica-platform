@@ -20,9 +20,12 @@ type ListUserEssaysStatisticsControllerDeps = {
   validator: Validator<string>;
 };
 
+type ListUserEssaysStatisticsParam = { username: string };
+
 export class ListUserEssaysStatisticsController implements Controller<
   void,
-  UserEssaysOverviewDto
+  UserEssaysOverviewDto,
+  ListUserEssaysStatisticsParam
 > {
   private readonly listUserEssaysStatisticsUseCase: UseCase<
     ListUserEssaysStatisticsInput,
@@ -39,7 +42,7 @@ export class ListUserEssaysStatisticsController implements Controller<
   }
 
   async handle(
-    request: AuthenticatedRequest<void>,
+    request: AuthenticatedRequest<void, ListUserEssaysStatisticsParam>,
   ): Promise<HttpResponse<UserEssaysOverviewDto | ErrorResponse>> {
     try {
       const rawUsername = request.params?.username;
