@@ -50,7 +50,7 @@ export class EssayService {
     return EssayMapper.toModel(data);
   }
 
-  async listMyEssaysOverview(): Promise<UserEssaysOverview> {
+  async listMyEssaysStatistics(): Promise<UserEssaysOverview> {
     const data = await this.httpClient.get<UserEssaysOverviewDto>({
       endpoint: '/essays',
     });
@@ -58,7 +58,9 @@ export class EssayService {
     return EssayMapper.toOverviewModel(data);
   }
 
-  async listUserEssaysOverview(username: string): Promise<UserEssaysOverview> {
+  async listUserEssaysStatistics(
+    username: string,
+  ): Promise<UserEssaysOverview> {
     const data = await this.httpClient.get<UserEssaysOverviewDto>({
       endpoint: '/essays/users/:username',
       options: { params: { username } },
