@@ -1,13 +1,13 @@
-import { ListUserEssaysStatisticsController } from "@/src/core/presentation/controllers/essay";
-import { ListUserEssaysStatisticsUseCase } from "@/src/core/application/use-cases/essay";
-import { makeUserAccessService } from "@/src/core/main/factories/common/services";
-import { PrismaListEssaysByAuthorQuery } from "@/src/core/infrastructure/databases/prisma/queries";
+import { ListUserEssaysStatisticsUseCase } from '@/src/core/application/use-cases/essay';
+import { prisma } from '@/src/core/infrastructure/databases/prisma/prisma';
+import { PrismaListEssaysByAuthorQuery } from '@/src/core/infrastructure/databases/prisma/queries';
 import {
   ZodValidator,
-  usernameSchema
-} from "@/src/core/infrastructure/validation/zod";
-import { prisma } from '@/src/core/infrastructure/databases/prisma/prisma';
+  usernameSchema,
+} from '@/src/core/infrastructure/validation/zod';
 import { makePrismaEssayDtoMapper } from '@/src/core/main/factories/common/mappers';
+import { makeUserAccessService } from '@/src/core/main/factories/common/services';
+import { ListUserEssaysStatisticsController } from '@/src/core/presentation/controllers/essay';
 
 export function makeListUserEssaysStatistics() {
   const prismaListEssaysByAuthorQuery = new PrismaListEssaysByAuthorQuery({

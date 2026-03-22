@@ -23,9 +23,20 @@ type ListSubjectProgressControllerDeps = {
   statusValidator: Validator<TopicStatus[] | undefined>;
 };
 
+type ListSubjectProgressStatisticsParam = {
+  subjectSlug: string;
+  username: string;
+};
+
+type ListSubjectProgressStatisticsQuery = {
+  status: string | string[];
+};
+
 export class ListSubjectProgressController implements Controller<
   void,
-  TopicProgressDto[]
+  TopicProgressDto[],
+  ListSubjectProgressStatisticsParam,
+  ListSubjectProgressStatisticsQuery
 > {
   private readonly listSubjectProgressUseCase: UseCase<
     ListSubjectProgressInput,
@@ -48,13 +59,17 @@ export class ListSubjectProgressController implements Controller<
   }
 
   async handle(
-    request: AuthenticatedRequest<void>,
+    request: AuthenticatedRequest<
+      void,
+      ListSubjectProgressStatisticsParam,
+      ListSubjectProgressStatisticsQuery
+    >,
   ): Promise<HttpResponse<TopicProgressDto[] | ErrorResponse>> {
     try {
-      const { subjectSlug: rawSubjectSlug, username: rawUsername } =
-        request.params ?? {};
+      const rawSubjectSlug = request.params?.subjectSlug;
+      const rawUsername = request.params?.username;
 
-      const { status: rawStatus } = request.query ?? {};
+      const rawStatus = request.query?.status;
 
       const statusArray = rawStatus ? [rawStatus].flat() : undefined;
       const status = this.statusValidator.validate(statusArray);

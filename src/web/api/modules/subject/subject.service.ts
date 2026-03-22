@@ -33,7 +33,7 @@ export class SubjectService {
     status?: string[];
   }): Promise<TopicProgress[]> {
     const rawProgress = await this.httpClient.get<TopicProgressDto[]>({
-      endpoint: `/subjects/:subjectSlug/users/:username/topics`,
+      endpoint: `/subjects/:subjectSlug/topics/users/:username`,
       options: {
         params: { subjectSlug, username },
         query: status?.length ? { status } : undefined,

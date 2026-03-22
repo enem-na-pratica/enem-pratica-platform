@@ -6,13 +6,23 @@ type Requester = {
   role: Role;
 };
 
-export type HttpRequest<T = unknown> = {
-  body: T;
-  params?: Record<string, string | string[]>;
-  query?: Record<string, string | string[]>;
-}
+export type SafeRecord = Record<string, string | string[]>;
 
-export type AuthenticatedRequest<T = unknown> = HttpRequest<T> & {
+export type HttpRequest<
+  Body = unknown,
+  Param extends SafeRecord = SafeRecord,
+  Query extends SafeRecord = SafeRecord,
+> = {
+  body: Body;
+  params?: Param;
+  query?: Query;
+};
+
+export type AuthenticatedRequest<
+  Body = unknown,
+  Param extends SafeRecord = SafeRecord,
+  Query extends SafeRecord = SafeRecord,
+> = HttpRequest<Body, Param, Query> & {
   requester: Requester;
 };
 
@@ -20,23 +30,23 @@ export type HttpResponse<T = unknown> = {
   statusCode: number;
   body?: T;
   cookies?: CookieData[];
-}
+};
 
 export type ErrorResponse<T = unknown> = {
   message: string;
   details?: T;
-}
+};
 
 export type CookieData = {
   name: string;
   value: string;
   options: CookieOptions;
-}
+};
 
 export type CookieOptions = {
   httpOnly: boolean;
   secure: boolean;
   maxAge: number;
   path: string;
-  sameSite: "strict" | "lax" | "none";
-}
+  sameSite: 'strict' | 'lax' | 'none';
+};

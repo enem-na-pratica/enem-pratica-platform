@@ -1,12 +1,12 @@
-import { CreateEssayController } from "@/src/core/presentation/controllers/essay";
-import { CreateEssayUseCase } from "@/src/core/application/use-cases/essay";
-import { makePrismaEssayRepository } from "@/src/core/main/factories/common/repositories";
-import { makeUserAccessService } from "@/src/core/main/factories/common/services";
+import { CreateEssayUseCase } from '@/src/core/application/use-cases/essay';
 import {
   ZodValidator,
-  createEssaySchema
-} from "@/src/core/infrastructure/validation/zod";
-import { makeEssayDtoMapper } from "@/src/core/main/factories/common/mappers";
+  createEssaySchema,
+} from '@/src/core/infrastructure/validation/zod';
+import { makeEssayDtoMapper } from '@/src/core/main/factories/common/mappers';
+import { makePrismaEssayRepository } from '@/src/core/main/factories/common/repositories';
+import { makeUserAccessService } from '@/src/core/main/factories/common/services';
+import { CreateEssayController } from '@/src/core/presentation/controllers/essay';
 
 export function makeCreateEssay() {
   const createEssayUseCase = new CreateEssayUseCase({

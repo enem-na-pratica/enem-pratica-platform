@@ -13,7 +13,6 @@ type MockExamServiceDeps = {
 };
 
 type CreateMockExamDto = {
-  authorUsername?: string;
   title: string;
   performances: Record<
     KnowledgeAreaLabelKey,
@@ -35,20 +34,26 @@ export class MockExamService {
     this.httpClient = deps.httpClient;
   }
 
-  async create(dataMockExam: CreateMockExamDto): Promise<MockExam> {
+  async create({
+    username,
+    dataMockExam,
+  }: {
+    username: string;
+    dataMockExam: CreateMockExamDto;
+  }): Promise<MockExam> {
     const data = await this.httpClient.post<MockExamDto>({
-      endpoint: '/mock-exams',
-      options: { data: dataMockExam },
+      endpoint: '/mock-exams/users/:username',
+      options: { data: dataMockExam, params: { username } },
     });
 
     return MockExamMapper.toModel(data);
   }
 
-  async listUserMockExamsStatistics(
+  async listMockExamsStatisticsForUser(
     username: string,
   ): Promise<UserMockExamsOverview> {
     const data = await this.httpClient.get<UserMockExamsOverviewDto>({
-      endpoint: '/mock-exams/:username',
+      endpoint: '/mock-exams/users/:username',
       options: { params: { username } },
     });
 

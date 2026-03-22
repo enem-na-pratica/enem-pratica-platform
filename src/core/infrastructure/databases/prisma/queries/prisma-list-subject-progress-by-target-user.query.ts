@@ -33,14 +33,15 @@ export class PrismaListSubjectProgressByTargetUserQuery implements ListSubjectPr
     subjectSlug: string;
     status?: TopicStatus[];
   }): Promise<TopicProgressDto[]> {
-    const statusFilter = status
-      ? {
-          some: {
-            authorId: targetUserId,
-            status: { in: status },
-          },
-        }
-      : undefined;
+    const statusFilter =
+      status && status.length > 0
+        ? {
+            some: {
+              authorId: targetUserId,
+              status: { in: status },
+            },
+          }
+        : undefined;
 
     const topics = await this.prisma.topic.findMany({
       where: {

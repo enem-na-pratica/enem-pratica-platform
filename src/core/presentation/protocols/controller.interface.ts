@@ -1,7 +1,20 @@
-import { ErrorResponse, HttpRequest, HttpResponse } from './http.interfaces';
+import {
+  AuthenticatedRequest,
+  ErrorResponse,
+  HttpRequest,
+  HttpResponse,
+  SafeRecord,
+} from './http.interfaces';
 
-export interface Controller<TReq, TRes> {
+export interface Controller<
+  TBody = unknown,
+  TResponse = unknown,
+  TParam extends SafeRecord = SafeRecord,
+  TQuery extends SafeRecord = SafeRecord,
+> {
   handle(
-    request: HttpRequest<TReq>
-  ): Promise<HttpResponse<TRes | ErrorResponse>>;
+    request:
+      | HttpRequest<TBody, TParam, TQuery>
+      | AuthenticatedRequest<TBody, TParam, TQuery>,
+  ): Promise<HttpResponse<TResponse | ErrorResponse>>;
 }

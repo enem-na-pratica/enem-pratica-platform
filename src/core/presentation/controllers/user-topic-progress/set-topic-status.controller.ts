@@ -18,9 +18,15 @@ type SetTopicStatusDeps = {
   validator: Validator<SetTopicStatusDto>;
 };
 
+type SetTopicStatusRequestBody = Prettify<
+  Omit<SetTopicStatusDto, 'authorUsername'>
+>;
+type SetTopicStatusRequestParam = { username: string };
+
 export class SetTopicStatusController implements Controller<
-  SetTopicStatusDto,
-  UserTopicProgressDto
+  SetTopicStatusRequestBody,
+  UserTopicProgressDto,
+  SetTopicStatusRequestParam
 > {
   private readonly setTopicStatusUseCase: UseCase<
     SetTopicStatusInput,
@@ -34,10 +40,21 @@ export class SetTopicStatusController implements Controller<
   }
 
   async handle(
-    request: AuthenticatedRequest<SetTopicStatusDto>,
+    request: AuthenticatedRequest<
+      SetTopicStatusRequestBody,
+      SetTopicStatusRequestParam
+    >,
   ): Promise<HttpResponse<UserTopicProgressDto | ErrorResponse>> {
     try {
-      const validatedData = this.validator.validate(request.body);
+      const rawUsername = request.params?.username;
+
+      const rawAuthorUsername =
+        rawUsername === 'me' ? request.requester.username : rawUsername;
+
+      const validatedData = this.validator.validate({
+        authorUsername: rawAuthorUsername,
+        ...request.body,
+      });
 
       const topicStatus = await this.setTopicStatusUseCase.execute({
         data: validatedData,

@@ -19,13 +19,16 @@ export class UserTopicProgressService {
   async SetTopicStatus({
     topicId,
     status,
+    username
   }: {
+    username: string
     topicId: string;
     status: TopicStatus;
   }): Promise<UserTopicProgress> {
     const rawProgress = await this.httpClient.post<UserTopicProgressDto>({
-      endpoint: '/user-topic-progress',
+      endpoint: '/user-topic-progress/users/:username',
       options: {
+        params: {username},
         data: {
           topicId,
           status,

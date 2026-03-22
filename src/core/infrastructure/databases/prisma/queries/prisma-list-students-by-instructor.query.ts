@@ -1,22 +1,19 @@
-import {
-  ListStudentsByInstructorQuery
-} from '@/src/core/application/use-cases/user';
-import type { Mapper } from "@/src/core/domain/contracts/mappers";
 import type { UserDto } from '@/src/core/application/common/dtos';
-import type { PrismaClient } from "@/src/generated/prisma/client";
-import {
-  userPublicSelect,
-  type PrismaUserPublic
-} from "@/src/core/infrastructure/databases/prisma/selects";
+import type { ListStudentsByInstructorQuery } from '@/src/core/application/use-cases/user';
+import type { Mapper } from '@/src/core/domain/contracts/mappers';
 import { UserNotFoundError } from '@/src/core/domain/errors';
+import {
+  type PrismaUserPublic,
+  userPublicSelect,
+} from '@/src/core/infrastructure/databases/prisma/selects';
+import type { PrismaClient } from '@/src/generated/prisma/client';
 
 type PrismaListStudentsByInstructorQueryDeps = {
   prisma: PrismaClient;
   mapper: Mapper<PrismaUserPublic, UserDto>;
 };
 
-export class PrismaListStudentsByInstructorQuery
-  implements ListStudentsByInstructorQuery {
+export class PrismaListStudentsByInstructorQuery implements ListStudentsByInstructorQuery {
   private readonly prisma: PrismaClient;
   private readonly mapper: Mapper<PrismaUserPublic, UserDto>;
 
@@ -35,7 +32,7 @@ export class PrismaListStudentsByInstructorQuery
           select: {
             student: {
               select: userPublicSelect,
-            }
+            },
           },
         },
       },
@@ -44,10 +41,10 @@ export class PrismaListStudentsByInstructorQuery
     if (!students) {
       throw new UserNotFoundError({
         fieldName: 'id (Instructor)',
-        entityValue: instructorId
+        entityValue: instructorId,
       });
     }
 
-    return students.mentorshipsAsTeacher.map(s => this.mapper.map(s.student));
+    return students.mentorshipsAsTeacher.map((s) => this.mapper.map(s.student));
   }
 }

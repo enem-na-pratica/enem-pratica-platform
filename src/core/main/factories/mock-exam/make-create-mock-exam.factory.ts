@@ -1,12 +1,12 @@
-import { CreateMockExamController } from "@/src/core/presentation/controllers/mock-exam";
-import { CreateMockExamUseCase } from "@/src/core/application/use-cases/mock-exam";
-import { makePrismaMockExamRepository } from "@/src/core/main/factories/common/repositories";
-import { makeUserAccessService } from "@/src/core/main/factories/common/services";
-import { makeMockExamDtoMapper } from "@/src/core/main/factories/common/mappers";
+import { CreateMockExamUseCase } from '@/src/core/application/use-cases/mock-exam';
 import {
   ZodValidator,
-  createMockExamSchema
-} from "@/src/core/infrastructure/validation/zod";
+  createMockExamSchema,
+} from '@/src/core/infrastructure/validation/zod';
+import { makeMockExamDtoMapper } from '@/src/core/main/factories/common/mappers';
+import { makePrismaMockExamRepository } from '@/src/core/main/factories/common/repositories';
+import { makeUserAccessService } from '@/src/core/main/factories/common/services';
+import { CreateMockExamController } from '@/src/core/presentation/controllers/mock-exam';
 
 export function makeCreateMockExam() {
   const createMockExamUseCase = new CreateMockExamUseCase({
