@@ -21,9 +21,15 @@ type CreateQuestionSessionControllerDeps = {
   validator: Validator<CreateQuestionSessionDto>;
 };
 
+type CreateQuestionSessionRequestBody = Prettify<
+  Omit<CreateQuestionSessionDto, 'authorUsername'>
+>;
+type CreateQuestionSessionRequestParam = { username: string };
+
 export class CreateQuestionSessionController implements Controller<
-  CreateQuestionSessionDto,
-  QuestionSessionDto
+  CreateQuestionSessionRequestBody,
+  QuestionSessionDto,
+  CreateQuestionSessionRequestParam
 > {
   private readonly createQuestionSessionUseCase: UseCase<
     CreateQuestionSessionInput,
@@ -40,10 +46,21 @@ export class CreateQuestionSessionController implements Controller<
   }
 
   async handle(
-    request: AuthenticatedRequest<CreateQuestionSessionDto>,
+    request: AuthenticatedRequest<
+      CreateQuestionSessionRequestBody,
+      CreateQuestionSessionRequestParam
+    >,
   ): Promise<HttpResponse<QuestionSessionDto | ErrorResponse>> {
     try {
-      const validatedData = this.validator.validate(request.body);
+      const rawUsername = request.params?.username;
+      const rawCreateQuestionSession = request.body;
+
+      const rawData: CreateQuestionSessionDto = {
+        authorUsername: rawUsername,
+        ...rawCreateQuestionSession,
+      };
+
+      const validatedData = this.validator.validate(rawData);
 
       const newQuestionSession =
         await this.createQuestionSessionUseCase.execute({

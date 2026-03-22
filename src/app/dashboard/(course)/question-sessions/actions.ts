@@ -9,7 +9,7 @@ import { CreateQuestionSessionFormValues } from '@/src/web/validation';
 export async function createQuestionSessionAction(
   data: CreateQuestionSessionFormValues,
 ) {
-  await makeQuestionSessionService().create(data);
+  await makeQuestionSessionService().createOwn(data);
   revalidatePath('/dashboard/question-sessions');
 }
 

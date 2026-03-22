@@ -15,7 +15,6 @@ type QuestionSessionServiceDeps = {
 };
 
 type CreateQuestionSessionDto = {
-  authorUsername?: string;
   topicId: string;
   date?: string;
   total: number;
@@ -35,12 +34,27 @@ export class QuestionSessionService {
     this.httpClient = deps.httpClient;
   }
 
-  async create(
+  async createOwn(
     dataQuestionSession: CreateQuestionSessionDto,
   ): Promise<QuestionSession> {
     const data = await this.httpClient.post<QuestionSessionDto>({
       endpoint: '/question-sessions',
       options: { data: dataQuestionSession },
+    });
+
+    return QuestionSessionMapper.toModel(data);
+  }
+
+  async createForUser({
+    username,
+    dataQuestionSession,
+  }: {
+    username: string;
+    dataQuestionSession: CreateQuestionSessionDto;
+  }): Promise<QuestionSession> {
+    const data = await this.httpClient.post<QuestionSessionDto>({
+      endpoint: '/question-sessions/users/:username',
+      options: { data: dataQuestionSession, params: { username } },
     });
 
     return QuestionSessionMapper.toModel(data);
