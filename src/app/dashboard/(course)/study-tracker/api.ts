@@ -28,5 +28,6 @@ export async function updateTopicStatus(
   await makeUserTopicProgressService().SetTopicStatus({
     status,
     topicId,
+    username: 'me',
   });
 }
