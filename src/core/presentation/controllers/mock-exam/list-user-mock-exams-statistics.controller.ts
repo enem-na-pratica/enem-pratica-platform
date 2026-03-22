@@ -48,9 +48,10 @@ export class ListUserMockExamsStatisticsController implements Controller<
     try {
       const rawUsername = request.params?.username;
 
-      const authorUsername = rawUsername
-        ? this.validator.validate(rawUsername)
-        : undefined;
+      const authorUsername =
+        rawUsername === 'me'
+          ? request.requester.username
+          : this.validator.validate(rawUsername);
 
       const listMockExamsWithStatistics =
         await this.listUserMockExamsStatisticsUseCase.execute({

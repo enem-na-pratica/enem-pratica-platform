@@ -34,16 +34,7 @@ export class MockExamService {
     this.httpClient = deps.httpClient;
   }
 
-  async createOwn(dataMockExam: CreateMockExamDto): Promise<MockExam> {
-    const data = await this.httpClient.post<MockExamDto>({
-      endpoint: '/mock-exams',
-      options: { data: dataMockExam },
-    });
-
-    return MockExamMapper.toModel(data);
-  }
-
-  async createForUser({
+  async create({
     username,
     dataMockExam,
   }: {
@@ -58,15 +49,7 @@ export class MockExamService {
     return MockExamMapper.toModel(data);
   }
 
-  async listMyMockExamsStatistics(): Promise<UserMockExamsOverview> {
-    const data = await this.httpClient.get<UserMockExamsOverviewDto>({
-      endpoint: '/mock-exams',
-    });
-
-    return MockExamMapper.toOverviewModel(data);
-  }
-
-  async listUserMockExamsStatistics(
+  async listMockExamsStatisticsForUser(
     username: string,
   ): Promise<UserMockExamsOverview> {
     const data = await this.httpClient.get<UserMockExamsOverviewDto>({

@@ -52,8 +52,11 @@ export class CreateMockExamController implements Controller<
       const rawUsername = request.params?.username;
       const rawCreateMockExam = request.body;
 
+      const rawAuthorUsername =
+        rawUsername === 'me' ? request.requester.username : rawUsername;
+
       const rawData: CreateMockExamDto = {
-        authorUsername: rawUsername,
+        authorUsername: rawAuthorUsername,
         ...rawCreateMockExam,
       };
 

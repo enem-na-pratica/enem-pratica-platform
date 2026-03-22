@@ -118,7 +118,7 @@ export default async function MockExamsPage({
   const isFormOpen = showForm === 'true';
 
   const { mockExams, statistics } =
-    await makeMockExamService().listUserMockExamsStatistics(username);
+    await makeMockExamService().listMockExamsStatisticsForUser(username);
 
   return (
     <div className="min-h-screen bg-(--background) pb-20 text-(--foreground) transition-colors duration-500">
