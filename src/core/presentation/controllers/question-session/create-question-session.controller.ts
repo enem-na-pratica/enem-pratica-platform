@@ -55,8 +55,11 @@ export class CreateQuestionSessionController implements Controller<
       const rawUsername = request.params?.username;
       const rawCreateQuestionSession = request.body;
 
+      const rawAuthorUsername =
+        rawUsername === 'me' ? request.requester.username : rawUsername;
+
       const rawData: CreateQuestionSessionDto = {
-        authorUsername: rawUsername,
+        authorUsername: rawAuthorUsername,
         ...rawCreateQuestionSession,
       };
 

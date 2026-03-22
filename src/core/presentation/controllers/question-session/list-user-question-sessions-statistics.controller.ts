@@ -51,9 +51,10 @@ export class ListUserQuestionSessionsStatisticsController implements Controller<
     try {
       const rawUsername = request.params?.username;
 
-      const authorUsername = rawUsername
-        ? this.validator.validate(rawUsername)
-        : undefined;
+      const authorUsername =
+        rawUsername === 'me'
+          ? request.requester.username
+          : this.validator.validate(rawUsername);
 
       const overview =
         await this.listUserQuestionSessionsStatisticsUseCase.execute({

@@ -34,18 +34,7 @@ export class QuestionSessionService {
     this.httpClient = deps.httpClient;
   }
 
-  async createOwn(
-    dataQuestionSession: CreateQuestionSessionDto,
-  ): Promise<QuestionSession> {
-    const data = await this.httpClient.post<QuestionSessionDto>({
-      endpoint: '/question-sessions',
-      options: { data: dataQuestionSession },
-    });
-
-    return QuestionSessionMapper.toModel(data);
-  }
-
-  async createForUser({
+  async create({
     username,
     dataQuestionSession,
   }: {
@@ -72,15 +61,7 @@ export class QuestionSessionService {
     return QuestionSessionMapper.toModel(data);
   }
 
-  async listMyQuestionSessionsStatistics(): Promise<UserQuestionSessionsOverview> {
-    const data = await this.httpClient.get<UserQuestionSessionsOverviewDto>({
-      endpoint: '/question-sessions',
-    });
-
-    return QuestionSessionMapper.toOverviewModel(data);
-  }
-
-  async listUserQuestionSessionsStatistics(
+  async listQuestionSessionsStatisticsForUser(
     username: string,
   ): Promise<UserQuestionSessionsOverview> {
     const data = await this.httpClient.get<UserQuestionSessionsOverviewDto>({

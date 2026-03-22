@@ -12,7 +12,7 @@ import { BackArrow } from './_components/icons';
 
 export default async function QuestionSessionPage() {
   const [{ statistics, questionSessions }, subjects] = await Promise.all([
-    makeQuestionSessionService().listMyQuestionSessionsStatistics(),
+    makeQuestionSessionService().listQuestionSessionsStatisticsForUser('me'),
     makeSubjectService().listSubjects(),
   ]);
 
