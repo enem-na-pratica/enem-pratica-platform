@@ -20,9 +20,12 @@ type ListUserMockExamsStatisticsControllerDeps = {
   validator: Validator<string>;
 };
 
+type ListUserMockExamsStatisticsParam = { username: string };
+
 export class ListUserMockExamsStatisticsController implements Controller<
   void,
-  UserMockExamsOverviewDto
+  UserMockExamsOverviewDto,
+  ListUserMockExamsStatisticsParam
 > {
   private readonly listUserMockExamsStatisticsUseCase: UseCase<
     ListUserMockExamsStatisticsInput,
@@ -40,15 +43,14 @@ export class ListUserMockExamsStatisticsController implements Controller<
   }
 
   async handle(
-    request: AuthenticatedRequest<void>,
+    request: AuthenticatedRequest<void, ListUserMockExamsStatisticsParam>,
   ): Promise<HttpResponse<UserMockExamsOverviewDto | ErrorResponse>> {
     try {
-      const { username: rawUsername } = request.params!;
+      const rawUsername = request.params?.username;
 
-      const authorUsername =
-        rawUsername === 'me'
-          ? request.requester.username
-          : this.validator.validate(rawUsername);
+      const authorUsername = rawUsername
+        ? this.validator.validate(rawUsername)
+        : undefined;
 
       const listMockExamsWithStatistics =
         await this.listUserMockExamsStatisticsUseCase.execute({

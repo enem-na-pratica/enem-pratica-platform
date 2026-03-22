@@ -44,6 +44,14 @@ export class MockExamService {
     return MockExamMapper.toModel(data);
   }
 
+  async listMyMockExamsStatistics(): Promise<UserMockExamsOverview> {
+    const data = await this.httpClient.get<UserMockExamsOverviewDto>({
+      endpoint: '/mock-exams',
+    });
+
+    return MockExamMapper.toOverviewModel(data);
+  }
+
   async listUserMockExamsStatistics(
     username: string,
   ): Promise<UserMockExamsOverview> {
