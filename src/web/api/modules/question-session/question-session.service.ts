@@ -58,6 +58,14 @@ export class QuestionSessionService {
     return QuestionSessionMapper.toModel(data);
   }
 
+  async listMyQuestionSessionsStatistics(): Promise<UserQuestionSessionsOverview> {
+    const data = await this.httpClient.get<UserQuestionSessionsOverviewDto>({
+      endpoint: '/question-sessions',
+    });
+
+    return QuestionSessionMapper.toOverviewModel(data);
+  }
+
   async listUserQuestionSessionsStatistics(
     username: string,
   ): Promise<UserQuestionSessionsOverview> {

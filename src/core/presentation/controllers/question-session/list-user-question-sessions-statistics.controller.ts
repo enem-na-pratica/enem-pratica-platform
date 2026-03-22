@@ -20,9 +20,12 @@ type ListUserQuestionSessionsStatisticsControllerDeps = {
   validator: Validator<string>;
 };
 
+type ListUserQuestionSessionsStatisticsParam = { username: string };
+
 export class ListUserQuestionSessionsStatisticsController implements Controller<
   void,
-  UserQuestionSessionsOverviewDto
+  UserQuestionSessionsOverviewDto,
+  ListUserQuestionSessionsStatisticsParam
 > {
   private readonly listUserQuestionSessionsStatisticsUseCase: UseCase<
     ListUserQuestionSessionsStatisticsInput,
@@ -40,15 +43,17 @@ export class ListUserQuestionSessionsStatisticsController implements Controller<
   }
 
   async handle(
-    request: AuthenticatedRequest<void>,
+    request: AuthenticatedRequest<
+      void,
+      ListUserQuestionSessionsStatisticsParam
+    >,
   ): Promise<HttpResponse<UserQuestionSessionsOverviewDto | ErrorResponse>> {
     try {
-      const { username: rawUsername } = request.params!;
+      const rawUsername = request.params?.username;
 
-      const authorUsername =
-        rawUsername === 'me'
-          ? request.requester.username
-          : this.validator.validate(rawUsername);
+      const authorUsername = rawUsername
+        ? this.validator.validate(rawUsername)
+        : undefined;
 
       const overview =
         await this.listUserQuestionSessionsStatisticsUseCase.execute({
