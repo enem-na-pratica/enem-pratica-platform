@@ -47,9 +47,10 @@ export class ListUserEssaysStatisticsController implements Controller<
     try {
       const rawUsername = request.params?.username;
 
-      const authorUsername = rawUsername
-        ? this.validator.validate(rawUsername)
-        : undefined;
+      const authorUsername =
+        rawUsername === 'me'
+          ? request.requester.username
+          : this.validator.validate(rawUsername);
 
       const listEssays = await this.listUserEssaysStatisticsUseCase.execute({
         authorUsername,

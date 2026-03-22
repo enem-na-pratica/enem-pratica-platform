@@ -26,16 +26,7 @@ export class EssayService {
     this.httpClient = deps.httpClient;
   }
 
-  async createOwn(dataEssay: CreateEssayDto): Promise<Essay> {
-    const data = await this.httpClient.post<EssayDto>({
-      endpoint: '/essays',
-      options: { data: dataEssay },
-    });
-
-    return EssayMapper.toModel(data);
-  }
-
-  async createForUser({
+  async create({
     username,
     dataEssay,
   }: {
@@ -50,15 +41,7 @@ export class EssayService {
     return EssayMapper.toModel(data);
   }
 
-  async listMyEssaysStatistics(): Promise<UserEssaysOverview> {
-    const data = await this.httpClient.get<UserEssaysOverviewDto>({
-      endpoint: '/essays',
-    });
-
-    return EssayMapper.toOverviewModel(data);
-  }
-
-  async listUserEssaysStatistics(
+  async listEssaysStatisticsForUser(
     username: string,
   ): Promise<UserEssaysOverview> {
     const data = await this.httpClient.get<UserEssaysOverviewDto>({

@@ -44,8 +44,11 @@ export class CreateEssayController implements Controller<
       const rawUsername = request.params?.username;
       const rawCreateEssay = request.body;
 
+      const rawAuthorUsername =
+        rawUsername === 'me' ? request.requester.username : rawUsername;
+
       const rawData: CreateEssayDto = {
-        authorUsername: rawUsername,
+        authorUsername: rawAuthorUsername,
         ...rawCreateEssay,
       };
 
