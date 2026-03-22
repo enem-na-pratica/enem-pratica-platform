@@ -18,9 +18,15 @@ type SetIsReviewedControllerDeps = {
   validator: Validator<SetIsReviewedDto>;
 };
 
+type SetIsReviewedRequestBody = Prettify<
+  Omit<SetIsReviewedDto, 'questionSessionId'>
+>;
+type SetIsReviewedRequestParam = { questionSessionId: string };
+
 export class SetIsReviewedController implements Controller<
-  Pick<SetIsReviewedDto, 'isReviewed'>,
-  QuestionSessionDto
+  SetIsReviewedRequestBody,
+  QuestionSessionDto,
+  SetIsReviewedRequestParam
 > {
   private readonly setIsReviewedUseCase: UseCase<
     SetIsReviewedInput,
@@ -37,13 +43,14 @@ export class SetIsReviewedController implements Controller<
   }
 
   async handle(
-    request: AuthenticatedRequest<Pick<SetIsReviewedDto, 'isReviewed'>>,
+    request: AuthenticatedRequest<
+      SetIsReviewedRequestBody,
+      SetIsReviewedRequestParam
+    >,
   ): Promise<HttpResponse<QuestionSessionDto | ErrorResponse>> {
     try {
-      const { questionSessionId: rawQuestionSessionId } = request.params ?? {};
-
       const validatedData = this.validator.validate({
-        questionSessionId: rawQuestionSessionId,
+        questionSessionId: request.params?.questionSessionId,
         isReviewed: request.body.isReviewed,
       });
 
