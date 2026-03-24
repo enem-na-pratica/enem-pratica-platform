@@ -47,7 +47,7 @@ export default async function EssayPage({ params, searchParams }: PageProps) {
             <BackArrow />
           </Link>
           <h1 className="text-xl font-bold tracking-tight">
-            Minhas <span className="text-(--accent)">Redações</span>
+            Redações de <span className="text-(--accent)">@{resolvedParams.username}</span>
           </h1>
         </div>
       </Header>
