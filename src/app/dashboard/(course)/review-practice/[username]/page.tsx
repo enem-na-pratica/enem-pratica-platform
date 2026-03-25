@@ -1,20 +1,40 @@
-import { cookies } from "next/headers";
+import Link from 'next/link';
 
-export default async function UserToBeReviewed({
-  params,
-}: {
+import { Header } from '@/src/web/components';
+
+import { BackArrow, ReviewPracticeClient } from './_components';
+import { fetchSubjects } from './api';
+
+type PageProps = {
   params: Promise<{ username: string }>;
-}) {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("auth_token")!;
+};
 
-  const { username } = await params;
+export default async function ReviewPracticePage({ params }: PageProps) {
+  const [resolvedParams, subjects] = await Promise.all([
+    params,
+    fetchSubjects(),
+  ]);
 
   return (
-    <div>
-      <div>Course To Be Reviewed Page / MyToBeReviewed</div>
-      <div>Token: {token.value}</div>
-      <div>Username: {username}</div>
-    </div>
+    <>
+      <Header>
+        <div className="flex items-center gap-4">
+          <Link
+            href="/dashboard"
+            aria-label="Voltar para Dashboard"
+          >
+            <BackArrow />
+          </Link>
+          <h1 className="text-xl font-bold tracking-tight">
+            Revisão e Prática de{' '}
+            <span className="text-(--accent)">@{resolvedParams.username}</span>
+          </h1>
+        </div>
+      </Header>
+      <ReviewPracticeClient
+        subjects={subjects}
+        targetUsername={resolvedParams.username}
+      />
+    </>
   );
 }
