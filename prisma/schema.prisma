@@ -16,7 +16,9 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  mentorshipAsStudent  StudentTeacher[] @relation("StudentRelation")
+  /// Relações onde este usuário é o ALUNO (quem recebe a mentoria)
+  mentorshipsAsStudent StudentTeacher[] @relation("StudentRelation")
+  /// Relações onde este usuário é o PROFESSOR (quem dá a mentoria)
   mentorshipsAsTeacher StudentTeacher[] @relation("TeacherRelation")
 
   essays              Essay[]
@@ -148,9 +150,9 @@ model QuestionSession {
   topicId String
   topic   Topic  @relation(fields: [topicId], references: [id], onDelete: Cascade)
 
-  date        DateTime @default(now())
-  total       Int
-  correct     Int
+  date       DateTime @default(now())
+  total      Int
+  correct    Int
   isReviewed Boolean  @default(false)
 
   createdAt DateTime @default(now())
