@@ -1,11 +1,14 @@
+import type { Mapper } from '@/src/core/domain/contracts/mappers';
 import type {
+  CreateUserParams,
   UserRepository,
-  CreateUserParams
 } from '@/src/core/domain/contracts/repositories';
 import type { User } from '@/src/core/domain/entities';
-import type { PrismaClient, User as PrismaUser } from "@/src/generated/prisma/client";
-import type { Mapper } from "@/src/core/domain/contracts/mappers";
 import { UserNotFoundError } from '@/src/core/domain/errors';
+import type {
+  PrismaClient,
+  User as PrismaUser,
+} from '@/src/generated/prisma/client';
 
 type PrismaUserRepositoryDeps = {
   prisma: PrismaClient;
@@ -29,13 +32,13 @@ export class PrismaUserRepository implements UserRepository {
         passwordHash: user.passwordHash,
         role: user.role,
         ...(teacherId && {
-          mentorshipAsStudent: {
+          mentorshipsAsStudent: {
             create: {
-              teacherId
-            }
-          }
-        })
-      }
+              teacherId,
+            },
+          },
+        }),
+      },
     });
 
     return this.mapper.map(newUser);
@@ -44,7 +47,8 @@ export class PrismaUserRepository implements UserRepository {
   async getById(userId: string): Promise<User> {
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
 
-    if (!user) throw new UserNotFoundError({ fieldName: "id", entityValue: userId });
+    if (!user)
+      throw new UserNotFoundError({ fieldName: 'id', entityValue: userId });
 
     return this.mapper.map(user);
   }
