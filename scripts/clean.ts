@@ -3,11 +3,11 @@ import os from 'node:os';
 
 const isWindows = os.platform() === 'win32';
 
-const paths = '.next node_modules/.cache dist';
+const paths = ['.next', 'node_modules/.cache', 'dist'];
 
 const cmd = isWindows
-  ? `powershell -Command "Remove-Item -Recurse -Force ${paths.split(' ').join(', ')} -ErrorAction SilentlyContinue"`
-  : `rm -rf ${paths}`;
+  ? `powershell -Command "${paths.map((p) => `if (Test-Path ${p}) { Remove-Item -Recurse -Force ${p} }`).join('; ')}"`
+  : `rm -rf ${paths.join(' ')}`;
 
 try {
   console.log('🧹 Limpando caches e builds antigos...');
