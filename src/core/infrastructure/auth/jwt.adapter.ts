@@ -1,19 +1,28 @@
+import {
+  JsonWebTokenError as JwtLibError,
+  TokenExpiredError as JwtLibExpiredError,
+  sign,
+  verify,
+} from 'jsonwebtoken';
+import type { StringValue } from 'ms';
+
 import type {
   TokenGenerator,
   TokenPayload,
-  TokenVerifier
+  TokenVerifier,
 } from '@/src/core/domain/contracts/auth';
-import type { StringValue } from "ms";
-import {
-  sign,
-  verify,
-  JsonWebTokenError as JwtLibError,
-  TokenExpiredError as JwtLibExpiredError,
-} from "jsonwebtoken";
-import { TokenExpiredError, InvalidTokenError } from '@/src/core/domain/errors';
+import { InvalidTokenError, TokenExpiredError } from '@/src/core/domain/errors';
 
 type JwtAdapterDeps = {
   secret: string;
+  /**
+   * Token expiration time.
+   * * @example 60, "2 days", "10h", "7d"
+   * @description
+   * - A numeric value is interpreted as seconds.
+   * - A string must include time units (e.g., "1d", "2h").
+   * - **Warning:** Strings without units (e.g., "120") are treated as milliseconds.
+   */
   expiresIn: StringValue | number;
 };
 
@@ -32,11 +41,7 @@ export class JwtAdapter implements TokenGenerator, TokenVerifier {
   }
 
   generate(payload: TokenPayload): string {
-    return sign(
-      payload,
-      this.secret,
-      { expiresIn: this.expiresIn }
-    );
+    return sign(payload, this.secret, { expiresIn: this.expiresIn });
   }
 
   verify(token: string): TokenPayload {
