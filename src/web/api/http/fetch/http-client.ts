@@ -1,36 +1,32 @@
-import { HttpClient, RequestOptions } from "@/src/web/api/shared";
-import { ApiError } from "@/src/web/api/http/api-error";
+import { ApiError } from '@/src/web/api/http/api-error';
+import { HttpClient, RequestOptions } from '@/src/web/api/shared';
 
 const HTTP_METHOD = {
-  GET: "GET",
-  POST: "POST",
-  PUT: "PUT",
-  DELETE: "DELETE",
-  PATCH: "PATCH",
+  GET: 'GET',
+  POST: 'POST',
+  PUT: 'PUT',
+  DELETE: 'DELETE',
+  PATCH: 'PATCH',
 } as const;
 
-type HttpMethod = typeof HTTP_METHOD[keyof typeof HTTP_METHOD];
+type HttpMethod = (typeof HTTP_METHOD)[keyof typeof HTTP_METHOD];
 
 export class FetchHttpClient implements HttpClient {
-  private baseUrl: string;
-
-  constructor(baseUrl?: string) {
-    this.baseUrl = baseUrl || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
-  }
+  constructor(private readonly baseUrl: string) {}
 
   private applyPathParams({
     endpoint,
-    params
+    params,
   }: {
-    endpoint: string,
-    params?: Record<string, string | string[]>
+    endpoint: string;
+    params?: Record<string, string | string[]>;
   }): string {
     if (!params) return endpoint;
     let result = endpoint;
     for (const [key, value] of Object.entries(params)) {
       if (value === undefined || value === null) continue;
       const replacement = Array.isArray(value)
-        ? value.map(v => encodeURIComponent(String(v))).join('/')
+        ? value.map((v) => encodeURIComponent(String(v))).join('/')
         : encodeURIComponent(String(value));
 
       const colonPattern = new RegExp(`:${key}\\b`, 'g');
@@ -82,7 +78,8 @@ export class FetchHttpClient implements HttpClient {
       ...(headers || {}),
     };
 
-    const isFormData = typeof FormData !== 'undefined' && data instanceof FormData;
+    const isFormData =
+      typeof FormData !== 'undefined' && data instanceof FormData;
 
     if (!isFormData && data !== undefined) {
       defaultHeaders['Content-Type'] = 'application/json';
@@ -121,7 +118,7 @@ export class FetchHttpClient implements HttpClient {
       throw new ApiError({
         message: errorData.message || 'Ocorreu um erro na requisição',
         status: response.status,
-        data: errorData
+        data: errorData,
       });
     }
 
@@ -131,50 +128,50 @@ export class FetchHttpClient implements HttpClient {
 
   get<T>({
     endpoint,
-    options
+    options,
   }: {
-    endpoint: string,
-    options?: Omit<RequestOptions, "data">
+    endpoint: string;
+    options?: Omit<RequestOptions, 'data'>;
   }): Promise<T> {
     return this.request<T>({ endpoint, method: HTTP_METHOD.GET, options });
   }
 
   post<T>({
     endpoint,
-    options
+    options,
   }: {
-    endpoint: string,
-    options?: RequestOptions
+    endpoint: string;
+    options?: RequestOptions;
   }): Promise<T> {
     return this.request<T>({ endpoint, method: HTTP_METHOD.POST, options });
   }
 
   put<T>({
     endpoint,
-    options
+    options,
   }: {
-    endpoint: string,
-    options?: RequestOptions
+    endpoint: string;
+    options?: RequestOptions;
   }): Promise<T> {
     return this.request<T>({ endpoint, method: HTTP_METHOD.PUT, options });
   }
 
   patch<T>({
     endpoint,
-    options
+    options,
   }: {
-    endpoint: string,
-    options?: RequestOptions
+    endpoint: string;
+    options?: RequestOptions;
   }): Promise<T> {
     return this.request<T>({ endpoint, method: HTTP_METHOD.PATCH, options });
   }
 
   delete<T>({
     endpoint,
-    options
+    options,
   }: {
-    endpoint: string,
-    options?: Omit<RequestOptions, "data">
+    endpoint: string;
+    options?: Omit<RequestOptions, 'data'>;
   }): Promise<T> {
     return this.request<T>({ endpoint, method: HTTP_METHOD.DELETE, options });
   }
