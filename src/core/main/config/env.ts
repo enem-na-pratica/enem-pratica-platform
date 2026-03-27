@@ -81,15 +81,9 @@ export const env = {
   NODE_ENV: clientEnv.NODE_ENV,
 
   // Helpers
-  get isDevelopment() {
-    return this.NODE_ENV === 'development';
-  },
-  get isProduction() {
-    return this.NODE_ENV === 'production';
-  },
-  get isTest() {
-    return this.NODE_ENV === 'test';
-  },
+  isDev: process.env.NODE_ENV === 'development',
+  isProd: process.env.NODE_ENV === 'production',
+  isTest: process.env.NODE_ENV === 'test',
 } as const;
 
 // ─── Guard ────────────────────────────────────────────────────────────────────

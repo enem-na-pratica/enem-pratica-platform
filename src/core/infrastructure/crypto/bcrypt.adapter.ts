@@ -1,12 +1,15 @@
+import { compare, hash } from 'bcrypt';
+
 import type { HashComparer, Hasher } from '@/src/core/domain/contracts/crypto';
-import { hash, compare } from 'bcrypt';
+
+const MIN_SALT = 10;
 
 export class BcryptAdapter implements Hasher, HashComparer {
-  private static readonly MIN_SALT = 10;
-
-  constructor(private readonly salt: number = BcryptAdapter.MIN_SALT) {
-    if (salt < BcryptAdapter.MIN_SALT) {
-      throw new Error(`BcryptAdapter: Salt cost must be at least ${BcryptAdapter.MIN_SALT}. Received: ${salt}`);
+  constructor(private readonly salt: number = MIN_SALT) {
+    if (salt < MIN_SALT) {
+      throw new Error(
+        `BcryptAdapter: Salt cost must be at least ${MIN_SALT}. Received: ${salt}`,
+      );
     }
   }
 
