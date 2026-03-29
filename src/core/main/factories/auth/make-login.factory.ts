@@ -21,6 +21,6 @@ export function makeLogin() {
   return new LoginController({
     loginUseCase,
     validator: zodValidator,
-    isProduction: env.isProduction,
+    isProduction: env.isProd,
   });
 }
