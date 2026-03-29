@@ -1,7 +1,8 @@
-import { afterAll, afterEach, beforeAll } from 'vitest';
+import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 
 import type { LoginDto } from '@/src/core/application/use-cases/auth/login/login.dto';
 import { ROLES } from '@/src/core/domain/auth/roles.constants';
+import { JwtAdapter } from '@/src/core/infrastructure/auth/jwt.adapter';
 import { prisma } from '@/src/core/infrastructure/databases/prisma/prisma';
 import { makeLogin } from '@/src/core/main/factories/auth';
 import { makeBcryptAdapter } from '@/src/core/main/factories/common/crypto';
@@ -45,3 +46,48 @@ async function createTestUser(passwordOverride?: string) {
 function makeRequest(body: Partial<LoginDto>): HttpRequest<LoginDto> {
   return { body: body as LoginDto };
 }
+
+describe('LoginController (integration)', () => {
+  describe('POST /api/auth/login — success cases', () => {
+    it('should return 204 and set the auth_token cookie with valid credentials', async () => {
+      await createTestUser();
+      const { controller } = makeSut();
+
+      const response = await controller.handle(
+        makeRequest({ username: TEST_USERNAME, password: TEST_PASSWORD }),
+      );
+
+      expect(response.statusCode).toBe(204);
+      expect(response.body).toBeUndefined();
+
+      const authCookie = response.cookies?.find((c) => c.name === 'auth_token');
+      expect(authCookie).toBeDefined();
+      expect(authCookie?.value).toBeTruthy();
+      expect(authCookie?.options.httpOnly).toBe(true);
+      expect(authCookie?.options.secure).toBe(false);
+    });
+
+    it('the generated token must be a valid JWT with user data', async () => {
+      await createTestUser();
+      const { controller } = makeSut();
+      const jwt = new JwtAdapter({
+        secret: process.env.JWT_SECRET!,
+        expiresIn: '1d',
+      });
+
+      const response = await controller.handle(
+        makeRequest({ username: TEST_USERNAME, password: TEST_PASSWORD }),
+      );
+
+      const authToken = response.cookies?.find((c) => c.name === 'auth_token');
+
+      expect(authToken?.value).toBeTruthy();
+
+      const payload = jwt.verify(authToken!.value);
+
+      expect(payload.username).toBe(TEST_USERNAME);
+      expect(payload.role).toBe(ROLES.STUDENT);
+      expect(payload.id).toBeTruthy();
+    });
+  });
+});
