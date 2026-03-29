@@ -13,6 +13,16 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     restart: always
+  db-test:
+    image: postgres:18-alpine
+    container_name: pratic-enem-postgres-test
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: pratic_enem_test_db
+    ports:
+      - "5433:5432" # different port to avoid collision
+    restart: always
 
 volumes:
   postgres_data:
