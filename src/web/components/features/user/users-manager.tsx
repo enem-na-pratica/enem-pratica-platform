@@ -1,10 +1,9 @@
-/* eslint-disable max-lines-per-function */
 import Link from 'next/link';
 
-import { makeUserService } from '@/src/web/api';
+import type { User } from '@/src/web/api';
+import { COURSE_NAVIGATION_ITEMS } from '@/src/web/config/course-navigation.constants';
 
-export async function UsersManager() {
-  const users = await makeUserService().list();
+export function UsersManager({ users }: { users: User[] }) {
   return (
     <>
       <div className="mb-8 flex items-center justify-between">
@@ -27,6 +26,7 @@ export async function UsersManager() {
               <th className="p-4 font-bold">Nome</th>
               <th className="p-4 font-bold">Username</th>
               <th className="p-4 font-bold">Role</th>
+              <th className="p-4 font-bold">Funcionalidades do Curso</th>
               <th className="p-4 text-right font-bold">Ações</th>
             </tr>
           </thead>
@@ -43,10 +43,27 @@ export async function UsersManager() {
                     {u.role}
                   </span>
                 </td>
+                <td className="p-4">
+                  <div className="flex gap-2">
+                    {COURSE_NAVIGATION_ITEMS.map((item) => (
+                      <div
+                        key={item.key}
+                        className="group/tooltip relative"
+                        title={item.label}
+                      >
+                        <Link
+                          href={`/dashboard/${item.key}/${u.username}`}
+                          className="inline-flex h-8 w-8 items-center justify-center rounded transition-all duration-200 hover:bg-(--accent) hover:text-(--foreground)"
+                          title={item.label}
+                        >
+                          <span className="text-base">{item.icon}</span>
+                        </Link>
+                      </div>
+                    ))}
+                  </div>
+                </td>
                 <td className="space-x-3 p-4 text-right">
                   <button
-                    // className="transition-all hover:text-(--accent)"
-                    // title="Editar Usuário"
                     disabled
                     className="cursor-not-allowed opacity-30 transition-all"
                     title="Ainda não implementado"
@@ -54,8 +71,6 @@ export async function UsersManager() {
                     ✏️
                   </button>
                   <button
-                    // className="transition-all hover:text-(--error)"
-                    // title="Excluir Usuário"
                     disabled
                     className="cursor-not-allowed opacity-30 transition-all"
                     title="Ainda não implementado"
