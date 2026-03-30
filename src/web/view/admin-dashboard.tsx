@@ -1,12 +1,12 @@
+import { User, makeUserService } from '@/src/web/api';
 import {
+  QuickActions,
   Sidebar,
   ThemeToggle,
-  QuickActions,
   UnderConstruction,
   UsersManager,
-} from "@/src/web/components";
-import { User } from "@/src/web/api";
-import { ADMIN_NAVIGATION_ITEMS, AdminNavigationKey } from "@/src/web/config";
+} from '@/src/web/components';
+import { ADMIN_NAVIGATION_ITEMS, AdminNavigationKey } from '@/src/web/config';
 
 type AdminDashboardProps = {
   user: User;
@@ -20,23 +20,24 @@ function isAdminNavigationKey(value: string): value is AdminNavigationKey {
 function normalizeAdminNavigationKey(
   value: string | string[] | undefined,
 ): AdminNavigationKey {
-  if (!value) return "home";
+  if (!value) return 'home';
 
   const candidateKey = Array.isArray(value) ? value[0] : value;
 
   if (isAdminNavigationKey(candidateKey)) return candidateKey;
 
-  return "home";
+  return 'home';
 }
 
 export async function AdminDashboard({ user, params }: AdminDashboardProps) {
   const activeTab = normalizeAdminNavigationKey(params.tab);
+  const users = await makeUserService().list();
 
   const renderView = async () => {
     switch (activeTab) {
-      case "users":
-        return <UsersManager />;
-      case "settings":
+      case 'users':
+        return <UsersManager users={users} />;
+      case 'settings':
         return <UnderConstruction title="configurações" />;
       default:
         return <QuickActions />;
@@ -51,9 +52,9 @@ export async function AdminDashboard({ user, params }: AdminDashboardProps) {
       />
 
       {/* main content */}
-      <main className="flex-1 flex flex-col min-w-0">
-        <header className="h-16 border-b border-(--foreground)/10 flex items-center justify-between px-8 bg-(--card-background)/30 backdrop-blur-sm shrink-0">
-          <h2 className="font-semibold capitalize text-(--accent)">
+      <main className="flex min-w-0 flex-1 flex-col">
+        <header className="flex h-16 shrink-0 items-center justify-between border-b border-(--foreground)/10 bg-(--card-background)/30 px-8 backdrop-blur-sm">
+          <h2 className="font-semibold text-(--accent) capitalize">
             {
               ADMIN_NAVIGATION_ITEMS.find((item) => item.key === activeTab)!
                 .label
@@ -64,14 +65,14 @@ export async function AdminDashboard({ user, params }: AdminDashboardProps) {
             <ThemeToggle />
             <div className="flex flex-col items-end">
               <span className="text-sm font-medium">Olá, {user.name}</span>
-              <span className="text-[10px] opacity-50 font-bold uppercase tracking-tighter">
+              <span className="text-[10px] font-bold tracking-tighter uppercase opacity-50">
                 Administrador
               </span>
             </div>
           </div>
         </header>
 
-        <section className="flex-1 p-8 overflow-y-auto">
+        <section className="flex-1 overflow-y-auto p-8">
           {await renderView()}
         </section>
       </main>

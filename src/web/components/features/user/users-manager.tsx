@@ -1,11 +1,12 @@
-import Link from "next/link";
-import { makeUserService } from "@/src/web/api";
+import Link from 'next/link';
 
-export async function UsersManager() {
-  const users = await makeUserService().list();
+import type { User } from '@/src/web/api';
+import { COURSE_NAVIGATION_ITEMS } from '@/src/web/config/course-navigation.constants';
+
+export function UsersManager({ users }: { users: User[] }) {
   return (
     <>
-      <div className="flex justify-between items-center mb-8">
+      <div className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">Gestão de Usuários</h1>
         </div>
@@ -18,39 +19,61 @@ export async function UsersManager() {
         </Link>
       </div>
 
-      <div className="bg-(--card-background) rounded-xl shadow-sm overflow-hidden border border-(--foreground)/5">
-        <table className="w-full text-left border-collapse">
+      <div className="overflow-hidden rounded-xl border border-(--foreground)/5 bg-(--card-background) shadow-sm">
+        <table className="w-full border-collapse text-left">
           <thead>
-            <tr className="bg-(--foreground)/5 text-(--accent) text-xs uppercase tracking-wider">
+            <tr className="bg-(--foreground)/5 text-xs tracking-wider text-(--accent) uppercase">
               <th className="p-4 font-bold">Nome</th>
               <th className="p-4 font-bold">Username</th>
               <th className="p-4 font-bold">Role</th>
-              <th className="p-4 font-bold text-right">Ações</th>
+              <th className="p-4 font-bold">Funcionalidades do Curso</th>
+              <th className="p-4 text-right font-bold">Ações</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-(--foreground)/5">
             {users.map((u) => (
               <tr
                 key={u.id}
-                className="hover:bg-(--foreground)/5 transition-colors group"
+                className="group transition-colors hover:bg-(--foreground)/5"
               >
                 <td className="p-4 text-sm font-medium">{u.name}</td>
                 <td className="p-4 text-sm opacity-70">{u.username}</td>
                 <td className="p-4">
-                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-(--accent) text-(--foreground)">
+                  <span className="rounded bg-(--accent) px-2 py-0.5 text-[10px] font-bold text-(--foreground)">
                     {u.role}
                   </span>
                 </td>
-                <td className="p-4 text-right space-x-3">
+                <td className="p-4">
+                  <div className="flex gap-2">
+                    {COURSE_NAVIGATION_ITEMS.map((item) => (
+                      <div
+                        key={item.key}
+                        className="group/tooltip relative"
+                        title={item.label}
+                      >
+                        <Link
+                          href={`/dashboard/${item.key}/${u.username}`}
+                          className="inline-flex h-8 w-8 items-center justify-center rounded transition-all duration-200 hover:bg-(--accent) hover:text-(--foreground)"
+                          title={item.label}
+                        >
+                          <span className="text-base">{item.icon}</span>
+                        </Link>
+                      </div>
+                    ))}
+                  </div>
+                </td>
+                <td className="space-x-3 p-4 text-right">
                   <button
-                    className="opacity-50 hover:opacity-100 hover:text-(--accent) transition-all"
-                    title="Editar Usuário"
+                    disabled
+                    className="cursor-not-allowed opacity-30 transition-all"
+                    title="Ainda não implementado"
                   >
                     ✏️
                   </button>
                   <button
-                    className="opacity-50 hover:opacity-100 hover:text-(--error) transition-all"
-                    title="Excluir Usuário"
+                    disabled
+                    className="cursor-not-allowed opacity-30 transition-all"
+                    title="Ainda não implementado"
                   >
                     🗑️
                   </button>
