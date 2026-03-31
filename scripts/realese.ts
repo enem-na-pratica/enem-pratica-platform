@@ -65,3 +65,61 @@ const executeGit = (args: string[]): void => {
     throw new Error(`git ${args[0]} falhou com código ${result.status}`);
   }
 };
+
+const getPackageData = (): PackageJson => {
+  return JSON.parse(fs.readFileSync('./package.json', 'utf8'));
+};
+
+const isValidSemver = (version: string): boolean =>
+  /^\d+\.\d+\.\d+([-.][a-zA-Z0-9.]+)?$/.test(version);
+
+const calculateSimulatedVersion = (
+  currentVersion: string,
+  bumpType: string,
+): string => {
+  const [major, minor, patch] = currentVersion.split('.').map(Number);
+  const strategies: Record<string, string> = {
+    patch: `${major}.${minor}.${patch + 1}`,
+    minor: `${major}.${minor + 1}.0`,
+    major: `${major + 1}.0.0`,
+  };
+  return strategies[bumpType] ?? bumpType;
+};
+
+async function promptBumpType(): Promise<BumpType> {
+  console.log('\nQual o tipo de atualização?');
+  console.log('1) patch\n2) minor\n3) major\n4) manual');
+
+  const choice = (await ask('Escolha (1-4): ')).trim();
+
+  switch (choice) {
+    case '1':
+      return 'patch';
+    case '2':
+      return 'minor';
+    case '3':
+      return 'major';
+    case '4':
+      const manualVersion = (
+        await ask('Digite a nova versão (ex: 0.17.0): ')
+      ).trim();
+      if (!isValidSemver(manualVersion))
+        throw new Error('Versão inválida. Use o formato semver.');
+      return manualVersion;
+    default:
+      throw new Error('Opção inválida.');
+  }
+}
+
+async function performVersionBump(bumpType: BumpType): Promise<string> {
+  const pkg = getPackageData();
+
+  if (DRY_RUN) {
+    const newVersion = calculateSimulatedVersion(pkg.version, bumpType);
+    logDryRun(`npm version ${bumpType} --no-git-tag-version`);
+    return newVersion;
+  }
+
+  executeSilent(`npm version ${bumpType} --no-git-tag-version`);
+  return getPackageData().version;
+}
