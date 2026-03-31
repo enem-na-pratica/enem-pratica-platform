@@ -11,12 +11,13 @@
     "format": "prettier --check \"src/**/*.{ts,tsx,js,jsx,css,json}\"",
     "format:fix": "prettier --write \"src/**/*.{ts,tsx,js,jsx,css,json}\"",
     "check-all": "npm run format && npm run lint && npm run check",
-    "stats": "npx tsx scripts/count-lines.ts",
+    "stats": "npx tsx scripts/project-stats.ts",
     "clean": "npx tsx scripts/clean.ts",
-    "check": "npx tsx scripts/check-health.ts",
+    "check": "npx tsx scripts/check-types.ts",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "release": "npx tsx scripts/release.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
