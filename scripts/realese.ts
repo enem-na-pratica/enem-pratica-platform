@@ -123,3 +123,70 @@ async function performVersionBump(bumpType: BumpType): Promise<string> {
   executeSilent(`npm version ${bumpType} --no-git-tag-version`);
   return getPackageData().version;
 }
+
+async function main(): Promise<void> {
+  try {
+    if (DRY_RUN) {
+      console.log(
+        `${COLORS.yellow}⚠ Modo dry-run ativo — nenhum comando Git será executado.${COLORS.reset}`,
+      );
+    }
+
+    const initialPkg = getPackageData();
+    console.log(
+      `\nVersão atual: ${COLORS.yellow}${initialPkg.version}${COLORS.reset}`,
+    );
+
+    const bumpType = await promptBumpType();
+    const newVersion = await performVersionBump(bumpType);
+
+    console.log(
+      `${COLORS.green}Próxima versão:${COLORS.reset} ${COLORS.yellow}${newVersion}${COLORS.reset}\n`,
+    );
+
+    console.log(`${COLORS.cyan}--- Configuração da Tag ---${COLORS.reset}`);
+    const tagDesc = await ask(
+      `Padrão: Version ${newVersion}: [DESCRIÇÃO]\nDigite a descrição: `,
+    );
+
+    const defaultCommit = `chore: bump version to ${newVersion}`;
+    const commitInput = await ask(
+      `\n${COLORS.cyan}--- Configuração do Commit ---${COLORS.reset}\nMensagem [${defaultCommit}]: `,
+    );
+    const commitMsg = commitInput.trim() || defaultCommit;
+
+    console.log(`\n${COLORS.yellow}Executando comandos Git...${COLORS.reset}`);
+    executeShell('git add -u');
+    executeGit(['commit', '-m', commitMsg]);
+    executeGit([
+      'tag',
+      '-a',
+      `v${newVersion}`,
+      '-m',
+      `Version ${newVersion}: ${tagDesc}`,
+    ]);
+
+    console.log(`\n${COLORS.green}✔ Sucesso!${COLORS.reset}`);
+    console.log(`Commit: ${COLORS.cyan}${commitMsg}${COLORS.reset}`);
+    console.log(
+      `Tag:    ${COLORS.cyan}v${newVersion} - Version ${newVersion}: ${tagDesc}${COLORS.reset}`,
+    );
+
+    const pushNow = await ask('\nDeseja dar push agora? (s/n): ');
+    if (pushNow.trim().toLowerCase() === 's') {
+      const currentBranch = executeSilent('git rev-parse --abbrev-ref HEAD');
+      executeGit(['push', 'origin', currentBranch]);
+      executeGit(['push', 'origin', `v${newVersion}`]);
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.error(
+      `\n${COLORS.red}Erro durante a execução:${COLORS.reset}`,
+      message,
+    );
+  } finally {
+    rl.close();
+  }
+}
+
+main();
