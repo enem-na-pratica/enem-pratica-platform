@@ -34,7 +34,7 @@ export const ACL_RULES: Array<{
       minRole: ROLES.ADMIN
     },
     {
-      pattern: new URLPattern({ pathname: "/user/new" }),
+      pattern: new URLPattern({ pathname: "/users/new" }),
       minRole: ROLES.ADMIN
     },
     {
