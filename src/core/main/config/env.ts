@@ -16,6 +16,7 @@ const serverSchema = z.object({
   //   .positive()
   //   .default(DEFAULT_POSTGRES_PORT),
   DATABASE_URL: z.url(),
+  DIRECT_URL: z.url(),
   JWT_SECRET: z.string().min(MIN_JWT_SECRET_LENGTH, {
     error: `JWT_SECRET must be at least ${MIN_JWT_SECRET_LENGTH} characters long`,
   }),
@@ -70,6 +71,10 @@ export const env = {
   get DATABASE_URL() {
     assertServer('DATABASE_URL');
     return serverEnv.DATABASE_URL!;
+  },
+  get DIRECT_URL() {
+    assertServer('DIRECT_URL');
+    return serverEnv.DIRECT_URL!;
   },
   get JWT_SECRET() {
     assertServer('JWT_SECRET');

@@ -9,8 +9,8 @@ export function FeatureCard({
 }) {
   return (
     <div className="flex flex-col items-start p-4">
-      <div className="text-4xl mb-4">{icon}</div>
-      <h3 className="text-xl font-bold mb-2">{title}</h3>
+      <div className="mb-4 text-4xl">{icon}</div>
+      <h3 className="mb-2 text-xl font-bold">{title}</h3>
       <p className="text-sm opacity-80">{desc}</p>
     </div>
   );
