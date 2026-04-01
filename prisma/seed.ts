@@ -308,6 +308,29 @@ async function main() {
   }
 
   console.log('✅ Simulados e desempenhos criados');
+
+  // ──────────────────────────────────────────────
+  // QUESTION SESSIONS (students apenas)
+  // ──────────────────────────────────────────────
+
+  for (const student of students) {
+    for (const topic of allTopics) {
+      const total = 10;
+      const correct = Math.floor(Math.random() * (total + 1));
+
+      await prisma.questionSession.create({
+        data: {
+          authorId: student.id,
+          topicId: topic.id,
+          total,
+          correct,
+          isReviewed: Math.random() > 0.5,
+        },
+      });
+    }
+  }
+
+  console.log('✅ Sessões de questões criadas');
   console.log('🎉 Seed concluída com sucesso!');
 }
 
