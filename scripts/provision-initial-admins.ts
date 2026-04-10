@@ -1,5 +1,7 @@
 import { UserDto } from '@/src/core/application/common/dtos';
 import { ROLES } from '@/src/core/domain/auth';
+import { prisma } from '@/src/core/infrastructure/databases/prisma/prisma';
+import { makeCreateUser } from '@/src/core/main/factories/user';
 import { ErrorResponse } from '@/src/core/presentation/protocols';
 
 type FieldErrors = Record<string, string[]>;
@@ -227,5 +229,90 @@ class CreationResponseParser {
       statusCode >= HTTP_STATUS.SUCCESS_RANGE_START &&
       statusCode <= HTTP_STATUS.SUCCESS_RANGE_END
     );
+  }
+}
+
+class DatabaseSeeder {
+  private readonly createUserController = makeCreateUser();
+  private readonly logger = new SeedLogger();
+  private readonly responseParser = new CreationResponseParser();
+  private readonly executionContext = SEED_EXECUTION_CONTEXT;
+
+  private async checkIfDatabaseIsEmpty(): Promise<boolean> {
+    try {
+      const existingUser = await prisma.user.findFirst({
+        select: { id: true },
+      });
+
+      return existingUser === null;
+    } catch (error) {
+      this.logger.logUnexpectedError('CHECK_DB', error);
+      return false;
+    } finally {
+      await prisma.$disconnect();
+    }
+  }
+
+  private async attemptUserCreation(
+    userTemplate: SeedUserTemplate,
+  ): Promise<UserCreationResult> {
+    try {
+      const response = await this.createUserController.handle({
+        body: userTemplate,
+        requester: this.executionContext,
+      });
+
+      return this.responseParser.parse(userTemplate.username, response);
+    } catch (error) {
+      this.logger.logUnexpectedError(userTemplate.username, error);
+
+      return {
+        success: false,
+        username: userTemplate.username,
+        errorMessage:
+          error instanceof Error ? error.message : 'Erro desconhecido',
+      };
+    }
+  }
+
+  private reportCreationResult(result: UserCreationResult): void {
+    if (result.success && result.userId) {
+      this.logger.logUserCreationSuccess(result.username, result.userId);
+      return;
+    }
+
+    if (result.statusCode === HTTP_STATUS.CONFLICT) {
+      this.logger.logUserAlreadyExists(result.username);
+      return;
+    }
+
+    if (result.statusCode === HTTP_STATUS.BAD_REQUEST) {
+      const fieldErrors = this.extractFieldErrors(result.errorMessage);
+      this.logger.logValidationError(result.username, fieldErrors);
+      return;
+    }
+
+    this.logger.logCreationFailed(result.username, result.statusCode ?? 0);
+  }
+
+  private extractFieldErrors(errorMessage: string | undefined): FieldErrors {
+    if (!errorMessage) {
+      return {};
+    }
+
+    try {
+      const parsed = JSON.parse(errorMessage);
+      if (typeof parsed === 'object' && parsed !== null) {
+        return parsed as FieldErrors;
+      }
+    } catch {
+      // Se não for JSON válido, continua
+    }
+
+    return {};
+  }
+
+  private delay(ms: number): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }
