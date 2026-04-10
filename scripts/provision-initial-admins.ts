@@ -238,6 +238,80 @@ class DatabaseSeeder {
   private readonly responseParser = new CreationResponseParser();
   private readonly executionContext = SEED_EXECUTION_CONTEXT;
 
+  async seed(): Promise<void> {
+    const startTime = Date.now();
+    const isForceMode = process.argv.includes('--force');
+
+    if (!isForceMode) {
+      const isDbEmpty = await this.checkIfDatabaseIsEmpty();
+      if (!isDbEmpty) {
+        this.logger.logSeedAborted();
+        return;
+      }
+    }
+
+    const userTemplates = INITIAL_USERS;
+
+    this.logger.logSeedStarted(userTemplates.length);
+
+    const results = await this.createAllUsers(userTemplates);
+
+    const executionTimeMs = Date.now() - startTime;
+    this.printSummary(results, executionTimeMs);
+  }
+
+  private async createAllUsers(
+    userTemplates: SeedUserTemplate[],
+  ): Promise<UserCreationResult[]> {
+    const results: UserCreationResult[] = [];
+
+    for (let index = 0; index < userTemplates.length; index++) {
+      const userTemplate = userTemplates[index];
+
+      this.logger.logUserCreationStarted(
+        userTemplate.name,
+        userTemplate.role,
+        index,
+        userTemplates.length,
+      );
+
+      const result = await this.attemptUserCreation(userTemplate);
+      results.push(result);
+
+      this.reportCreationResult(result);
+
+      if (index < userTemplates.length - 1) {
+        await this.delay(500);
+      }
+    }
+
+    return results;
+  }
+
+  private printSummary(
+    results: UserCreationResult[],
+    executionTimeMs: number,
+  ): void {
+    const successCount = results.filter((r) => r.success).length;
+    const failureCount = results.filter((r) => !r.success).length;
+    const failedUsers = results
+      .filter((r) => !r.success)
+      .map((r) => ({
+        username: r.username,
+        reason: r.errorMessage ?? `HTTP ${r.statusCode}`,
+      }));
+
+    const summary: SeedSummary = {
+      totalAttempted: results.length,
+      totalSucceeded: successCount,
+      totalFailed: failureCount,
+      failedUsers,
+      executionTimeMs,
+    };
+
+    this.logger.logSeedCompleted(summary);
+  }
+
   private async checkIfDatabaseIsEmpty(): Promise<boolean> {
     try {
       const existingUser = await prisma.user.findFirst({
