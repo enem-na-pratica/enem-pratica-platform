@@ -1,4 +1,6 @@
+import { UserDto } from '@/src/core/application/common/dtos';
 import { ROLES } from '@/src/core/domain/auth';
+import { ErrorResponse } from '@/src/core/presentation/protocols';
 
 type FieldErrors = Record<string, string[]>;
 
@@ -181,5 +183,49 @@ class SeedLogger {
     };
 
     return descriptions[statusCode] || 'Erro desconhecido';
+  }
+}
+
+class CreationResponseParser {
+  parse(
+    username: string,
+    response: { statusCode: number; body?: UserDto | ErrorResponse },
+  ): UserCreationResult {
+    const { statusCode, body } = response;
+    const isSuccessful = this.isSuccessfulStatus(statusCode);
+
+    if (isSuccessful) {
+      const userId = (body as UserDto)?.id ?? 'unknown';
+      return {
+        success: true,
+        username,
+        userId,
+        statusCode,
+      };
+    }
+
+    const errorResponse = body as ErrorResponse;
+    const errorMessage = errorResponse?.message ?? 'Erro desconhecido';
+
+    const errorDetails = (
+      errorResponse as ErrorResponse & { details?: FieldErrors }
+    )?.details;
+    const fullErrorMessage = errorDetails
+      ? JSON.stringify(errorDetails)
+      : errorMessage;
+
+    return {
+      success: false,
+      username,
+      statusCode,
+      errorMessage: fullErrorMessage,
+    };
+  }
+
+  private isSuccessfulStatus(statusCode: number): boolean {
+    return (
+      statusCode >= HTTP_STATUS.SUCCESS_RANGE_START &&
+      statusCode <= HTTP_STATUS.SUCCESS_RANGE_END
+    );
   }
 }
