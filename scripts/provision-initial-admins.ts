@@ -1,8 +1,8 @@
-import { UserDto } from '@/src/core/application/common/dtos';
+import type { UserDto } from '@/src/core/application/common/dtos';
 import { ROLES } from '@/src/core/domain/auth';
 import { prisma } from '@/src/core/infrastructure/databases/prisma/prisma';
 import { makeCreateUser } from '@/src/core/main/factories/user';
-import { ErrorResponse } from '@/src/core/presentation/protocols';
+import type { ErrorResponse } from '@/src/core/presentation/protocols';
 
 type FieldErrors = Record<string, string[]>;
 
@@ -390,3 +390,16 @@ class DatabaseSeeder {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }
+
+async function executeSeedProcess(): Promise<void> {
+  try {
+    const seeder = new DatabaseSeeder();
+    await seeder.seed();
+    process.exit(0);
+  } catch (fatalError) {
+    console.error('❌ Erro fatal ao executar seed:', fatalError);
+    process.exit(1);
+  }
+}
+
+executeSeedProcess();
