@@ -64,3 +64,21 @@ function handleSeedError(error: unknown): void {
   }
   process.exit(1);
 }
+
+async function seed() {
+  try {
+    const subjects = z.array(SubjectSchema).parse(rawData);
+
+    for (const subject of subjects) {
+      await ensureSubjectExists(subject);
+    }
+
+    console.log('\n✅ Seed concluído com sucesso!');
+  } catch (error) {
+    handleSeedError(error);
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
+seed();
