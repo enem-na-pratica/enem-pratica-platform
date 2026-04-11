@@ -9,7 +9,12 @@ import {
 const DEFAULT_PASSWORD =
   '$2b$12$8QHdhZ8bP4tLH.ZjaOKNpuCQUt5plrgKfbCUKEGX1Gc2hDmSGewkC';
 
-async function clearDatabase() {
+export async function clearDatabase() {
+  if (process.env.NODE_ENV === 'production') {
+    console.error('⚠️ Tentativa de limpar o banco em PRODUÇÃO abortada!');
+    return;
+  }
+
   console.log('🧹 Limpando todas as tabelas...');
   const tableNames = await prisma.$queryRaw<Array<{ tableName: string }>>`
     SELECT tablename AS "tableName" FROM pg_tables WHERE schemaname='public'
@@ -32,6 +37,11 @@ async function clearDatabase() {
 }
 
 async function main() {
+  if (process.env.NODE_ENV === 'production') {
+    console.error('❌ SEED NÃO PODE SER EXECUTADA EM PRODUÇÃO!');
+    process.exit(1);
+  }
+
   await clearDatabase();
 
   console.log('🌱 Iniciando seed...');
