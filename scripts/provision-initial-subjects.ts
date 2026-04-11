@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+import { Slug } from '@/src/core/domain/value-objects';
 import { prisma } from '@/src/core/infrastructure/databases/prisma/prisma';
 
 /** * @description Raw data imported from data.json.
@@ -39,4 +40,15 @@ async function createSubjectWithTopics(
   });
 
   console.log(`✓ Subject criado: "${subject.name}"`);
+}
+
+async function ensureSubjectExists(data: SubjectInput): Promise<void> {
+  const slug = Slug.slugify(data.name);
+
+  if (await isSubjectAlreadyRegistered(slug)) {
+    console.warn(`⚠️  Subject "${data.name}" já existe. Pulando...`);
+    return;
+  }
+
+  await createSubjectWithTopics(data, slug);
 }
