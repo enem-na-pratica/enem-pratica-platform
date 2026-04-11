@@ -52,3 +52,15 @@ async function ensureSubjectExists(data: SubjectInput): Promise<void> {
 
   await createSubjectWithTopics(data, slug);
 }
+
+function handleSeedError(error: unknown): void {
+  if (error instanceof z.ZodError) {
+    console.error(
+      '❌ Erro de validação nos dados do JSON:',
+      z.treeifyError(error),
+    );
+  } else {
+    console.error('❌ Erro inesperado durante o seed:', error);
+  }
+  process.exit(1);
+}
