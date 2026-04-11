@@ -20,3 +20,23 @@ async function isSubjectAlreadyRegistered(slug: string): Promise<boolean> {
   const subject = await prisma.subject.findFirst({ where: { slug } });
   return !!subject;
 }
+
+async function createSubjectWithTopics(
+  data: SubjectInput,
+  slug: string,
+): Promise<void> {
+  const subject = await prisma.subject.create({
+    data: {
+      name: data.name,
+      slug,
+      topics: {
+        create: data.topics.map((title, index) => ({
+          title,
+          position: index,
+        })),
+      },
+    },
+  });
+
+  console.log(`✓ Subject criado: "${subject.name}"`);
+}
