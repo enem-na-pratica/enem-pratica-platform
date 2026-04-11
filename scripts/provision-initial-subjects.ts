@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { prisma } from '@/src/core/infrastructure/databases/prisma/prisma';
+
 /** * @description Raw data imported from data.json.
  * Please rename this variable to match your specific use case for better semantics.
  */
@@ -13,3 +15,8 @@ const SubjectSchema = z.object({
 });
 
 type SubjectInput = z.infer<typeof SubjectSchema>;
+
+async function isSubjectAlreadyRegistered(slug: string): Promise<boolean> {
+  const subject = await prisma.subject.findFirst({ where: { slug } });
+  return !!subject;
+}
