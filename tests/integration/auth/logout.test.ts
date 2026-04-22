@@ -18,5 +18,16 @@ describe('LogoutController (integration)', () => {
       expect(response.statusCode).toBe(HttpStatus.NO_CONTENT);
       expect(response.body).toBeUndefined();
     });
+
+    it('should clear the auth_token cookie with maxAge: 0', async () => {
+      const { controller } = makeSut();
+
+      const response = await controller.handle();
+
+      const authCookie = response.cookies?.find((c) => c.name === 'auth_token');
+      expect(authCookie).toBeDefined();
+      expect(authCookie?.value).toBe('');
+      expect(authCookie?.options.maxAge).toBe(0);
+    });
   });
 });
