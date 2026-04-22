@@ -29,5 +29,32 @@ describe('LogoutController (integration)', () => {
       expect(authCookie?.value).toBe('');
       expect(authCookie?.options.maxAge).toBe(0);
     });
+
+    it('should set httpOnly flag to true', async () => {
+      const { controller } = makeSut();
+
+      const response = await controller.handle();
+
+      const authCookie = response.cookies?.find((c) => c.name === 'auth_token');
+      expect(authCookie?.options.httpOnly).toBe(true);
+    });
+
+    it('should set sameSite to strict', async () => {
+      const { controller } = makeSut();
+
+      const response = await controller.handle();
+
+      const authCookie = response.cookies?.find((c) => c.name === 'auth_token');
+      expect(authCookie?.options.sameSite).toBe('strict');
+    });
+
+    it('should set path to root /', async () => {
+      const { controller } = makeSut();
+
+      const response = await controller.handle();
+
+      const authCookie = response.cookies?.find((c) => c.name === 'auth_token');
+      expect(authCookie?.options.path).toBe('/');
+    });
   });
 });
