@@ -56,5 +56,23 @@ describe('LogoutController (integration)', () => {
       const authCookie = response.cookies?.find((c) => c.name === 'auth_token');
       expect(authCookie?.options.path).toBe('/');
     });
+
+    it('should set secure flag to false in development', async () => {
+      const { controller } = makeSut(false);
+
+      const response = await controller.handle();
+
+      const authCookie = response.cookies?.find((c) => c.name === 'auth_token');
+      expect(authCookie?.options.secure).toBe(false);
+    });
+
+    it('should set secure flag to true in production', async () => {
+      const { controller } = makeSut(true);
+
+      const response = await controller.handle();
+
+      const authCookie = response.cookies?.find((c) => c.name === 'auth_token');
+      expect(authCookie?.options.secure).toBe(true);
+    });
   });
 });
