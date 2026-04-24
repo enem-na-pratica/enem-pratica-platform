@@ -24,9 +24,40 @@ function makeRequest(requesterId: {
   };
 }
 
+async function createTestUser(
+  overrides: { username?: string; role?: keyof typeof ROLES } = {},
+) {
+  const { makeBcryptAdapter } =
+    await import('@/src/core/main/factories/common/crypto');
+  const bcrypt = makeBcryptAdapter();
+  const passwordHash = await bcrypt.hash(TEST_PASSWORD);
+
+  return prisma.user.create({
+    data: {
+      name: 'Auth User Teste',
+      username: overrides.username ?? TEST_USERNAME,
+      passwordHash,
+      role: overrides.role ?? ROLES.STUDENT,
+    },
+  });
+}
+
+beforeAll(async () => {
+  await prisma.$connect();
+});
+
+afterEach(async () => {
+  await prisma.user.deleteMany({
+    where: { username: { in: [TEST_USERNAME, 'outro.user.teste'] } },
+  });
+});
+
+afterAll(async () => {
+  await prisma.$disconnect();
+});
+
 describe('GetAuthenticatedUserController (integration)', () => {
   describe('GET /api/users/me — success cases', () => {
-    it('should return 200 and the UserDto of the authenticated user', async () => {
-    });
+    it('should return 200 and the UserDto of the authenticated user', async () => {});
   });
 });
