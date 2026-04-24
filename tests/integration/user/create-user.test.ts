@@ -134,5 +134,42 @@ describe('CreateUserController (integration)', () => {
       expect(mentorship).not.toBeNull();
       expect(mentorship?.teacherId).toBe(teacherId);
     });
+
+    it('should persist the user in the database after creation', async () => {
+      const controller = makeSut();
+
+      await controller.handle(
+        makeRequest({
+          name: 'Professor Teste',
+          username: TEST_TEACHER_USERNAME,
+          password: TEST_PASSWORD,
+          role: ROLES.TEACHER,
+        }),
+      );
+
+      const userInDb = await prisma.user.findUnique({
+        where: { username: TEST_TEACHER_USERNAME },
+      });
+
+      expect(userInDb).not.toBeNull();
+      expect(userInDb?.username).toBe(TEST_TEACHER_USERNAME);
+      expect(userInDb?.passwordHash).not.toBe(TEST_PASSWORD);
+    });
+
+    it('should trim and lowercase the username before saving', async () => {
+      const controller = makeSut();
+
+      const response = await controller.handle(
+        makeRequest({
+          name: 'Professor Teste',
+          username: '  Teacher.Teste  ',
+          password: TEST_PASSWORD,
+          role: ROLES.TEACHER,
+        }),
+      );
+
+      expect(response.statusCode).toBe(201);
+      expect((response.body as UserDto).username).toBe(TEST_TEACHER_USERNAME);
+    });
   });
 });
