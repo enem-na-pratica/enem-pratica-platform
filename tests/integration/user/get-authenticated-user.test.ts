@@ -112,5 +112,60 @@ describe('GetAuthenticatedUserController (integration)', () => {
       expect(response.body).not.toHaveProperty('passwordHash');
       expect(response.body).not.toHaveProperty('password');
     });
+
+    it('should return the correct data for a TEACHER role', async () => {
+      const user = await createTestUser({ role: 'TEACHER' });
+      const controller = makeSut();
+
+      const response = await controller.handle(
+        makeRequest({
+          id: user.id,
+          username: user.username,
+          role: ROLES.TEACHER,
+        }),
+      );
+
+      expect(response.statusCode).toBe(200);
+      expect((response.body as UserDto).role).toBe(ROLES.TEACHER);
+    });
+
+    it('should return the correct data for an ADMIN role', async () => {
+      const user = await createTestUser({ role: 'ADMIN' });
+      const controller = makeSut();
+
+      const response = await controller.handle(
+        makeRequest({
+          id: user.id,
+          username: user.username,
+          role: ROLES.ADMIN,
+        }),
+      );
+
+      expect(response.statusCode).toBe(200);
+      expect((response.body as UserDto).role).toBe(ROLES.ADMIN);
+    });
+
+    it('should return only the requesting user data, not another user', async () => {
+      const userA = await createTestUser();
+      const userB = await createTestUser({
+        username: 'outro.user.teste',
+        role: 'TEACHER',
+      });
+      const controller = makeSut();
+
+      const response = await controller.handle(
+        makeRequest({
+          id: userA.id,
+          username: userA.username,
+          role: ROLES.STUDENT,
+        }),
+      );
+
+      const body = response.body as UserDto;
+      expect(response.statusCode).toBe(200);
+      expect(body.id).toBe(userA.id);
+      expect(body.id).not.toBe(userB.id);
+      expect(body.username).toBe(TEST_USERNAME);
+    });
   });
 });
