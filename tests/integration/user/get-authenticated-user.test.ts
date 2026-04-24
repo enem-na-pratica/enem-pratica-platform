@@ -58,6 +58,59 @@ afterAll(async () => {
 
 describe('GetAuthenticatedUserController (integration)', () => {
   describe('GET /api/users/me — success cases', () => {
-    it('should return 200 and the UserDto of the authenticated user', async () => {});
+    it('should return 200 and the UserDto of the authenticated user', async () => {
+      const user = await createTestUser();
+      const controller = makeSut();
+
+      const response = await controller.handle(
+        makeRequest({
+          id: user.id,
+          username: user.username,
+          role: ROLES.STUDENT,
+        }),
+      );
+
+      expect(response.statusCode).toBe(200);
+      expect(response.body).toMatchObject<Partial<UserDto>>({
+        id: user.id,
+        name: 'Auth User Teste',
+        username: TEST_USERNAME,
+        role: ROLES.STUDENT,
+      });
+    });
+
+    it('should return createdAt and updatedAt as ISO strings', async () => {
+      const user = await createTestUser();
+      const controller = makeSut();
+
+      const response = await controller.handle(
+        makeRequest({
+          id: user.id,
+          username: user.username,
+          role: ROLES.STUDENT,
+        }),
+      );
+
+      const body = response.body as UserDto;
+      expect(response.statusCode).toBe(200);
+      expect(body.createdAt).toMatch(/^\d{4}-\d{2}-\d{2}T/);
+      expect(body.updatedAt).toMatch(/^\d{4}-\d{2}-\d{2}T/);
+    });
+
+    it('should not expose passwordHash in the response', async () => {
+      const user = await createTestUser();
+      const controller = makeSut();
+
+      const response = await controller.handle(
+        makeRequest({
+          id: user.id,
+          username: user.username,
+          role: ROLES.STUDENT,
+        }),
+      );
+
+      expect(response.body).not.toHaveProperty('passwordHash');
+      expect(response.body).not.toHaveProperty('password');
+    });
   });
 });
