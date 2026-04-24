@@ -26,6 +26,24 @@ function makeRequest(
   };
 }
 
+beforeAll(async () => {
+  await prisma.$connect();
+});
+
+afterEach(async () => {
+  await prisma.user.deleteMany({
+    where: {
+      username: {
+        in: [TEST_TEACHER_USERNAME, TEST_STUDENT_USERNAME, TEST_ADMIN_USERNAME],
+      },
+    },
+  });
+});
+
+afterAll(async () => {
+  await prisma.$disconnect();
+});
+
 describe('CreateUserController (integration)', () => {
   describe('POST /api/users — success cases', () => {
     it('should return 201 and the created user DTO when creating a TEACHER', async () => {
