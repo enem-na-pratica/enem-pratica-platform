@@ -26,6 +26,24 @@ function makeRequest(
   };
 }
 
+async function createTeacher(): Promise<string> {
+  const { makeBcryptAdapter } =
+    await import('@/src/core/main/factories/common/crypto');
+  const bcrypt = makeBcryptAdapter();
+  const passwordHash = await bcrypt.hash(TEST_PASSWORD);
+
+  const teacher = await prisma.user.create({
+    data: {
+      name: 'Professor Teste',
+      username: TEST_TEACHER_USERNAME,
+      passwordHash,
+      role: ROLES.TEACHER,
+    },
+  });
+
+  return teacher.id;
+}
+
 beforeAll(async () => {
   await prisma.$connect();
 });
@@ -69,6 +87,52 @@ describe('CreateUserController (integration)', () => {
       expect(response.body).toHaveProperty('updatedAt');
       expect(response.body).not.toHaveProperty('passwordHash');
       expect(response.body).not.toHaveProperty('password');
+    });
+
+    it('should return 201 and the created user DTO when creating an ADMIN', async () => {
+      const controller = makeSut();
+
+      const response = await controller.handle(
+        makeRequest({
+          name: 'Admin Teste',
+          username: TEST_ADMIN_USERNAME,
+          password: TEST_PASSWORD,
+          role: ROLES.ADMIN,
+        }),
+      );
+
+      expect(response.statusCode).toBe(201);
+      expect(response.body).toMatchObject({
+        username: TEST_ADMIN_USERNAME,
+        role: ROLES.ADMIN,
+      });
+    });
+
+    it('should return 201 and create a STUDENT linked to an existing teacher', async () => {
+      const teacherId = await createTeacher();
+      const controller = makeSut();
+
+      const response = await controller.handle(
+        makeRequest({
+          name: 'Aluno Teste',
+          username: TEST_STUDENT_USERNAME,
+          password: TEST_PASSWORD,
+          role: ROLES.STUDENT,
+          teacherId,
+        }),
+      );
+
+      expect(response.statusCode).toBe(201);
+      expect(response.body).toMatchObject({
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+
+      const mentorship = await prisma.studentTeacher.findFirst({
+        where: { teacherId },
+      });
+      expect(mentorship).not.toBeNull();
+      expect(mentorship?.teacherId).toBe(teacherId);
     });
   });
 });
