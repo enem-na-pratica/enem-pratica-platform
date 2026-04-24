@@ -172,4 +172,55 @@ describe('CreateUserController (integration)', () => {
       expect((response.body as UserDto).username).toBe(TEST_TEACHER_USERNAME);
     });
   });
+
+  describe('POST /api/users — validation errors (400)', () => {
+    it('should return 400 with error details when the request body is invalid', async () => {
+      const controller = makeSut();
+
+      const response = await controller.handle(makeRequest({}));
+
+      expect(response.statusCode).toBe(400);
+      expect(response.body).toHaveProperty('message');
+      expect(response.body).toHaveProperty('details');
+    });
+  });
+
+  describe('POST /api/users — conflict errors (409)', () => {
+    it('should return 409 when username is already taken', async () => {
+      const controller = makeSut();
+
+      const payload = makeRequest({
+        name: 'Professor Teste',
+        username: TEST_TEACHER_USERNAME,
+        password: TEST_PASSWORD,
+        role: ROLES.TEACHER,
+      });
+
+      // First creation succeeds
+      await controller.handle(payload);
+
+      // Second creation with the same username must conflict
+      const response = await controller.handle(payload);
+      expect(response.statusCode).toBe(409);
+    });
+  });
+
+  describe('POST /api/users — not-found errors (404)', () => {
+    it('should return 404 when the provided teacherId does not exist', async () => {
+      const controller = makeSut();
+      const nonExistentTeacherId = '00000000-0000-0000-0000-000000000000';
+
+      const response = await controller.handle(
+        makeRequest({
+          name: 'Aluno Teste',
+          username: TEST_STUDENT_USERNAME,
+          password: TEST_PASSWORD,
+          role: ROLES.STUDENT,
+          teacherId: nonExistentTeacherId,
+        }),
+      );
+
+      expect(response.statusCode).toBe(404);
+    });
+  });
 });
