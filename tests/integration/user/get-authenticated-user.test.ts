@@ -168,4 +168,21 @@ describe('GetAuthenticatedUserController (integration)', () => {
       expect(body.username).toBe(TEST_USERNAME);
     });
   });
+
+  describe('GET /api/users/me — error cases', () => {
+    it('should return 404 when the requester id does not exist in the database', async () => {
+      const controller = makeSut();
+      const nonExistentId = '00000000-0000-0000-0000-000000000000';
+
+      const response = await controller.handle(
+        makeRequest({
+          id: nonExistentId,
+          username: 'ghost',
+          role: ROLES.STUDENT,
+        }),
+      );
+
+      expect(response.statusCode).toBe(404);
+    });
+  });
 });
