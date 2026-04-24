@@ -9,9 +9,11 @@ type UserProps = {
   role: Role;
   createdAt?: Date;
   updatedAt?: Date;
-}
+};
 
-type CreateUserProps = Prettify<Omit<UserProps, "id" | "createdAt" | "updatedAt">>;
+type CreateUserProps = Prettify<
+  Omit<UserProps, 'id' | 'createdAt' | 'updatedAt'>
+>;
 
 type LoadUserProps = Prettify<Required<UserProps>>;
 
@@ -45,13 +47,27 @@ export class User {
   }
 
   // --- Getters ---
-  public get id(): string | undefined { return this._id }
-  public get name(): string { return this._name.value }
-  public get username(): string { return this._username.value }
-  public get passwordHash(): string { return this._passwordHash }
-  public get role(): Role { return this._role }
-  public get createdAt(): Date { return this._createdAt }
-  public get updatedAt(): Date { return this._updatedAt }
+  public get id(): string | undefined {
+    return this._id;
+  }
+  public get name(): string {
+    return this._name.value;
+  }
+  public get username(): string {
+    return this._username.value;
+  }
+  public get passwordHash(): string {
+    return this._passwordHash;
+  }
+  public get role(): Role {
+    return this._role;
+  }
+  public get createdAt(): Date {
+    return this._createdAt;
+  }
+  public get updatedAt(): Date {
+    return this._updatedAt;
+  }
 
   // --- Mutations ---
   public changeName(newName: string): void {
