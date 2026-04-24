@@ -3,6 +3,6 @@ export type UserDto = {
   name: string;
   username: string;
   role: string;
-  createdAt: string; 
+  createdAt: string;
   updatedAt: string;
-}
+};

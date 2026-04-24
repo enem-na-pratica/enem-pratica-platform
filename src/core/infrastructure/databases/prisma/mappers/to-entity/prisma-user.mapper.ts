@@ -1,6 +1,6 @@
-import { User } from "@/src/core/domain/entities";
-import { Mapper } from "@/src/core/domain/contracts/mappers";
-import { User as PrismaUser } from "@/src/generated/prisma/client";
+import { Mapper } from '@/src/core/domain/contracts/mappers';
+import { User } from '@/src/core/domain/entities';
+import { User as PrismaUser } from '@/src/generated/prisma/client';
 
 export class UserEntityMapper implements Mapper<PrismaUser, User> {
   map(prismaUser: PrismaUser): User {
