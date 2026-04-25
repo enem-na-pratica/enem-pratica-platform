@@ -156,5 +156,68 @@ describe('ListAvailableInstructorsController (integration)', () => {
 
       expect(found).toBeUndefined();
     });
+
+    it('should return the correct studentsCount when a teacher has students linked', async () => {
+      const teacherId = await createUser({
+        name: 'Professor Teste',
+        username: TEST_TEACHER_USERNAME,
+        role: ROLES.TEACHER,
+      });
+      const studentId = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+
+      await linkStudentToTeacher(studentId, teacherId);
+
+      const controller = makeSut();
+      const response = await controller.handle();
+
+      expect(response.statusCode).toBe(200);
+
+      const body = response.body as InstructorWithStudentCountDto[];
+      const found = body.find(
+        (i) => i.instructor.username === TEST_TEACHER_USERNAME,
+      );
+
+      expect(found).toBeDefined();
+      expect(found?.studentsCount).toBe(1);
+    });
+
+    it('should return both TEACHERs and ADMINs but not STUDENTs', async () => {
+      await createUser({
+        name: 'Professor Teste',
+        username: TEST_TEACHER_USERNAME,
+        role: ROLES.TEACHER,
+      });
+      await createUser({
+        name: 'Admin Teste',
+        username: TEST_ADMIN_USERNAME,
+        role: ROLES.ADMIN,
+      });
+      await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+
+      const controller = makeSut();
+      const response = await controller.handle();
+
+      expect(response.statusCode).toBe(200);
+
+      const body = response.body as InstructorWithStudentCountDto[];
+      const testResults = body.filter((i) =>
+        ALL_TEST_USERNAMES.includes(i.instructor.username),
+      );
+
+      expect(testResults).toHaveLength(2);
+
+      const usernames = testResults.map((i) => i.instructor.username);
+      expect(usernames).toContain(TEST_TEACHER_USERNAME);
+      expect(usernames).toContain(TEST_ADMIN_USERNAME);
+      expect(usernames).not.toContain(TEST_STUDENT_USERNAME);
+    });
   });
 });
