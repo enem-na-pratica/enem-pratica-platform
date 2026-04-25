@@ -1,19 +1,19 @@
+import type { UserDto } from '@/src/core/application/common/dtos';
 import type {
+  InstructorWithStudentCountDto,
   ListInstructorsLoadQuery,
-  InstructorWithStudentCountDto
-} from "@/src/core/application/use-cases/user/list-available-instructors";
-import type { PrismaClient } from "@/src/generated/prisma/client";
-import { ROLES } from "@/src/core/domain/auth";
+} from '@/src/core/application/use-cases/user/list-available-instructors';
+import { ROLES } from '@/src/core/domain/auth';
+import type { Mapper } from '@/src/core/domain/contracts/mappers';
 import {
+  type PrismaUserPublic,
   userPublicSelect,
-  type PrismaUserPublic
-} from "@/src/core/infrastructure/databases/prisma/selects";
-import type { Mapper } from "@/src/core/domain/contracts/mappers";
-import type { UserDto } from "@/src/core/application/common/dtos";
+} from '@/src/core/infrastructure/databases/prisma/selects';
+import type { PrismaClient } from '@/src/generated/prisma/client';
 
 type PrismaListInstructorsLoadQueryDeps = {
   prisma: PrismaClient;
-  mapper: Mapper<PrismaUserPublic, UserDto>
+  mapper: Mapper<PrismaUserPublic, UserDto>;
 };
 
 export class PrismaListInstructorsLoadQuery implements ListInstructorsLoadQuery {
@@ -45,7 +45,7 @@ export class PrismaListInstructorsLoadQuery implements ListInstructorsLoadQuery 
     return instructors.map((i) => {
       return {
         instructor: this.mapper.map(i),
-        studentsCount: i._count.mentorshipsAsTeacher
+        studentsCount: i._count.mentorshipsAsTeacher,
       };
     });
   }
