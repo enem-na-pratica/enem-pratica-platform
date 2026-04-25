@@ -75,3 +75,21 @@ afterEach(async () => {
 afterAll(async () => {
   await prisma.$disconnect();
 });
+
+describe('ListAvailableInstructorsController (integration)', () => {
+  describe('GET /api/users/instructors — success cases', () => {
+    it('should return 200 with an empty array when there are no instructors', async () => {
+      const controller = makeSut();
+      const response = await controller.handle();
+
+      expect(response.statusCode).toBe(200);
+      expect(Array.isArray(response.body)).toBe(true);
+
+      const body = response.body as InstructorWithStudentCountDto[];
+      const testInstructors = body.filter((i) =>
+        ALL_TEST_USERNAMES.includes(i.instructor.username),
+      );
+      expect(testInstructors).toHaveLength(0);
+    });
+  });
+});
