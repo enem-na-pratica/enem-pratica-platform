@@ -120,7 +120,13 @@ describe('ListUsersController (integration)', () => {
       const controller = makeSut();
       const response = await controller.handle(makeRequest(ROLES.SUPER_ADMIN));
 
-      const usernames = (response.body as UserDto[]).map((u) => u.username);
+      expect(response.statusCode).toBe(200);
+
+      const body = response.body as UserDto[];
+      const usernames = body.map((u) => u.username);
+
+      expect(usernames).toContain(USERNAMES.teacher);
+      expect(usernames).toContain(USERNAMES.student);
       expect(usernames).toContain(USERNAMES.admin);
     });
 
@@ -130,18 +136,57 @@ describe('ListUsersController (integration)', () => {
         username: USERNAMES.teacher,
         role: ROLES.TEACHER,
       });
+
       const controller = makeSut();
       const response = await controller.handle(makeRequest(ROLES.ADMIN));
+
+      expect(response.statusCode).toBe(200);
 
       const body = response.body as UserDto[];
       const found = body.find((u) => u.username === USERNAMES.teacher);
 
+      expect(found).toBeDefined();
       expect(found).toMatchObject({
         name: 'Professor Lista',
         username: USERNAMES.teacher,
         role: ROLES.TEACHER,
       });
+      expect(found).toHaveProperty('id');
+      expect(found).toHaveProperty('createdAt');
+      expect(found).toHaveProperty('updatedAt');
       expect(found).not.toHaveProperty('passwordHash');
+      expect(found).not.toHaveProperty('password');
+    });
+
+    it('should return an empty array when there are no STUDENTs or TEACHERs (ADMIN view)', async () => {
+      const controller = makeSut();
+
+      const response = await controller.handle(makeRequest(ROLES.ADMIN));
+
+      expect(response.statusCode).toBe(200);
+      expect(Array.isArray(response.body)).toBe(true);
+
+      const body = response.body as UserDto[];
+      const testUsernames = body.filter((u) =>
+        Object.values(USERNAMES).includes(u.username),
+      );
+      expect(testUsernames).toHaveLength(0);
+    });
+  });
+
+  describe('GET /api/users — authorization errors (403)', () => {
+    it('should return 403 when called by a STUDENT', async () => {
+      const controller = makeSut();
+      const response = await controller.handle(makeRequest(ROLES.STUDENT));
+
+      expect(response.statusCode).toBe(403);
+    });
+
+    it('should return 403 when called by a TEACHER', async () => {
+      const controller = makeSut();
+      const response = await controller.handle(makeRequest(ROLES.TEACHER));
+
+      expect(response.statusCode).toBe(403);
     });
   });
 });
