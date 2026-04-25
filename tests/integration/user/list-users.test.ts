@@ -26,6 +26,32 @@ function makeRequest(role: Role): AuthenticatedRequest<void> {
   };
 }
 
+async function createUser(data: {
+  name: string;
+  username: string;
+  role: Role;
+}) {
+  const bcrypt = makeBcryptAdapter();
+  const passwordHash = await bcrypt.hash(TEST_PASSWORD);
+  return prisma.user.create({
+    data: { ...data, passwordHash, role: data.role },
+  });
+}
+
+beforeAll(async () => {
+  await prisma.$connect();
+});
+
+afterEach(async () => {
+  await prisma.user.deleteMany({
+    where: { username: { in: Object.values(USERNAMES) } },
+  });
+});
+
+afterAll(async () => {
+  await prisma.$disconnect();
+});
+
 describe('ListUsersController (integration)', () => {
   describe('GET /api/users — success cases', () => {
     it('should return 200 with an array when called by an ADMIN', async () => {
