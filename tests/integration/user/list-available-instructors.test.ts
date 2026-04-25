@@ -91,6 +91,7 @@ describe('ListAvailableInstructorsController (integration)', () => {
       );
       expect(testInstructors).toHaveLength(0);
     });
+
     it('should return 200 and list a TEACHER with studentsCount 0 when they have no students', async () => {
       await createUser({
         name: 'Professor Teste',
@@ -137,26 +138,6 @@ describe('ListAvailableInstructorsController (integration)', () => {
       expect(found?.instructor.role).toBe(ROLES.ADMIN);
     });
 
-    it('should NOT include STUDENT role in the results', async () => {
-      await createUser({
-        name: 'Aluno Teste',
-        username: TEST_STUDENT_USERNAME,
-        role: ROLES.STUDENT,
-      });
-
-      const controller = makeSut();
-      const response = await controller.handle();
-
-      expect(response.statusCode).toBe(200);
-
-      const body = response.body as InstructorWithStudentCountDto[];
-      const found = body.find(
-        (i) => i.instructor.username === TEST_STUDENT_USERNAME,
-      );
-
-      expect(found).toBeUndefined();
-    });
-
     it('should return the correct studentsCount when a teacher has students linked', async () => {
       const teacherId = await createUser({
         name: 'Professor Teste',
@@ -183,6 +164,26 @@ describe('ListAvailableInstructorsController (integration)', () => {
 
       expect(found).toBeDefined();
       expect(found?.studentsCount).toBe(1);
+    });
+
+    it('should NOT include STUDENT role in the results', async () => {
+      await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+
+      const controller = makeSut();
+      const response = await controller.handle();
+
+      expect(response.statusCode).toBe(200);
+
+      const body = response.body as InstructorWithStudentCountDto[];
+      const found = body.find(
+        (i) => i.instructor.username === TEST_STUDENT_USERNAME,
+      );
+
+      expect(found).toBeUndefined();
     });
 
     it('should return both TEACHERs and ADMINs but not STUDENTs', async () => {
@@ -218,6 +219,73 @@ describe('ListAvailableInstructorsController (integration)', () => {
       expect(usernames).toContain(TEST_TEACHER_USERNAME);
       expect(usernames).toContain(TEST_ADMIN_USERNAME);
       expect(usernames).not.toContain(TEST_STUDENT_USERNAME);
+    });
+
+    it('should return the correct shape for each instructor entry', async () => {
+      await createUser({
+        name: 'Professor Teste',
+        username: TEST_TEACHER_USERNAME,
+        role: ROLES.TEACHER,
+      });
+
+      const controller = makeSut();
+      const response = await controller.handle();
+
+      expect(response.statusCode).toBe(200);
+
+      const body = response.body as InstructorWithStudentCountDto[];
+      const found = body.find(
+        (i) => i.instructor.username === TEST_TEACHER_USERNAME,
+      );
+
+      expect(found).toBeDefined();
+      expect(found).toHaveProperty('instructor');
+      expect(found).toHaveProperty('studentsCount');
+      expect(found?.instructor).toHaveProperty('id');
+      expect(found?.instructor).toHaveProperty('name');
+      expect(found?.instructor).toHaveProperty('username');
+      expect(found?.instructor).toHaveProperty('role');
+      expect(found?.instructor).toHaveProperty('createdAt');
+      expect(found?.instructor).toHaveProperty('updatedAt');
+      expect(found?.instructor).not.toHaveProperty('passwordHash');
+      expect(found?.instructor).not.toHaveProperty('password');
+    });
+
+    it('should reflect accurate studentsCount for multiple teachers independently', async () => {
+      const teacher1Id = await createUser({
+        name: 'Professor 1',
+        username: TEST_TEACHER_USERNAME,
+        role: ROLES.TEACHER,
+      });
+      await createUser({
+        name: 'Professor 2',
+        username: TEST_TEACHER2_USERNAME,
+        role: ROLES.TEACHER,
+      });
+      const studentId = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+
+      await linkStudentToTeacher(studentId, teacher1Id);
+
+      const controller = makeSut();
+      const response = await controller.handle();
+
+      expect(response.statusCode).toBe(200);
+
+      const body = response.body as InstructorWithStudentCountDto[];
+
+      const teacher1 = body.find(
+        (i) => i.instructor.username === TEST_TEACHER_USERNAME,
+      );
+      const teacher2 = body.find(
+        (i) => i.instructor.username === TEST_TEACHER2_USERNAME,
+      );
+
+      expect(teacher1?.studentsCount).toBe(1);
+      expect(teacher2?.studentsCount).toBe(0);
     });
   });
 });
