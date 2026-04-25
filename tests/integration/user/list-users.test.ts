@@ -99,5 +99,49 @@ describe('ListUsersController (integration)', () => {
       expect(usernames).toContain(USERNAMES.student);
       expect(usernames).not.toContain(USERNAMES.admin);
     });
+
+    it('SUPER_ADMIN should receive all users regardless of role', async () => {
+      await createUser({
+        name: 'Professor Lista',
+        username: USERNAMES.teacher,
+        role: ROLES.TEACHER,
+      });
+      await createUser({
+        name: 'Aluno Lista',
+        username: USERNAMES.student,
+        role: ROLES.STUDENT,
+      });
+      await createUser({
+        name: 'Admin Lista',
+        username: USERNAMES.admin,
+        role: ROLES.ADMIN,
+      });
+
+      const controller = makeSut();
+      const response = await controller.handle(makeRequest(ROLES.SUPER_ADMIN));
+
+      const usernames = (response.body as UserDto[]).map((u) => u.username);
+      expect(usernames).toContain(USERNAMES.admin);
+    });
+
+    it('should return each user with the correct DTO shape', async () => {
+      await createUser({
+        name: 'Professor Lista',
+        username: USERNAMES.teacher,
+        role: ROLES.TEACHER,
+      });
+      const controller = makeSut();
+      const response = await controller.handle(makeRequest(ROLES.ADMIN));
+
+      const body = response.body as UserDto[];
+      const found = body.find((u) => u.username === USERNAMES.teacher);
+
+      expect(found).toMatchObject({
+        name: 'Professor Lista',
+        username: USERNAMES.teacher,
+        role: ROLES.TEACHER,
+      });
+      expect(found).not.toHaveProperty('passwordHash');
+    });
   });
 });
