@@ -1,0 +1,192 @@
+import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
+
+import { UserDto } from '@/src/core/application/common/dtos';
+import { ROLES, type Role } from '@/src/core/domain/auth';
+import { prisma } from '@/src/core/infrastructure/databases/prisma/prisma';
+import { makeBcryptAdapter } from '@/src/core/main/factories/common/crypto';
+import { makeListUsers } from '@/src/core/main/factories/user/make-list-users.factory';
+import type { AuthenticatedRequest } from '@/src/core/presentation/protocols';
+
+const TEST_PASSWORD = 'Senha@123';
+
+const USERNAMES = {
+  teacher: 'teacher.list.teste',
+  student: 'student.list.teste',
+  admin: 'admin.list.teste',
+};
+
+function makeSut() {
+  return makeListUsers();
+}
+
+function makeRequest(role: Role): AuthenticatedRequest<void> {
+  return {
+    body: undefined as void,
+    requester: { id: 'any-id', username: 'any-user', role: role },
+  };
+}
+
+async function createUser(data: {
+  name: string;
+  username: string;
+  role: Role;
+}) {
+  const bcrypt = makeBcryptAdapter();
+  const passwordHash = await bcrypt.hash(TEST_PASSWORD);
+  return prisma.user.create({
+    data: { ...data, passwordHash, role: data.role },
+  });
+}
+
+beforeAll(async () => {
+  await prisma.$connect();
+});
+
+afterEach(async () => {
+  await prisma.user.deleteMany({
+    where: { username: { in: Object.values(USERNAMES) } },
+  });
+});
+
+afterAll(async () => {
+  await prisma.$disconnect();
+});
+
+describe('ListUsersController (integration)', () => {
+  describe('GET /api/users — success cases', () => {
+    it('should return 200 with an array when called by an ADMIN', async () => {
+      const controller = makeSut();
+      const response = await controller.handle(makeRequest(ROLES.ADMIN));
+
+      expect(response.statusCode).toBe(200);
+      expect(Array.isArray(response.body)).toBe(true);
+    });
+
+    it('should return 200 with an array when called by a SUPER_ADMIN', async () => {
+      const controller = makeSut();
+      const response = await controller.handle(makeRequest(ROLES.SUPER_ADMIN));
+
+      expect(response.statusCode).toBe(200);
+      expect(Array.isArray(response.body)).toBe(true);
+    });
+
+    it('ADMIN should receive only STUDENTs and TEACHERs (not ADMINs)', async () => {
+      await createUser({
+        name: 'Professor Lista',
+        username: USERNAMES.teacher,
+        role: ROLES.TEACHER,
+      });
+      await createUser({
+        name: 'Aluno Lista',
+        username: USERNAMES.student,
+        role: ROLES.STUDENT,
+      });
+      await createUser({
+        name: 'Admin Lista',
+        username: USERNAMES.admin,
+        role: ROLES.ADMIN,
+      });
+
+      const controller = makeSut();
+      const response = await controller.handle(makeRequest(ROLES.ADMIN));
+
+      expect(response.statusCode).toBe(200);
+
+      const body = response.body as UserDto[];
+      const usernames = body.map((u) => u.username);
+
+      expect(usernames).toContain(USERNAMES.teacher);
+      expect(usernames).toContain(USERNAMES.student);
+      expect(usernames).not.toContain(USERNAMES.admin);
+    });
+
+    it('SUPER_ADMIN should receive all users regardless of role', async () => {
+      await createUser({
+        name: 'Professor Lista',
+        username: USERNAMES.teacher,
+        role: ROLES.TEACHER,
+      });
+      await createUser({
+        name: 'Aluno Lista',
+        username: USERNAMES.student,
+        role: ROLES.STUDENT,
+      });
+      await createUser({
+        name: 'Admin Lista',
+        username: USERNAMES.admin,
+        role: ROLES.ADMIN,
+      });
+
+      const controller = makeSut();
+      const response = await controller.handle(makeRequest(ROLES.SUPER_ADMIN));
+
+      expect(response.statusCode).toBe(200);
+
+      const body = response.body as UserDto[];
+      const usernames = body.map((u) => u.username);
+
+      expect(usernames).toContain(USERNAMES.teacher);
+      expect(usernames).toContain(USERNAMES.student);
+      expect(usernames).toContain(USERNAMES.admin);
+    });
+
+    it('should return each user with the correct DTO shape', async () => {
+      await createUser({
+        name: 'Professor Lista',
+        username: USERNAMES.teacher,
+        role: ROLES.TEACHER,
+      });
+
+      const controller = makeSut();
+      const response = await controller.handle(makeRequest(ROLES.ADMIN));
+
+      expect(response.statusCode).toBe(200);
+
+      const body = response.body as UserDto[];
+      const found = body.find((u) => u.username === USERNAMES.teacher);
+
+      expect(found).toBeDefined();
+      expect(found).toMatchObject({
+        name: 'Professor Lista',
+        username: USERNAMES.teacher,
+        role: ROLES.TEACHER,
+      });
+      expect(found).toHaveProperty('id');
+      expect(found).toHaveProperty('createdAt');
+      expect(found).toHaveProperty('updatedAt');
+      expect(found).not.toHaveProperty('passwordHash');
+      expect(found).not.toHaveProperty('password');
+    });
+
+    it('should return an empty array when there are no STUDENTs or TEACHERs (ADMIN view)', async () => {
+      const controller = makeSut();
+
+      const response = await controller.handle(makeRequest(ROLES.ADMIN));
+
+      expect(response.statusCode).toBe(200);
+      expect(Array.isArray(response.body)).toBe(true);
+
+      const body = response.body as UserDto[];
+      const testUsernames = body.filter((u) =>
+        Object.values(USERNAMES).includes(u.username),
+      );
+      expect(testUsernames).toHaveLength(0);
+    });
+  });
+
+  describe('GET /api/users — authorization errors (403)', () => {
+    it('should return 403 when called by a STUDENT', async () => {
+      const controller = makeSut();
+      const response = await controller.handle(makeRequest(ROLES.STUDENT));
+
+      expect(response.statusCode).toBe(403);
+    });
+
+    it('should return 403 when called by a TEACHER', async () => {
+      const controller = makeSut();
+      const response = await controller.handle(makeRequest(ROLES.TEACHER));
+
+      expect(response.statusCode).toBe(403);
+    });
+  });
+});
