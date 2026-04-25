@@ -91,5 +91,70 @@ describe('ListAvailableInstructorsController (integration)', () => {
       );
       expect(testInstructors).toHaveLength(0);
     });
+    it('should return 200 and list a TEACHER with studentsCount 0 when they have no students', async () => {
+      await createUser({
+        name: 'Professor Teste',
+        username: TEST_TEACHER_USERNAME,
+        role: ROLES.TEACHER,
+      });
+
+      const controller = makeSut();
+      const response = await controller.handle();
+
+      expect(response.statusCode).toBe(200);
+
+      const body = response.body as InstructorWithStudentCountDto[];
+      const found = body.find(
+        (i) => i.instructor.username === TEST_TEACHER_USERNAME,
+      );
+
+      expect(found).toBeDefined();
+      expect(found?.studentsCount).toBe(0);
+      expect(found?.instructor).toMatchObject({
+        username: TEST_TEACHER_USERNAME,
+        role: ROLES.TEACHER,
+      });
+    });
+
+    it('should return 200 and list an ADMIN as an available instructor', async () => {
+      await createUser({
+        name: 'Admin Teste',
+        username: TEST_ADMIN_USERNAME,
+        role: ROLES.ADMIN,
+      });
+
+      const controller = makeSut();
+      const response = await controller.handle();
+
+      expect(response.statusCode).toBe(200);
+
+      const body = response.body as InstructorWithStudentCountDto[];
+      const found = body.find(
+        (i) => i.instructor.username === TEST_ADMIN_USERNAME,
+      );
+
+      expect(found).toBeDefined();
+      expect(found?.instructor.role).toBe(ROLES.ADMIN);
+    });
+
+    it('should NOT include STUDENT role in the results', async () => {
+      await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+
+      const controller = makeSut();
+      const response = await controller.handle();
+
+      expect(response.statusCode).toBe(200);
+
+      const body = response.body as InstructorWithStudentCountDto[];
+      const found = body.find(
+        (i) => i.instructor.username === TEST_STUDENT_USERNAME,
+      );
+
+      expect(found).toBeUndefined();
+    });
   });
 });
