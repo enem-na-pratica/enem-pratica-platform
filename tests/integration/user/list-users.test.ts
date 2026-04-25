@@ -69,5 +69,35 @@ describe('ListUsersController (integration)', () => {
       expect(response.statusCode).toBe(200);
       expect(Array.isArray(response.body)).toBe(true);
     });
+
+    it('ADMIN should receive only STUDENTs and TEACHERs (not ADMINs)', async () => {
+      await createUser({
+        name: 'Professor Lista',
+        username: USERNAMES.teacher,
+        role: ROLES.TEACHER,
+      });
+      await createUser({
+        name: 'Aluno Lista',
+        username: USERNAMES.student,
+        role: ROLES.STUDENT,
+      });
+      await createUser({
+        name: 'Admin Lista',
+        username: USERNAMES.admin,
+        role: ROLES.ADMIN,
+      });
+
+      const controller = makeSut();
+      const response = await controller.handle(makeRequest(ROLES.ADMIN));
+
+      expect(response.statusCode).toBe(200);
+
+      const body = response.body as UserDto[];
+      const usernames = body.map((u) => u.username);
+
+      expect(usernames).toContain(USERNAMES.teacher);
+      expect(usernames).toContain(USERNAMES.student);
+      expect(usernames).not.toContain(USERNAMES.admin);
+    });
   });
 });
