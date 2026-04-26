@@ -56,6 +56,16 @@ export class ListUserQuestionSessionsStatisticsUseCase implements UseCase<
     };
   }
 
+  /**
+   * Sort priority:
+   * 1. Sessions with nextReviewDate come first.
+   * 2. Among sessions pending review, earlier nextReviewDate has higher priority.
+   * 3. Sessions without nextReviewDate are sorted by updatedAt (most recent first).
+   *
+   * Tie-breakers:
+   * 4. date descending (most recent first).
+   * 5. createdAt descending (newest first).
+   */
   private sortSessionsByNextReviewDate(
     sessions: QuestionSessionWithTopicAndSubjectDto[],
   ): QuestionSessionWithTopicAndSubjectDto[] {
