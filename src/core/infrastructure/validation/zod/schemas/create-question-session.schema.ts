@@ -16,26 +16,29 @@ const createCountSchema = (fieldName: string) =>
     });
 
 const createDateSchema = (optional = true) => {
-  const schema = z.string().superRefine((val, ctx) => {
-    if (isNaN(new Date(val).getTime())) {
-      ctx.addIssue({
-        code: 'custom',
-        message: `Invalid date string: "${val}"`,
-      });
-      return;
-    }
+  const schema = z
+    .string()
+    .superRefine((val, ctx) => {
+      if (isNaN(new Date(val).getTime())) {
+        ctx.addIssue({
+          code: 'custom',
+          message: `Invalid date string: "${val}"`,
+        });
+        return;
+      }
 
-    const inputDate = new Date(val);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+      const inputDate = new Date(val);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
 
-    if (inputDate > today) {
-      ctx.addIssue({
-        code: 'custom',
-        message: 'A given cannot be in the future',
-      });
-    }
-  });
+      if (inputDate > today) {
+        ctx.addIssue({
+          code: 'custom',
+          message: 'A given cannot be in the future',
+        });
+      }
+    })
+    .transform((val) => new Date(`${val}T00:00:00Z`).toISOString());
 
   return optional ? schema.optional() : schema;
 };
