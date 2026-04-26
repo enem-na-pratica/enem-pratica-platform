@@ -43,9 +43,9 @@ export const createQuestionSessionSchema = z
     date: dateFromString.optional(),
     total: createCountSchema('Total'),
     correct: createCountSchema('Correct'),
-    isReviewing: z
+    isReviewed: z
       .boolean({
-        error: 'isReviewing must be a boolean',
+        error: 'isReviewed must be a boolean',
       })
       .optional(),
   })
