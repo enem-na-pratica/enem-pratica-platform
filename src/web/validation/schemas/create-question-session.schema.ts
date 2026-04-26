@@ -36,10 +36,7 @@ export const createQuestionSessionSchema = z
     correct: createCountSchema('Acertos'),
     isReviewed: z
       .boolean({
-        error: (issue) =>
-          issue.input === undefined
-            ? 'O campo "revisado" é obrigatório'
-            : 'O campo "revisado" deve ser booleano',
+        error: 'O campo "revisado" deve ser booleano',
       })
       .optional(),
   })
