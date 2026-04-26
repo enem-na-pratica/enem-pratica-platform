@@ -1,6 +1,6 @@
 {
   "name": "pratic-enem",
-  "version": "0.16.3",
+  "version": "0.16.4",
   "private": true,
   "scripts": {
     "postinstall": "prisma generate",

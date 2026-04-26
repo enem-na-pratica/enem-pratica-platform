@@ -28,7 +28,7 @@ export class PrismaQuestionSessionWithTopicAndSubjectDtoMapper implements Mapper
       }),
       nextReviewDate: this.nextReviewDate({
         correct: prismaQuestionSession.correct,
-        total: prismaQuestionSession.correct,
+        total: prismaQuestionSession.total,
         date: prismaQuestionSession.date,
         isReviewed: prismaQuestionSession.isReviewed,
       }),
