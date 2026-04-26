@@ -33,7 +33,6 @@ export class PrismaListQuestionSessionsByAuthorQuery implements ListQuestionSess
     const questionSessions = await this.prisma.questionSession.findMany({
       where: { authorId },
       include: prismaQuestionSessionWithTopicAndSubjectInclude,
-      orderBy: [{ date: 'desc' }, { createdAt: 'desc' }],
     });
 
     return questionSessions.map((s) => this.mapper.map(s));
