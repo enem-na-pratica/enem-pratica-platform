@@ -1,19 +1,21 @@
+import type { UserDto } from '@/src/core/application/common/dtos';
 import type { UseCase } from '@/src/core/application/common/interfaces';
+import { handleError, ok } from '@/src/core/presentation/helpers';
 import type {
+  AuthenticatedRequest,
   Controller,
   ErrorResponse,
   HttpResponse,
-  AuthenticatedRequest
 } from '@/src/core/presentation/protocols';
-import type { UserDto } from '@/src/core/application/common/dtos';
-import { handleError, ok } from '@/src/core/presentation/helpers';
 
 type GetAuthenticatedUserControllerDeps = {
   getAuthenticatedUserUseCase: UseCase<string, UserDto>;
-}
+};
 
-export class GetAuthenticatedUserController
-  implements Controller<void, UserDto> {
+export class GetAuthenticatedUserController implements Controller<
+  void,
+  UserDto
+> {
   private readonly getAuthenticatedUserUseCase: UseCase<string, UserDto>;
 
   constructor({
@@ -23,11 +25,11 @@ export class GetAuthenticatedUserController
   }
 
   async handle(
-    request: AuthenticatedRequest<void>
+    request: AuthenticatedRequest<void>,
   ): Promise<HttpResponse<UserDto | ErrorResponse>> {
     try {
       const requesterData = await this.getAuthenticatedUserUseCase.execute(
-        request.requester.id
+        request.requester.id,
       );
 
       return ok(requesterData);

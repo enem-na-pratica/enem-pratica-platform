@@ -1,6 +1,6 @@
-import type { Mapper } from "@/src/core/domain/contracts/mappers";
-import type { UserDto } from "@/src/core/application/common/dtos";
-import type { PrismaUserPublic } from "@/src/core/infrastructure/databases/prisma/selects";
+import type { UserDto } from '@/src/core/application/common/dtos';
+import type { Mapper } from '@/src/core/domain/contracts/mappers';
+import type { PrismaUserPublic } from '@/src/core/infrastructure/databases/prisma/selects';
 
 export class PrismaUserDtoMapper implements Mapper<PrismaUserPublic, UserDto> {
   public map(user: PrismaUserPublic): UserDto {
