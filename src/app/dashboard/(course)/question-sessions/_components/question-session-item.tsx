@@ -38,12 +38,16 @@ export function QuestionSessionItem({
     }
   };
 
-  const date = new Date(session.date).toLocaleDateString('pt-BR');
+  const date = new Date(session.date).toLocaleDateString('pt-BR', {
+    timeZone: 'UTC',
+  });
 
   const nextReviewLabel = isReviewed
     ? null
     : session.nextReviewDate
-      ? new Date(session.nextReviewDate).toLocaleDateString('pt-BR')
+      ? new Date(session.nextReviewDate).toLocaleDateString('pt-BR', {
+          timeZone: 'UTC',
+        })
       : null;
 
   return (
