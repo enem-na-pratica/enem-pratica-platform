@@ -50,7 +50,41 @@ export class ListUserQuestionSessionsStatisticsUseCase implements UseCase<
 
     const statistics = this.calculateStatistics(sessions);
 
-    return { questionSessions: sessions, statistics };
+    return {
+      questionSessions: this.sortSessionsByNextReviewDate(sessions),
+      statistics,
+    };
+  }
+
+  private sortSessionsByNextReviewDate(
+    sessions: QuestionSessionWithTopicAndSubjectDto[],
+  ): QuestionSessionWithTopicAndSubjectDto[] {
+    return [...sessions].sort((a, b) => {
+      const aHasReview = a.nextReviewDate !== null;
+
+      const bHasReview = b.nextReviewDate !== null;
+
+      if (aHasReview !== bHasReview) return aHasReview ? -1 : 1;
+
+      if (!aHasReview && !bHasReview) {
+        const diff =
+          new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+
+        if (diff !== 0) return diff;
+      } else {
+        const diff =
+          new Date(a.nextReviewDate!).getTime() -
+          new Date(b.nextReviewDate!).getTime();
+
+        if (diff !== 0) return diff;
+      }
+
+      const dateDiff = new Date(b.date).getTime() - new Date(a.date).getTime();
+
+      if (dateDiff !== 0) return dateDiff;
+
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
   }
 
   private calculateStatistics(
