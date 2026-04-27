@@ -1,7 +1,7 @@
 import { ValueObject } from "@/src/core/domain/shared";
 import { capitalizePTBR } from "@/src/core/domain/shared/utils";
 
-const NAME_CONFIG = { MIN: 20, MAX: 255 };
+const NAME_CONFIG = { MIN: 5, MAX: 255 };
 
 export class EssayTheme extends ValueObject<string> {
   private constructor(theme: string) {
