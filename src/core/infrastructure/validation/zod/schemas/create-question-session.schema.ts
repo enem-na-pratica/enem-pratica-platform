@@ -15,19 +15,33 @@ const createCountSchema = (fieldName: string) =>
       error: `${fieldName} cannot be less than 0`,
     });
 
-const dateFromString = z.string().transform((val, ctx) => {
-  const parsed = new Date(val);
+const createDateSchema = (optional = true) => {
+  const schema = z
+    .string()
+    .superRefine((val, ctx) => {
+      if (isNaN(new Date(val).getTime())) {
+        ctx.addIssue({
+          code: 'custom',
+          message: `Invalid date string: "${val}"`,
+        });
+        return;
+      }
 
-  if (isNaN(parsed.getTime())) {
-    ctx.addIssue({
-      code: 'custom',
-      message: `Invalid date string: "${val}"`,
-    });
-    return z.NEVER;
-  }
+      const inputDate = new Date(val);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
 
-  return parsed;
-});
+      if (inputDate > today) {
+        ctx.addIssue({
+          code: 'custom',
+          message: 'A given cannot be in the future',
+        });
+      }
+    })
+    .transform((val) => new Date(`${val}T00:00:00Z`));
+
+  return optional ? schema.optional() : schema;
+};
 
 export const createQuestionSessionSchema = z
   .object({
@@ -40,7 +54,7 @@ export const createQuestionSessionSchema = z
           : 'topicId must be a valid UUID',
     }),
 
-    date: dateFromString.optional(),
+    date: createDateSchema(),
     total: createCountSchema('Total'),
     correct: createCountSchema('Correct'),
     isReviewed: z
