@@ -53,7 +53,7 @@ export function NewUserForm({
       password: "",
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       role: "" as any, // A cast is necessary because the initial value is empty, but the type expects Enum.
-      teacherId: "",
+      teacherId: undefined,
     },
   });
 
@@ -64,7 +64,7 @@ export function NewUserForm({
 
   useEffect(() => {
     if (selectedRole !== ROLES.STUDENT) {
-      setValue("teacherId", "");
+      setValue("teacherId", undefined);
     }
   }, [selectedRole, setValue]);
 
