@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { usernameSchema } from './common';
 
 const THEME_CONFIG = {
-  MIN: 20,
+  MIN: 5,
   MAX: 255,
 };
 
