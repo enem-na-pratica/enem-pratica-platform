@@ -38,7 +38,7 @@ const createDateSchema = (optional = true) => {
         });
       }
     })
-    .transform((val) => new Date(`${val}T00:00:00Z`).toISOString());
+    .transform((val) => new Date(`${val}T00:00:00Z`));
 
   return optional ? schema.optional() : schema;
 };
