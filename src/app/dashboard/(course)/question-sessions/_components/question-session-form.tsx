@@ -17,6 +17,8 @@ import { fetchTopicsBySubject } from '../api';
 import { ChevronIcon, SpinnerIcon } from './icons';
 
 export function QuestionSessionForm({ subjects }: { subjects: Subject[] }) {
+  const today = new Date().toISOString().split('T')[0];
+
   const [isOpen, setIsOpen] = useState(false);
 
   // Cascading select state
@@ -36,7 +38,7 @@ export function QuestionSessionForm({ subjects }: { subjects: Subject[] }) {
     mode: 'onChange',
     defaultValues: {
       topicId: '',
-      date: new Date().toISOString().slice(0, 10),
+      date: today,
       total: 10,
       correct: 0,
       isReviewed: false,
@@ -79,7 +81,7 @@ export function QuestionSessionForm({ subjects }: { subjects: Subject[] }) {
     setTopics([]);
     reset({
       topicId: '',
-      date: new Date().toISOString().slice(0, 10),
+      date: today,
       total: 10,
       correct: 0,
       isReviewed: false,
@@ -235,6 +237,7 @@ export function QuestionSessionForm({ subjects }: { subjects: Subject[] }) {
               </label>
               <input
                 type="date"
+                max={today}
                 className={`input transition-all ${
                   errors.date
                     ? 'animate-shake border-(--error) ring-1 ring-(--error)'

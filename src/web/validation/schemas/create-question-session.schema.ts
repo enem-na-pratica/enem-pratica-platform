@@ -15,6 +15,31 @@ const createCountSchema = (fieldName: string) =>
       error: `${fieldName} deve ser no mínimo 0`,
     });
 
+const createDateSchema = (optional = true) => {
+  const schema = z.string().superRefine((val, ctx) => {
+    if (isNaN(new Date(val).getTime())) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'Data inválida',
+      });
+      return;
+    }
+
+    const inputDate = new Date(val);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (inputDate > today) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'A data não pode ser no futuro',
+      });
+    }
+  });
+
+  return optional ? schema.optional() : schema;
+};
+
 export const createQuestionSessionSchema = z
   .object({
     authorUsername: usernameSchema.optional(),
@@ -26,12 +51,7 @@ export const createQuestionSessionSchema = z
           : 'O tópico deve ser um UUID válido',
     }),
 
-    date: z
-      .string()
-      .optional()
-      .refine((val) => !val || !isNaN(new Date(val).getTime()), {
-        message: 'Data inválida',
-      }),
+    date: createDateSchema(),
     total: createCountSchema('Total'),
     correct: createCountSchema('Acertos'),
     isReviewed: z
