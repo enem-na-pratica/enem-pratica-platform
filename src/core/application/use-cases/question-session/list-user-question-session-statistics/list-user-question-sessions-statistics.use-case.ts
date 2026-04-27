@@ -188,14 +188,25 @@ export class ListUserQuestionSessionsStatisticsUseCase implements UseCase<
       ),
     );
 
-    const today = new Date(
-      new Date().getFullYear(),
-      new Date().getMonth(),
-      new Date().getDate(),
-    ).getTime();
-    const yesterday = today - DAY_MS;
+    if (!uniqueDays.length) return 0;
 
-    if (uniqueDays[0] !== today && uniqueDays[0] !== yesterday) return 0;
+    const now = new Date();
+    const today = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate(),
+    ).getTime();
+
+    const yesterday = today - DAY_MS;
+    const dayBeforeYesterday = yesterday - DAY_MS;
+
+    if (
+      uniqueDays[0] !== today &&
+      uniqueDays[0] !== yesterday &&
+      uniqueDays[0] !== dayBeforeYesterday
+    ) {
+      return 0;
+    }
 
     let streak = 0;
     let expected = uniqueDays[0];
@@ -208,6 +219,7 @@ export class ListUserQuestionSessionsStatisticsUseCase implements UseCase<
         break;
       }
     }
+
     return streak;
   }
 
