@@ -20,7 +20,7 @@ export type AreaPerformance = {
     errorAnalysis: {
       distractionErrors: number;
       interpretationErrors: number;
-      knowledgeGaps: number;
+      knowledgeGapsErrors: number;
     };
   };
 };
