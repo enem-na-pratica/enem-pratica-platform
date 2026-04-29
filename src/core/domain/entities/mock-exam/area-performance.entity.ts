@@ -147,18 +147,16 @@ export class AreaPerformance {
   public get qualityAssessment(): QualityAssessment {
     const correct = this._correctCount.value;
     const certainty = this._certaintyCount.value;
-    const doubtHits = this._doubtHits.value;
-    const doubtErrors = this._doubtErrors.value;
-    const doubt = doubtHits + doubtErrors;
-
     const wrong = QUESTIONS_PER_AREA - correct;
+    const doubtHits = correct - certainty;
+    const doubtErrors = this._doubtErrors.value;
 
     return {
       certaintyHits: certainty,
       confidenceRate: correct > 0 ? certainty / correct : 0,
       doubtHits: doubtHits,
       doubtErrors: doubtErrors,
-      criticalErrors: wrong - doubt,
+      criticalErrors: wrong - doubtErrors,
     };
   }
 
