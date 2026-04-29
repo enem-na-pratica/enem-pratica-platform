@@ -216,22 +216,28 @@ export class AreaPerformance {
   }
 
   public update(props: UpdateAreaPerformanceProps): void {
-    if (props.correctCount !== undefined) {
-      this._correctCount = ScoreCount.create(props.correctCount);
-    }
-    if (props.certaintyCount !== undefined) {
-      this._certaintyCount = ScoreCount.create(props.certaintyCount);
-    }
-    if (props.doubtErrors !== undefined) {
-      this._doubtErrors = ScoreCount.create(props.doubtErrors);
-    }
-    if (props.distractionErrors !== undefined) {
-      this._distractionErrors = ScoreCount.create(props.distractionErrors);
-    }
-    if (props.interpretationErrors !== undefined) {
-      this._interpretationErrors = ScoreCount.create(
-        props.interpretationErrors,
-      );
-    }
+    const nextState = this.getNextState(props);
+
+    this.validate(nextState);
+
+    this._correctCount = ScoreCount.create(nextState.correctCount);
+    this._certaintyCount = ScoreCount.create(nextState.certaintyCount);
+    this._doubtErrors = ScoreCount.create(nextState.doubtErrors);
+    this._distractionErrors = ScoreCount.create(nextState.distractionErrors);
+    this._interpretationErrors = ScoreCount.create(
+      nextState.interpretationErrors,
+    );
+  }
+
+  private getNextState(props: UpdateAreaPerformanceProps): PerformanceMetrics {
+    return {
+      correctCount: props.correctCount ?? this._correctCount.value,
+      certaintyCount: props.certaintyCount ?? this._certaintyCount.value,
+      doubtErrors: props.doubtErrors ?? this._doubtErrors.value,
+      distractionErrors:
+        props.distractionErrors ?? this._distractionErrors.value,
+      interpretationErrors:
+        props.interpretationErrors ?? this._interpretationErrors.value,
+    };
   }
 }
