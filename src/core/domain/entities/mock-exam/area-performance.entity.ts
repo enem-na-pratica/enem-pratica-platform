@@ -1,3 +1,4 @@
+import { ValidationError } from '@/src/core/domain/errors';
 import { ScoreCount } from '@/src/core/domain/value-objects';
 
 // | Português        | Inglês                 |
@@ -7,12 +8,12 @@ import { ScoreCount } from '@/src/core/domain/value-objects';
 // | Rendimento       | `performanceRate`      |
 // | Certeza*         | `certaintyCount`       |
 // | Confiança        | `confidenceRate`       |
-// | Dúvida - Acerto* | `doubtHits`            |
+// | Dúvida - Acerto  | `doubtHits`            |
 // | Dúvida - Erro*   | `doubtErrors`          |
 // | Falha            | `criticalErrors`       |
 // | Distração*       | `distractionErrors`    |
 // | Interpretação*   | `interpretationErrors` |
-// | Conteúdo         | `knowledgeGaps`        |
+// | Conteúdo         | `knowledgeGapsErrors`  |
 // (*) Input fields (not system-calculated)
 
 export const KNOWLEDGE_AREA = {
@@ -61,20 +62,23 @@ export interface ErrorAnalysis {
   /** Errors stemming from misinterpreting the question, text, or charts */
   interpretationErrors: number;
   /** Pure lack of content mastery (genuine learning gaps) */
-  knowledgeGaps: number;
+  knowledgeGapsErrors: number;
 }
 
-export type AreaPerformanceProps = {
-  id?: string;
-  area: KnowledgeArea;
-
+type PerformanceMetrics = {
   correctCount: number;
   certaintyCount: number;
-  doubtHits: number;
   doubtErrors: number;
   distractionErrors: number;
   interpretationErrors: number;
 };
+
+export type AreaPerformanceProps = Prettify<
+  {
+    id?: string;
+    area: KnowledgeArea;
+  } & PerformanceMetrics
+>;
 
 export type CreateAreaPerformanceProps = Omit<AreaPerformanceProps, 'id'>;
 
@@ -93,7 +97,6 @@ export class AreaPerformance {
 
   private _correctCount: ScoreCount;
   private _certaintyCount: ScoreCount;
-  private _doubtHits: ScoreCount;
   private _doubtErrors: ScoreCount;
   private _distractionErrors: ScoreCount;
   private _interpretationErrors: ScoreCount;
@@ -101,9 +104,11 @@ export class AreaPerformance {
   private constructor(props: AreaPerformanceProps) {
     this._id = props.id;
     this._area = props.area;
+
+    this.validate(props);
+
     this._correctCount = ScoreCount.create(props.correctCount);
     this._certaintyCount = ScoreCount.create(props.certaintyCount);
-    this._doubtHits = ScoreCount.create(props.doubtHits);
     this._doubtErrors = ScoreCount.create(props.doubtErrors);
     this._distractionErrors = ScoreCount.create(props.distractionErrors);
     this._interpretationErrors = ScoreCount.create(props.interpretationErrors);
@@ -166,13 +171,50 @@ export class AreaPerformance {
     const wrong = QUESTIONS_PER_AREA - this._correctCount.value;
     const doubt = doubtHits + doubtErrors;
     const criticalErrors = wrong - doubt;
-    const knowledgeGaps = criticalErrors - distraction - interpretation;
+    const knowledgeGapsErrors = criticalErrors - distraction - interpretation;
 
     return {
       distractionErrors: distraction,
       interpretationErrors: interpretation,
-      knowledgeGaps: Math.max(0, knowledgeGaps),
+      knowledgeGapsErrors: Math.max(0, knowledgeGapsErrors),
     };
+  }
+
+  private validate(metrics: PerformanceMetrics): void {
+    const totalErrors = QUESTIONS_PER_AREA - metrics.correctCount;
+
+    const checks: Array<[boolean, string]> = [
+      [
+        metrics.certaintyCount > metrics.correctCount,
+        'Certainty count cannot exceed the number of correct answers.',
+      ],
+      [
+        metrics.doubtErrors > totalErrors,
+        'Doubt-related errors cannot exceed the total number of errors.',
+      ],
+      [
+        metrics.distractionErrors > totalErrors,
+        'Distraction errors cannot exceed the total number of errors.',
+      ],
+      [
+        metrics.interpretationErrors > totalErrors,
+        'Interpretation errors cannot exceed the total number of errors.',
+      ],
+      [
+        metrics.interpretationErrors + metrics.distractionErrors > totalErrors,
+        'The sum of interpretation and distraction errors cannot exceed the total number of errors.',
+      ],
+    ];
+
+    const errors = checks
+      .filter(([isInvalid]) => isInvalid)
+      .map(([, message]) => message);
+
+    if (errors.length > 0) {
+      throw new ValidationError({
+        metrics: errors,
+      });
+    }
   }
 
   public update(props: UpdateAreaPerformanceProps): void {
@@ -211,9 +253,9 @@ export class AreaPerformance {
     const confidenceRate = correct > 0 ? certainty / correct : 0;
     const doubt = doubtHits + doubtErrors;
     const criticalErrors = Math.max(0, wrong - doubt);
-    const knowledgeGaps = Math.max(
+    const knowledgeGapsErrors = Math.max(
       0,
       criticalErrors - distractionErrors - interpretationErrors,
-    ); 
+    );
   }
 }
