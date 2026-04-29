@@ -84,8 +84,8 @@ export type CreateAreaPerformanceProps = Omit<AreaPerformanceProps, 'id'>;
 
 export type LoadAreaPerformanceProps = Required<AreaPerformanceProps>;
 
-export type UpdateAreaPerformanceProps = Partial<
-  Omit<AreaPerformanceProps, 'id' | 'area'>
+export type UpdateAreaPerformanceProps = Prettify<
+  Partial<Omit<AreaPerformanceProps, 'id' | 'area'>>
 >;
 
 const QUESTIONS_PER_AREA = 45;
@@ -222,9 +222,6 @@ export class AreaPerformance {
     if (props.certaintyCount !== undefined) {
       this._certaintyCount = ScoreCount.create(props.certaintyCount);
     }
-    if (props.doubtHits !== undefined) {
-      this._doubtHits = ScoreCount.create(props.doubtHits);
-    }
     if (props.doubtErrors !== undefined) {
       this._doubtErrors = ScoreCount.create(props.doubtErrors);
     }
@@ -236,24 +233,5 @@ export class AreaPerformance {
         props.interpretationErrors,
       );
     }
-  }
-
-  private calculateMetrics() {
-    const correct = this._correctCount.value;
-    const certainty = this._certaintyCount.value;
-    const doubtHits = this._doubtHits.value;
-    const doubtErrors = this._doubtErrors.value;
-    const distractionErrors = this._distractionErrors.value;
-    const interpretationErrors = this._interpretationErrors.value;
-
-    const wrong = QUESTIONS_PER_AREA - correct;
-    const performanceRate = correct / QUESTIONS_PER_AREA;
-    const confidenceRate = correct > 0 ? certainty / correct : 0;
-    const doubt = doubtHits + doubtErrors;
-    const criticalErrors = Math.max(0, wrong - doubt);
-    const knowledgeGapsErrors = Math.max(
-      0,
-      criticalErrors - distractionErrors - interpretationErrors,
-    );
   }
 }
