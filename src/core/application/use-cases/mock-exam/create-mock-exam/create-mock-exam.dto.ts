@@ -1,4 +1,4 @@
-import { KnowledgeAreaLabelKey } from "@/src/core/domain/entities";
+import { KnowledgeAreaLabelKey } from '@/src/core/domain/entities';
 
 export type CreateMockExamDto = {
   authorUsername?: string;
@@ -8,10 +8,9 @@ export type CreateMockExamDto = {
     {
       correctCount: number;
       certaintyCount: number;
-      doubtHits: number;
       doubtErrors: number;
       distractionErrors: number;
       interpretationErrors: number;
     }
   >;
-}
+};
