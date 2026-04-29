@@ -26,6 +26,19 @@ const KNOWLEDGE_AREA_KEYS = Object.keys(
   KNOWLEDGE_AREA_MAP,
 ) as KnowledgeAreaLabelKey[];
 
+type AreaTotals = Record<
+  KnowledgeAreaLabelKey,
+  { performanceSum: number; correctSum: number; criticalSum: number }
+>;
+
+type AggregatedTotals = {
+  sumGlobalPerformance: number;
+  sumDistraction: number;
+  sumInterpretation: number;
+  sumKnowledgeGap: number;
+  areaTotals: AreaTotals;
+};
+
 export class ListUserMockExamsStatisticsUseCase implements UseCase<
   ListUserMockExamsStatisticsInput,
   UserMockExamsOverviewDto
@@ -64,63 +77,76 @@ export class ListUserMockExamsStatisticsUseCase implements UseCase<
       return this.createEmptyStatistics();
     }
 
-    let sumGlobalPerformance = 0;
-    let sumDistraction = 0;
-    let sumInterpretation = 0;
-    let sumKnowledgeGap = 0;
+    const totals = this.aggregateTotals(mockExams);
+    return this.mapTotalsToDto(totals, totalMockExams);
+  }
 
-    const areaTotals = KNOWLEDGE_AREA_KEYS.reduce(
-      (acc, area) => {
-        acc[area] = { performanceSum: 0, correctSum: 0, criticalSum: 0 };
-        return acc;
-      },
-      {} as Record<
-        KnowledgeAreaLabelKey,
-        { performanceSum: number; correctSum: number; criticalSum: number }
-      >,
-    );
+  private aggregateTotals(mockExams: MockExamDto[]): AggregatedTotals {
+    const totals: AggregatedTotals = {
+      sumGlobalPerformance: 0,
+      sumDistraction: 0,
+      sumInterpretation: 0,
+      sumKnowledgeGap: 0,
+      areaTotals: this.initializeAreaTotals(),
+    };
 
     mockExams.forEach((exam) => {
       KNOWLEDGE_AREA_KEYS.forEach((areaKey) => {
         const data = exam.performances[areaKey];
+        const stats = data.statistics;
 
-        areaTotals[areaKey].performanceSum +=
-          data.statistics.overallResult.performanceRate;
-        areaTotals[areaKey].correctSum +=
-          data.statistics.overallResult.correctAnswers;
-        areaTotals[areaKey].criticalSum +=
-          data.statistics.qualityAssessment.criticalErrors;
+        totals.areaTotals[areaKey].performanceSum +=
+          stats.overallResult.performanceRate;
+        totals.areaTotals[areaKey].correctSum +=
+          stats.overallResult.correctAnswers;
+        totals.areaTotals[areaKey].criticalSum +=
+          stats.qualityAssessment.criticalErrors;
 
-        sumGlobalPerformance += data.statistics.overallResult.performanceRate;
-        sumDistraction += data.statistics.errorAnalysis.distractionErrors;
-        sumInterpretation += data.statistics.errorAnalysis.interpretationErrors;
-        sumKnowledgeGap += data.statistics.errorAnalysis.knowledgeGaps;
+        totals.sumGlobalPerformance += stats.overallResult.performanceRate;
+        totals.sumDistraction += stats.errorAnalysis.distractionErrors;
+        totals.sumInterpretation += stats.errorAnalysis.interpretationErrors;
+        totals.sumKnowledgeGap += stats.errorAnalysis.knowledgeGapsErrors;
       });
     });
 
+    return totals;
+  }
+
+  private mapTotalsToDto(
+    totals: AggregatedTotals,
+    totalMockExams: number,
+  ): MockExamStatisticsDto {
     const totalDataPoints = totalMockExams * KNOWLEDGE_AREA_KEYS.length;
 
     return {
       totalMockExams,
-      globalAveragePerformance: sumGlobalPerformance / totalDataPoints,
+      globalAveragePerformance: totals.sumGlobalPerformance / totalDataPoints,
       performancePerArea: KNOWLEDGE_AREA_KEYS.reduce(
         (acc, area) => {
           acc[area] = {
             averagePerformanceRate:
-              areaTotals[area].performanceSum / totalMockExams,
-            averageCorrectAnswers: areaTotals[area].correctSum / totalMockExams,
-            totalCriticalErrors: areaTotals[area].criticalSum,
+              totals.areaTotals[area].performanceSum / totalMockExams,
+            averageCorrectAnswers:
+              totals.areaTotals[area].correctSum / totalMockExams,
+            totalCriticalErrors: totals.areaTotals[area].criticalSum,
           };
           return acc;
         },
         {} as MockExamStatisticsDto['performancePerArea'],
       ),
       errorPrevalence: {
-        distractionAverage: sumDistraction / totalMockExams,
-        interpretationAverage: sumInterpretation / totalMockExams,
-        knowledgeGapAverage: sumKnowledgeGap / totalMockExams,
+        distractionAverage: totals.sumDistraction / totalMockExams,
+        interpretationAverage: totals.sumInterpretation / totalMockExams,
+        knowledgeGapAverage: totals.sumKnowledgeGap / totalMockExams,
       },
     };
+  }
+
+  private initializeAreaTotals(): AreaTotals {
+    return KNOWLEDGE_AREA_KEYS.reduce((acc, area) => {
+      acc[area] = { performanceSum: 0, correctSum: 0, criticalSum: 0 };
+      return acc;
+    }, {} as AreaTotals);
   }
 
   private createEmptyStatistics(): MockExamStatisticsDto {

@@ -24,18 +24,16 @@ export class MockExamDtoMapper implements Mapper<MockExam, MockExamDto> {
   private mapPerformances(
     exam: MockExam,
   ): Record<KnowledgeAreaLabelKey, AreaPerformanceDto> {
-    const result = {} as Record<KnowledgeAreaLabelKey, AreaPerformanceDto>;
-
-    (Object.keys(KNOWLEDGE_AREA_MAP) as KnowledgeAreaLabelKey[]).forEach(
-      (labelKey) => {
+    return (Object.keys(KNOWLEDGE_AREA_MAP) as KnowledgeAreaLabelKey[]).reduce(
+      (acc, labelKey) => {
         const areaEnum = KNOWLEDGE_AREA_MAP[labelKey];
-        const performance = exam.getPerformanceByArea(areaEnum);
-
-        result[labelKey] = this.mapAreaPerformance(performance);
+        acc[labelKey] = this.mapAreaPerformance(
+          exam.getPerformanceByArea(areaEnum),
+        );
+        return acc;
       },
+      {} as Record<KnowledgeAreaLabelKey, AreaPerformanceDto>,
     );
-
-    return result;
   }
 
   private mapAreaPerformance(performance: AreaPerformance): AreaPerformanceDto {
@@ -43,24 +41,9 @@ export class MockExamDtoMapper implements Mapper<MockExam, MockExamDto> {
       id: performance.id!,
       area: performance.area,
       statistics: {
-        overallResult: {
-          totalQuestions: performance.overallResult.totalQuestions,
-          correctAnswers: performance.overallResult.correctAnswers,
-          wrongAnswers: performance.overallResult.wrongAnswers,
-          performanceRate: performance.overallResult.performanceRate,
-        },
-        qualityAssessment: {
-          certaintyHits: performance.qualityAssessment.certaintyHits,
-          confidenceRate: performance.qualityAssessment.confidenceRate,
-          doubtHits: performance.qualityAssessment.doubtHits,
-          doubtErrors: performance.qualityAssessment.doubtErrors,
-          criticalErrors: performance.qualityAssessment.criticalErrors,
-        },
-        errorAnalysis: {
-          distractionErrors: performance.errorAnalysis.distractionErrors,
-          interpretationErrors: performance.errorAnalysis.interpretationErrors,
-          knowledgeGaps: performance.errorAnalysis.knowledgeGapsErrors,
-        },
+        overallResult: { ...performance.overallResult },
+        qualityAssessment: { ...performance.qualityAssessment },
+        errorAnalysis: { ...performance.errorAnalysis },
       },
     };
   }
