@@ -115,7 +115,6 @@ model AreaPerformance {
 
   correctCount         Int // Acertos
   certaintyCount       Int // Certeza
-  doubtHits            Int // Dúvida - Acerto
   doubtErrors          Int // Dúvida - Erro
   distractionErrors    Int // Erro por Distração
   interpretationErrors Int // Erro por Interpretação

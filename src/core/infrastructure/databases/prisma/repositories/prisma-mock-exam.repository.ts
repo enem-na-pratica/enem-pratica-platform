@@ -1,8 +1,8 @@
+import type { Mapper } from '@/src/core/domain/contracts/mappers';
 import type { MockExamRepository } from '@/src/core/domain/contracts/repositories';
 import type { MockExam } from '@/src/core/domain/entities';
-import type { PrismaClient } from "@/src/generated/prisma/client";
-import type { PrismaMockExamFull } from "@/src/core/infrastructure/databases/prisma/types";
-import type { Mapper } from "@/src/core/domain/contracts/mappers";
+import type { PrismaMockExamFull } from '@/src/core/infrastructure/databases/prisma/types';
+import type { PrismaClient } from '@/src/generated/prisma/client';
 
 type PrismaMockExamRepositoryDeps = {
   prisma: PrismaClient;
@@ -19,17 +19,18 @@ export class PrismaMockExamRepository implements MockExamRepository {
   }
 
   async create(mockExam: MockExam): Promise<MockExam> {
-    const performancesData = Object.values(mockExam.performances).map((perf) => {
-      return {
-        area: perf.area,
-        correctCount: perf.overallResult.correctAnswers,
-        certaintyCount: perf.qualityAssessment.certaintyHits,
-        doubtHits: perf.qualityAssessment.doubtHits,
-        doubtErrors: perf.qualityAssessment.doubtErrors,
-        distractionErrors: perf.errorAnalysis.distractionErrors,
-        interpretationErrors: perf.errorAnalysis.interpretationErrors,
-      };
-    });
+    const performancesData = Object.values(mockExam.performances).map(
+      (perf) => {
+        return {
+          area: perf.area,
+          correctCount: perf.overallResult.correctAnswers,
+          certaintyCount: perf.qualityAssessment.certaintyHits,
+          doubtErrors: perf.qualityAssessment.doubtErrors,
+          distractionErrors: perf.errorAnalysis.distractionErrors,
+          interpretationErrors: perf.errorAnalysis.interpretationErrors,
+        };
+      },
+    );
 
     const newMockExam = await this.prisma.mockExam.create({
       data: {
