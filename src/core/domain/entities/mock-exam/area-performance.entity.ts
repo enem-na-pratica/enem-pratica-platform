@@ -165,11 +165,9 @@ export class AreaPerformance {
     const correct = this._correctCount.value;
     const distraction = this._distractionErrors.value;
     const interpretation = this._interpretationErrors.value;
-    const doubtErrors = this._doubtErrors.value;
 
     const wrong = QUESTIONS_PER_AREA - correct;
-    const criticalErrors = wrong - doubtErrors;
-    const knowledgeGapsErrors = criticalErrors - distraction - interpretation;
+    const knowledgeGapsErrors = wrong - distraction - interpretation;
 
     return {
       distractionErrors: distraction,
