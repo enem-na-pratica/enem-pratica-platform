@@ -36,7 +36,7 @@ export function MockExamItem({ mock }: { mock: MockExam }) {
       acc.totalCritical += stats.qualityAssessment.criticalErrors;
       acc.totalDistraction += stats.errorAnalysis.distractionErrors;
       acc.totalInterpretation += stats.errorAnalysis.interpretationErrors;
-      acc.totalKnowledge += stats.errorAnalysis.knowledgeGaps;
+      acc.totalKnowledge += stats.errorAnalysis.knowledgeGapsErrors;
 
       return acc;
     },
@@ -170,7 +170,7 @@ export function MockExamItem({ mock }: { mock: MockExam }) {
                   </td>
                   {/* Conteúdo */}
                   <td className="p-2 font-bold text-orange-500">
-                    {stats.errorAnalysis.knowledgeGaps}
+                    {stats.errorAnalysis.knowledgeGapsErrors}
                   </td>
                 </tr>
               );
