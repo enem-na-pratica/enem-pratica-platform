@@ -147,9 +147,10 @@ export class AreaPerformance {
   public get qualityAssessment(): QualityAssessment {
     const correct = this._correctCount.value;
     const certainty = this._certaintyCount.value;
+    const doubtErrors = this._doubtErrors.value;
+
     const wrong = QUESTIONS_PER_AREA - correct;
     const doubtHits = correct - certainty;
-    const doubtErrors = this._doubtErrors.value;
 
     return {
       certaintyHits: certainty,
@@ -161,20 +162,19 @@ export class AreaPerformance {
   }
 
   public get errorAnalysis(): ErrorAnalysis {
+    const correct = this._correctCount.value;
     const distraction = this._distractionErrors.value;
     const interpretation = this._interpretationErrors.value;
-    const doubtHits = this._doubtHits.value;
     const doubtErrors = this._doubtErrors.value;
 
-    const wrong = QUESTIONS_PER_AREA - this._correctCount.value;
-    const doubt = doubtHits + doubtErrors;
-    const criticalErrors = wrong - doubt;
+    const wrong = QUESTIONS_PER_AREA - correct;
+    const criticalErrors = wrong - doubtErrors;
     const knowledgeGapsErrors = criticalErrors - distraction - interpretation;
 
     return {
       distractionErrors: distraction,
       interpretationErrors: interpretation,
-      knowledgeGapsErrors: Math.max(0, knowledgeGapsErrors),
+      knowledgeGapsErrors: knowledgeGapsErrors,
     };
   }
 
