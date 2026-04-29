@@ -19,7 +19,6 @@ type CreateMockExamDto = {
     {
       correctCount: number;
       certaintyCount: number;
-      doubtHits: number;
       doubtErrors: number;
       distractionErrors: number;
       interpretationErrors: number;
