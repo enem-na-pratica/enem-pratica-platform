@@ -59,7 +59,7 @@ export class MockExamDtoMapper implements Mapper<MockExam, MockExamDto> {
         errorAnalysis: {
           distractionErrors: performance.errorAnalysis.distractionErrors,
           interpretationErrors: performance.errorAnalysis.interpretationErrors,
-          knowledgeGaps: performance.errorAnalysis.knowledgeGapsErrors,
+          knowledgeGapsErrors: performance.errorAnalysis.knowledgeGapsErrors,
         },
       },
     };

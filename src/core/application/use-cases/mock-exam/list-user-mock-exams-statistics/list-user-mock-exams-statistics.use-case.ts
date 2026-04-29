@@ -94,7 +94,7 @@ export class ListUserMockExamsStatisticsUseCase implements UseCase<
         sumGlobalPerformance += data.statistics.overallResult.performanceRate;
         sumDistraction += data.statistics.errorAnalysis.distractionErrors;
         sumInterpretation += data.statistics.errorAnalysis.interpretationErrors;
-        sumKnowledgeGap += data.statistics.errorAnalysis.knowledgeGaps;
+        sumKnowledgeGap += data.statistics.errorAnalysis.knowledgeGapsErrors;
       });
     });
 

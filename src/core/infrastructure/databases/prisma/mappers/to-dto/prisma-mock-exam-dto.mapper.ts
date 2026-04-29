@@ -77,7 +77,7 @@ export class PrismaMockExamDtoMapper implements Mapper<
         errorAnalysis: {
           distractionErrors: p.distractionErrors,
           interpretationErrors: p.interpretationErrors,
-          knowledgeGaps: knowledgeGaps,
+          knowledgeGapsErrors: knowledgeGaps,
         },
       },
     };
