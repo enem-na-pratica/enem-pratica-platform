@@ -1,14 +1,14 @@
-import type { Mapper } from "@/src/core/domain/contracts/mappers/mapper.interface";
+import type {
+  AreaPerformanceDto,
+  MockExamDto,
+} from '@/src/core/application/common/dtos';
+import type { Mapper } from '@/src/core/domain/contracts/mappers/mapper.interface';
 import {
   type AreaPerformance,
   KNOWLEDGE_AREA_MAP,
   type KnowledgeAreaLabelKey,
-  type MockExam
-} from "@/src/core/domain/entities";
-import type {
-  AreaPerformanceDto,
-  MockExamDto
-} from "@/src/core/application/common/dtos";
+  type MockExam,
+} from '@/src/core/domain/entities';
 
 export class MockExamDtoMapper implements Mapper<MockExam, MockExamDto> {
   map(input: MockExam): MockExamDto {
@@ -22,12 +22,9 @@ export class MockExamDtoMapper implements Mapper<MockExam, MockExamDto> {
   }
 
   private mapPerformances(
-    exam: MockExam
+    exam: MockExam,
   ): Record<KnowledgeAreaLabelKey, AreaPerformanceDto> {
-    const result = {} as Record<
-      KnowledgeAreaLabelKey,
-      AreaPerformanceDto
-    >;
+    const result = {} as Record<KnowledgeAreaLabelKey, AreaPerformanceDto>;
 
     (Object.keys(KNOWLEDGE_AREA_MAP) as KnowledgeAreaLabelKey[]).forEach(
       (labelKey) => {
@@ -35,15 +32,13 @@ export class MockExamDtoMapper implements Mapper<MockExam, MockExamDto> {
         const performance = exam.getPerformanceByArea(areaEnum);
 
         result[labelKey] = this.mapAreaPerformance(performance);
-      }
+      },
     );
 
     return result;
   }
 
-  private mapAreaPerformance(
-    performance: AreaPerformance
-  ): AreaPerformanceDto {
+  private mapAreaPerformance(performance: AreaPerformance): AreaPerformanceDto {
     return {
       id: performance.id!,
       area: performance.area,
@@ -59,16 +54,12 @@ export class MockExamDtoMapper implements Mapper<MockExam, MockExamDto> {
           confidenceRate: performance.qualityAssessment.confidenceRate,
           doubtHits: performance.qualityAssessment.doubtHits,
           doubtErrors: performance.qualityAssessment.doubtErrors,
-          criticalErrors:
-            performance.qualityAssessment.criticalErrors,
+          criticalErrors: performance.qualityAssessment.criticalErrors,
         },
         errorAnalysis: {
-          distractionErrors:
-            performance.errorAnalysis.distractionErrors,
-          interpretationErrors:
-            performance.errorAnalysis.interpretationErrors,
-          knowledgeGaps:
-            performance.errorAnalysis.knowledgeGaps,
+          distractionErrors: performance.errorAnalysis.distractionErrors,
+          interpretationErrors: performance.errorAnalysis.interpretationErrors,
+          knowledgeGaps: performance.errorAnalysis.knowledgeGapsErrors,
         },
       },
     };

@@ -1,58 +1,54 @@
 import {
   AreaPerformance,
-  type KnowledgeArea,
-  KNOWLEDGE_AREA,
-  type CreateAreaPerformanceProps,
-  type LoadAreaPerformanceProps,
   type AreaPerformanceProps,
+  type CreateAreaPerformanceProps,
+  KNOWLEDGE_AREA,
+  type KnowledgeArea,
+  type LoadAreaPerformanceProps,
   type UpdateAreaPerformanceProps,
 } from './area-performance.entity';
 
 export const KNOWLEDGE_AREA_MAP = {
-  "languages": KNOWLEDGE_AREA.LANGUAGES,
-  "humanities": KNOWLEDGE_AREA.HUMANITIES,
-  "naturalSciences": KNOWLEDGE_AREA.NATURAL_SCIENCES,
-  "mathematics": KNOWLEDGE_AREA.MATHEMATICS,
+  languages: KNOWLEDGE_AREA.LANGUAGES,
+  humanities: KNOWLEDGE_AREA.HUMANITIES,
+  naturalSciences: KNOWLEDGE_AREA.NATURAL_SCIENCES,
+  mathematics: KNOWLEDGE_AREA.MATHEMATICS,
 } as const satisfies Record<string, KnowledgeArea>;
 
 export type KnowledgeAreaLabelKey = keyof typeof KNOWLEDGE_AREA_MAP;
 
 type MockExamProps = {
-  id?: string,
-  authorId: string,
-  title: string,
-  performances: Record<
-    KnowledgeAreaLabelKey,
-    Prettify<AreaPerformanceProps>
-  >,
-  createdAt?: Date
-}
+  id?: string;
+  authorId: string;
+  title: string;
+  performances: Record<KnowledgeAreaLabelKey, Prettify<AreaPerformanceProps>>;
+  createdAt?: Date;
+};
 
-type CreateMockExamProps = Prettify<Omit<
-  MockExamProps,
-  "id" | "createdAt" | "performances"
-> & {
-  performances: Record<
-    KnowledgeAreaLabelKey,
-    Prettify<Omit<CreateAreaPerformanceProps, "area">>
-  >,
-}>;
+type CreateMockExamProps = Prettify<
+  Omit<MockExamProps, 'id' | 'createdAt' | 'performances'> & {
+    performances: Record<
+      KnowledgeAreaLabelKey,
+      Prettify<Omit<CreateAreaPerformanceProps, 'area'>>
+    >;
+  }
+>;
 
-type LoadMockExamProps = Prettify<Required<Omit<MockExamProps, "performances">> & {
-  performances: Record<
-    KnowledgeAreaLabelKey,
-    Prettify<LoadAreaPerformanceProps>
-  >,
-}>;
+type LoadMockExamProps = Prettify<
+  Required<Omit<MockExamProps, 'performances'>> & {
+    performances: Record<
+      KnowledgeAreaLabelKey,
+      Prettify<LoadAreaPerformanceProps>
+    >;
+  }
+>;
 
 type UpdateMockExamProps = {
   title?: string;
-  performances?: Partial<Record<
-    KnowledgeAreaLabelKey,
-    UpdateAreaPerformanceProps
-  >>;
+  performances?: Partial<
+    Record<KnowledgeAreaLabelKey, UpdateAreaPerformanceProps>
+  >;
 };
-
 
 export class MockExam {
   private _id: string | undefined;
@@ -71,24 +67,26 @@ export class MockExam {
 
     this._performances = {} as Record<KnowledgeArea, AreaPerformance>;
 
-    (Object.keys(props.performances) as KnowledgeAreaLabelKey[]).forEach((key) => {
-      const areaEnum = KNOWLEDGE_AREA_MAP[key];
-      const performanceProps = props.performances[key];
+    (Object.keys(props.performances) as KnowledgeAreaLabelKey[]).forEach(
+      (key) => {
+        const areaEnum = KNOWLEDGE_AREA_MAP[key];
+        const performanceProps = props.performances[key];
 
-      if (this._id) {
-        // Context: LOAD
-        this._performances[areaEnum] = AreaPerformance.load({
-          ...performanceProps,
-          area: areaEnum,
-        } as LoadAreaPerformanceProps);
-      } else {
-        // Context: CREATE
-        this._performances[areaEnum] = AreaPerformance.create({
-          ...performanceProps,
-          area: areaEnum,
-        } as CreateAreaPerformanceProps);
-      }
-    });
+        if (this._id) {
+          // Context: LOAD
+          this._performances[areaEnum] = AreaPerformance.load({
+            ...performanceProps,
+            area: areaEnum,
+          } as LoadAreaPerformanceProps);
+        } else {
+          // Context: CREATE
+          this._performances[areaEnum] = AreaPerformance.create({
+            ...performanceProps,
+            area: areaEnum,
+          } as CreateAreaPerformanceProps);
+        }
+      },
+    );
   }
 
   public static create(props: CreateMockExamProps): MockExam {
@@ -99,16 +97,22 @@ export class MockExam {
     return new MockExam(props);
   }
 
-  private validatePerformances(performances: MockExamProps['performances']): void {
+  private validatePerformances(
+    performances: MockExamProps['performances'],
+  ): void {
     if (!performances) {
-      throw new Error("Performance data is required.");
+      throw new Error('Performance data is required.');
     }
 
-    const requiredAreas = Object.keys(KNOWLEDGE_AREA_MAP) as KnowledgeAreaLabelKey[];
+    const requiredAreas = Object.keys(
+      KNOWLEDGE_AREA_MAP,
+    ) as KnowledgeAreaLabelKey[];
 
     for (const areaKey of requiredAreas) {
       if (!performances[areaKey]) {
-        throw new Error(`Missing performance data for required area: ${areaKey}`);
+        throw new Error(
+          `Missing performance data for required area: ${areaKey}`,
+        );
       }
     }
   }
@@ -143,14 +147,16 @@ export class MockExam {
     }
 
     if (props.performances) {
-      (Object.keys(props.performances) as KnowledgeAreaLabelKey[]).forEach((key) => {
-        const areaEnum = KNOWLEDGE_AREA_MAP[key];
-        const updateData = props.performances![key];
+      (Object.keys(props.performances) as KnowledgeAreaLabelKey[]).forEach(
+        (key) => {
+          const areaEnum = KNOWLEDGE_AREA_MAP[key];
+          const updateData = props.performances![key];
 
-        if (updateData && this._performances[areaEnum]) {
-          this._performances[areaEnum].update(updateData);
-        }
-      });
+          if (updateData && this._performances[areaEnum]) {
+            this._performances[areaEnum].update(updateData);
+          }
+        },
+      );
     }
   }
 }
