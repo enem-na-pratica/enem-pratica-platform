@@ -308,7 +308,6 @@ async function main() {
           area,
           correctCount: 30 + (i % 16),
           certaintyCount: 20 + (i % 10),
-          doubtHits: 8 + (i % 5),
           doubtErrors: 4 + (i % 4),
           distractionErrors: 2 + (i % 3),
           interpretationErrors: 1 + (i % 2),

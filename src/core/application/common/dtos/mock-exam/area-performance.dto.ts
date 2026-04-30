@@ -18,7 +18,7 @@ export type AreaPerformanceDto = {
     errorAnalysis: {
       distractionErrors: number;
       interpretationErrors: number;
-      knowledgeGaps: number;
-    }
-  }
-}
+      knowledgeGapsErrors: number;
+    };
+  };
+};

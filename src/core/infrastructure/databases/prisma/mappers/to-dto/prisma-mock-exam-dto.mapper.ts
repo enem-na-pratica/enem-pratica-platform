@@ -3,13 +3,12 @@ import type {
   MockExamDto,
 } from '@/src/core/application/common/dtos';
 import type { Mapper } from '@/src/core/domain/contracts';
-import type {
-  KnowledgeArea,
-  KnowledgeAreaLabelKey,
+import {
+  AreaPerformance,
+  type KnowledgeArea,
+  type KnowledgeAreaLabelKey,
 } from '@/src/core/domain/entities';
 import type { PrismaMockExamFull } from '@/src/core/infrastructure/databases/prisma/types';
-
-const QUESTIONS_PER_AREA = 45;
 
 const REVERSE_KNOWLEDGE_AREA_MAP: Record<KnowledgeArea, KnowledgeAreaLabelKey> =
   {
@@ -25,10 +24,10 @@ export class PrismaMockExamDtoMapper implements Mapper<
 > {
   map(input: PrismaMockExamFull): MockExamDto {
     const performances = input.performances.reduce(
-      (acc, p) => {
-        const dtoKey = REVERSE_KNOWLEDGE_AREA_MAP[p.area];
+      (acc, performance) => {
+        const dtoKey = REVERSE_KNOWLEDGE_AREA_MAP[performance.area];
         if (dtoKey) {
-          acc[dtoKey] = this.calculateStatistics(p);
+          acc[dtoKey] = this.calculateStatistics(performance);
         }
         return acc;
       },
@@ -45,40 +44,17 @@ export class PrismaMockExamDtoMapper implements Mapper<
   }
 
   private calculateStatistics(
-    p: PrismaMockExamFull['performances'][number],
+    performance: PrismaMockExamFull['performances'][number],
   ): AreaPerformanceDto {
-    const correct = p.correctCount;
-    const wrong = QUESTIONS_PER_AREA - correct;
-    const doubtTotal = p.doubtHits + p.doubtErrors;
-    const criticalErrors = Math.max(0, wrong - doubtTotal);
-
-    const knowledgeGaps = Math.max(
-      0,
-      criticalErrors - p.distractionErrors - p.interpretationErrors,
-    );
+    const areaPerformance = AreaPerformance.load({ ...performance });
 
     return {
-      id: p.id,
-      area: p.area,
+      id: areaPerformance.id!,
+      area: areaPerformance.area,
       statistics: {
-        overallResult: {
-          totalQuestions: QUESTIONS_PER_AREA,
-          correctAnswers: correct,
-          wrongAnswers: wrong,
-          performanceRate: correct / QUESTIONS_PER_AREA,
-        },
-        qualityAssessment: {
-          certaintyHits: p.certaintyCount,
-          confidenceRate: correct > 0 ? p.certaintyCount / correct : 0,
-          doubtHits: p.doubtHits,
-          doubtErrors: p.doubtErrors,
-          criticalErrors: criticalErrors,
-        },
-        errorAnalysis: {
-          distractionErrors: p.distractionErrors,
-          interpretationErrors: p.interpretationErrors,
-          knowledgeGaps: knowledgeGaps,
-        },
+        overallResult: { ...areaPerformance.overallResult },
+        qualityAssessment: { ...areaPerformance.qualityAssessment },
+        errorAnalysis: { ...areaPerformance.errorAnalysis },
       },
     };
   }

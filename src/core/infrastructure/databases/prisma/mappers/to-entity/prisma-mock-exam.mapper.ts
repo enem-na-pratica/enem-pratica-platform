@@ -22,7 +22,6 @@ export class MockExamEntityMapper implements Mapper<PrismaMockExamFull, MockExam
           id: performanceData.id,
           correctCount: performanceData.correctCount,
           certaintyCount: performanceData.certaintyCount,
-          doubtHits: performanceData.doubtHits,
           doubtErrors: performanceData.doubtErrors,
           distractionErrors: performanceData.distractionErrors,
           interpretationErrors: performanceData.interpretationErrors,
