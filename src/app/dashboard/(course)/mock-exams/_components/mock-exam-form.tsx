@@ -378,10 +378,12 @@ export function MockExamForm() {
                 {calculateTotalInput('certaintyCount')}
               </td>
               <td className="p-1 text-xs opacity-70">
-                {(
-                  (calculateTotalInput('certaintyCount') / totalCorrect) *
-                  100
-                ).toFixed(0)}
+                {totalCorrect > 0
+                  ? (
+                      (calculateTotalInput('certaintyCount') / totalCorrect) *
+                      100
+                    ).toFixed(0)
+                  : '0'}
                 %
               </td>
               <td className="p-1 text-yellow-600 opacity-70 dark:text-yellow-400">
