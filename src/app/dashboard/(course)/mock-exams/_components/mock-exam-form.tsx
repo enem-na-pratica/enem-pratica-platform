@@ -21,7 +21,6 @@ import {
 import { createMockExamAction } from '../actions';
 
 const TOTAL_QUESTIONS_PER_AREA = 45;
-
 const AREAS: { key: KnowledgeAreaLabelKey; label: KnowledgeAreaLabelPT }[] = [
   { key: 'languages', label: 'Linguagens' },
   { key: 'humanities', label: 'Humanas' },
@@ -32,7 +31,6 @@ const AREAS: { key: KnowledgeAreaLabelKey; label: KnowledgeAreaLabelPT }[] = [
 type AreaInputValues = {
   correctCount: number;
   certaintyCount: number;
-  doubtHits: number;
   doubtErrors: number;
   distractionErrors: number;
   interpretationErrors: number;
@@ -41,6 +39,7 @@ type AreaInputValues = {
 type AreaCalculatedValues = {
   wrongAnswers: number;
   performanceRate: number;
+  doubtHits: number;
   confidenceRate: number;
   criticalErrors: number;
   knowledgeGaps: number;
@@ -52,7 +51,6 @@ const DEFAULT_FORM_VALUES: CreateMockExamFormValues = {
     languages: {
       correctCount: 0,
       certaintyCount: 0,
-      doubtHits: 0,
       doubtErrors: 0,
       distractionErrors: 0,
       interpretationErrors: 0,
@@ -60,7 +58,6 @@ const DEFAULT_FORM_VALUES: CreateMockExamFormValues = {
     humanities: {
       correctCount: 0,
       certaintyCount: 0,
-      doubtHits: 0,
       doubtErrors: 0,
       distractionErrors: 0,
       interpretationErrors: 0,
@@ -68,7 +65,6 @@ const DEFAULT_FORM_VALUES: CreateMockExamFormValues = {
     naturalSciences: {
       correctCount: 0,
       certaintyCount: 0,
-      doubtHits: 0,
       doubtErrors: 0,
       distractionErrors: 0,
       interpretationErrors: 0,
@@ -76,7 +72,6 @@ const DEFAULT_FORM_VALUES: CreateMockExamFormValues = {
     mathematics: {
       correctCount: 0,
       certaintyCount: 0,
-      doubtHits: 0,
       doubtErrors: 0,
       distractionErrors: 0,
       interpretationErrors: 0,
@@ -88,31 +83,35 @@ function calculateAreaStats(input: AreaInputValues): AreaCalculatedValues {
   const {
     correctCount,
     certaintyCount,
-    doubtHits,
     doubtErrors,
     distractionErrors,
     interpretationErrors,
   } = input;
 
-  // Same calculation logic as the AreaPerformance entity
-  const wrongAnswers = Math.max(0, TOTAL_QUESTIONS_PER_AREA - correctCount);
-  const performanceRate = Math.max(
-    0,
-    (correctCount / TOTAL_QUESTIONS_PER_AREA) * 100,
-  );
-  const confidenceRate = Math.max(
-    correctCount > 0 ? (certaintyCount / correctCount) * 100 : 0,
-  );
-  const doubt = doubtHits + doubtErrors;
-  const criticalErrors = Math.max(0, wrongAnswers - doubt);
+  // Aligned with AreaPerformance entity logic
+  const wrongAnswers = TOTAL_QUESTIONS_PER_AREA - correctCount;
+
+  const performanceRate = (correctCount / TOTAL_QUESTIONS_PER_AREA) * 100;
+
+  // doubtHits is now calculated: correct answers that weren't marked with certainty
+  const doubtHits = correctCount - certaintyCount;
+
+  const confidenceRate =
+    correctCount > 0 ? (certaintyCount / correctCount) * 100 : 0;
+
+  // criticalErrors: wrong answers that weren't due to doubt
+  const criticalErrors = Math.max(0, wrongAnswers - doubtErrors);
+
+  // knowledgeGaps: wrong answers not explained by distraction or interpretation
   const knowledgeGaps = Math.max(
     0,
-    criticalErrors - distractionErrors - interpretationErrors,
+    wrongAnswers - distractionErrors - interpretationErrors,
   );
 
   return {
     wrongAnswers,
     performanceRate,
+    doubtHits,
     confidenceRate,
     criticalErrors,
     knowledgeGaps,
@@ -221,7 +220,6 @@ export function MockExamForm() {
         >
           Título / Instituição
         </label>
-
         <input
           id="title"
           {...register('title')}
@@ -233,7 +231,6 @@ export function MockExamForm() {
           placeholder="Ex: Simulado SAS 1º dia"
           autoFocus
         />
-
         {/* Animated Error Message */}
         <div
           className={`overflow-hidden transition-all duration-300 ${
@@ -263,8 +260,8 @@ export function MockExamForm() {
                 Certeza*
               </th>
               <th className="min-w-[60px] px-1 opacity-70">Conf.</th>
-              <th className="min-w-[60px] bg-(--accent)/10 px-1 text-yellow-600 dark:text-yellow-400">
-                Dúvida (A)*
+              <th className="min-w-[60px] px-1 text-yellow-600 dark:text-yellow-400">
+                Dúvida (A)
               </th>
               <th className="min-w-[60px] bg-(--accent)/10 px-1 text-yellow-600 dark:text-yellow-400">
                 Dúvida (E)*
@@ -287,6 +284,7 @@ export function MockExamForm() {
             {AREAS.map(({ key, label }) => {
               const stats = calculatedData[key];
               const areaErrors = errors.performances?.[key];
+
               return (
                 <tr
                   key={key}
@@ -325,14 +323,12 @@ export function MockExamForm() {
                     {stats.confidenceRate.toFixed(0)}%
                   </td>
 
-                  {/* --- INPUTS --- */}
-                  <td className="p-1">
-                    <RHFInputCell
-                      register={register}
-                      name={`performances.${key}.doubtHits`}
-                      error={areaErrors?.doubtHits}
-                    />
+                  {/* --- CALCULADO (antes era input) --- */}
+                  <td className="p-1 font-mono text-yellow-600 opacity-70 dark:text-yellow-400">
+                    {stats.doubtHits}
                   </td>
+
+                  {/* --- INPUTS --- */}
                   <td className="p-1">
                     <RHFInputCell
                       register={register}
@@ -382,11 +378,8 @@ export function MockExamForm() {
                 {calculateTotalInput('certaintyCount')}
               </td>
               <td className="p-1 text-xs opacity-70">-</td>
-              {/* <td className="p-1 text-xs opacity-70">
-                {calculateTotalCalculated('confidenceRate')}
-              </td> */}
-              <td className="p-1 text-yellow-600 dark:text-yellow-400">
-                {calculateTotalInput('doubtHits')}
+              <td className="p-1 text-yellow-600 opacity-70 dark:text-yellow-400">
+                {calculateTotalCalculated('doubtHits')}
               </td>
               <td className="p-1 text-yellow-600 dark:text-yellow-400">
                 {calculateTotalInput('doubtErrors')}
@@ -407,6 +400,7 @@ export function MockExamForm() {
           </tbody>
         </table>
       </div>
+
       <p className="text-center text-xs italic opacity-50">
         * Campos de preenchimento são obrigatório. Os demais são calculados
         automaticamente.
@@ -438,14 +432,12 @@ function RHFInputCell({
             : 'border-(--foreground)/20'
         }`}
       />
-
       {error && (
         <div className="absolute -top-1 -right-1 z-20">
           <span className="flex h-3 w-3 cursor-help">
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-(--error) opacity-75"></span>
             <span className="relative inline-flex h-3 w-3 rounded-full bg-(--error)"></span>
           </span>
-
           <div className="animate-in fade-in zoom-in-95 absolute right-0 bottom-full mb-2 hidden duration-200 group-hover/cell:block">
             <div className="rounded bg-(--foreground) px-2 py-1 text-[10px] font-bold whitespace-nowrap text-(--background) shadow-lg">
               {error.message}
