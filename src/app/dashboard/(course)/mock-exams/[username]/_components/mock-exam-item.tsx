@@ -56,16 +56,12 @@ export function MockExamItem({ mock }: { mock: MockExam }) {
     totalWrong,
   } = totals;
 
-  const calculateGlobalMetric = (
-    value: number,
-    total = TOTAL_QUESTIONS_GLOBAL,
-  ) => {
-    if (total === 0) return 0;
-    return (value / total) * PERCENTAGE_MULTIPLIER;
-  };
-
-  const globalPerformance = calculateGlobalMetric(totalCorrect);
-  const globalConfidence = calculateGlobalMetric(totalCertainty);
+  const globalPerformance =
+    (totalCorrect / TOTAL_QUESTIONS_GLOBAL) * PERCENTAGE_MULTIPLIER;
+  const globalConfidence =
+    totalCorrect > 0
+      ? (totalCertainty / totalCorrect) * PERCENTAGE_MULTIPLIER
+      : 0;
 
   return (
     <div className="card card-interactive overflow-hidden border-t-4 border-(--accent) p-0">
