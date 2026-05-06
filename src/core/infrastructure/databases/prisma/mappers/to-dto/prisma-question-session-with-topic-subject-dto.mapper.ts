@@ -20,7 +20,7 @@ export class PrismaQuestionSessionWithTopicAndSubjectDtoMapper implements Mapper
       isReviewed: prismaQuestionSession.isReviewed,
       incorrect: this.incorrectCount({
         correct: prismaQuestionSession.correct,
-        total: prismaQuestionSession.correct,
+        total: prismaQuestionSession.total,
       }),
       performance: this.accuracy({
         correct: prismaQuestionSession.correct,
