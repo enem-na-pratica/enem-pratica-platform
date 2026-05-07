@@ -31,6 +31,7 @@ const clientSchema = z.object({
   NODE_ENV: z
     .enum(['development', 'test', 'production'])
     .default('development'),
+  NEXT_PUBLIC_CALENDAR_URL: z.url(),
 });
 
 // ─── Conditional validation based on environment ─────────────────────────────
@@ -43,6 +44,7 @@ const serverEnv = isServer
 const clientEnv = clientSchema.parse({
   NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
   NODE_ENV: process.env.NODE_ENV,
+  NEXT_PUBLIC_CALENDAR_URL: process.env.NEXT_PUBLIC_CALENDAR_URL,
 });
 
 // ─── Exported Object ─────────────────────────────────────────────────────────
@@ -84,6 +86,7 @@ export const env = {
   // Available on both sides
   NEXT_PUBLIC_API_URL: clientEnv.NEXT_PUBLIC_API_URL,
   NODE_ENV: clientEnv.NODE_ENV,
+  NEXT_PUBLIC_CALENDAR_URL: clientEnv.NEXT_PUBLIC_CALENDAR_URL,
 
   // Helpers
   isDev: process.env.NODE_ENV === 'development',
