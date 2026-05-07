@@ -1,7 +1,8 @@
-"use client";
+'use client';
 
-import { useState, useEffect, ReactNode } from "react";
-import { ThemeToggle, LogoutButton } from "@/src/web/components";
+import { ReactNode, useEffect, useState } from 'react';
+
+import { LogoutButton, ThemeToggle } from '@/src/web/components';
 
 type HeaderProps = {
   children?: ReactNode;
@@ -24,19 +25,15 @@ export function Header({ children }: HeaderProps) {
       setLastScrollY(currentScrollY);
     };
 
-    window.addEventListener("scroll", controlNavbar);
-    return () => window.removeEventListener("scroll", controlNavbar);
+    window.addEventListener('scroll', controlNavbar);
+    return () => window.removeEventListener('scroll', controlNavbar);
   }, [lastScrollY]);
 
   return (
     <header
-      className={`
-        w-full bg-(--card-background)/80 backdrop-blur-sm shadow-sm border-b
-        border-(--foreground)/10 sticky top-0 z-50 transition-transform duration-300
-        ${isVisible ? "translate-y-0" : "-translate-y-full"}
-      `}
+      className={`sticky top-0 z-50 w-full border-b border-(--foreground)/10 bg-(--card-background)/80 shadow-sm backdrop-blur-sm transition-transform duration-300 ${isVisible ? 'translate-y-0' : '-translate-y-full'} `}
     >
-      <div className="max-w-6xl mx-auto flex justify-between items-center p-4">
+      <div className="mx-auto flex max-w-6xl items-center justify-between p-4">
         {children ?? (
           <h1 className="text-xl font-bold tracking-tight text-(--accent)">
             ENEM <span className="text-(--foreground)">na Prática</span>
@@ -45,7 +42,7 @@ export function Header({ children }: HeaderProps) {
 
         <div className="flex items-center gap-4">
           <ThemeToggle />
-          <div className="w-px h-6 bg-(--foreground)/10 hidden sm:block" />
+          <div className="hidden h-6 w-px bg-(--foreground)/10 sm:block" />
           <LogoutButton />
         </div>
       </div>
