@@ -2,7 +2,11 @@
 
 import { ReactNode, useEffect, useState } from 'react';
 
-import { LogoutButton, ThemeToggle } from '@/src/web/components';
+import {
+  CalendarButton,
+  LogoutButton,
+  ThemeToggle,
+} from '@/src/web/components';
 
 type HeaderProps = {
   children?: ReactNode;
@@ -41,6 +45,8 @@ export function Header({ children }: HeaderProps) {
         )}
 
         <div className="flex items-center gap-4">
+          <CalendarButton />
+          <div className="hidden h-6 w-px bg-(--foreground)/10 sm:block" />
           <ThemeToggle />
           <div className="hidden h-6 w-px bg-(--foreground)/10 sm:block" />
           <LogoutButton />
