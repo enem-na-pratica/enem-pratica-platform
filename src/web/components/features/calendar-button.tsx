@@ -29,7 +29,7 @@ export function CalendarButton() {
       <button
         onClick={handleClick}
         type="button"
-        aria-label="Agendar um compromisso"
+        aria-label="Marque Sua Assessoria"
         className="flex cursor-pointer items-center justify-center rounded-lg p-2 transition-all duration-300 hover:bg-(--foreground)/10"
       >
         <svg
@@ -108,7 +108,7 @@ export function CalendarButton() {
         }}
         role="tooltip"
       >
-        Agendar um compromisso
+        Marque Sua Assessoria
         <span
           className="absolute -top-1 left-1/2 block h-2 w-2 -translate-x-1/2 rotate-45"
           style={{
