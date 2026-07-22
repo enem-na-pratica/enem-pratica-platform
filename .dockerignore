@@ -1,0 +1,35 @@
+# Dependency and build folders
+node_modules
+.next
+.turbo
+dist
+build
+out
+
+# Environment configuration and secrets files
+.env
+.env.*
+!.env.example
+
+# Logs and temporary files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# Version control and IDEs
+.git
+.gitignore
+.vscode
+.idea
+
+# Tests and coverage
+coverage
+vitest.config.ts.timestamp-*
+
+# Development scripts and auxiliary files
+scripts/
+*.md
+.eslint*
+.prettier*
+tsconfig.json
