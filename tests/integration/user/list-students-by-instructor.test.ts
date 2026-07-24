@@ -135,5 +135,37 @@ describe('ListStudentsByInstructorController (integration)', () => {
       expect(usernames).toContain(TEST_STUDENT_USERNAME);
       expect(usernames).toContain(TEST_STUDENT2_USERNAME);
     });
+
+    it('should return the correct shape for each student entry and never expose the password hash', async () => {
+      const teacher = await createUser({
+        name: 'Professor Teste',
+        username: TEST_TEACHER_USERNAME,
+        role: ROLES.TEACHER,
+      });
+      const student = await createUser({
+        name: 'Aluno Um',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      await linkStudentToTeacher(student.id, teacher.id);
+
+      const controller = makeSut();
+      const response = await controller.handle(makeRequest('me', teacher));
+
+      expect(response.statusCode).toBe(200);
+      const body = response.body as UserDto[];
+      const found = body.find((s) => s.username === TEST_STUDENT_USERNAME);
+
+      expect(found).toBeDefined();
+      expect(found).toHaveProperty('id');
+      expect(found).toHaveProperty('name');
+      expect(found).toHaveProperty('username');
+      expect(found).toHaveProperty('role');
+      expect(found).toHaveProperty('createdAt');
+      expect(found).toHaveProperty('updatedAt');
+      expect(found).not.toHaveProperty('password');
+      expect(found).not.toHaveProperty('passwordHash');
+      expect(found?.role).toBe(ROLES.STUDENT);
+    });
   });
 });
