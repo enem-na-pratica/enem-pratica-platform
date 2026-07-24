@@ -104,5 +104,36 @@ describe('ListStudentsByInstructorController (integration)', () => {
       expect(response.statusCode).toBe(200);
       expect(response.body).toEqual([]);
     });
+
+    it('should return 200 and the linked students when the instructor accesses their own list via "me"', async () => {
+      const teacher = await createUser({
+        name: 'Professor Teste',
+        username: TEST_TEACHER_USERNAME,
+        role: ROLES.TEACHER,
+      });
+      const student1 = await createUser({
+        name: 'Aluno Um',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      const student2 = await createUser({
+        name: 'Aluno Dois',
+        username: TEST_STUDENT2_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      await linkStudentToTeacher(student1.id, teacher.id);
+      await linkStudentToTeacher(student2.id, teacher.id);
+
+      const controller = makeSut();
+      const response = await controller.handle(makeRequest('me', teacher));
+
+      expect(response.statusCode).toBe(200);
+      const body = response.body as UserDto[];
+      expect(body).toHaveLength(2);
+
+      const usernames = body.map((s) => s.username);
+      expect(usernames).toContain(TEST_STUDENT_USERNAME);
+      expect(usernames).toContain(TEST_STUDENT2_USERNAME);
+    });
   });
 });
