@@ -1,6 +1,11 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 
+import type { UserDto } from '@/src/core/application/common/dtos';
+import { ROLES, type Role } from '@/src/core/domain/auth';
 import { prisma } from '@/src/core/infrastructure/databases/prisma/prisma';
+import { makeBcryptAdapter } from '@/src/core/main/factories/common/crypto';
+import { makeListStudentsByInstructor } from '@/src/core/main/factories/user/make-list-students-by-instructor.factory';
+import type { AuthenticatedRequest } from '@/src/core/presentation/protocols';
 
 const TEST_PASSWORD = 'Senha@123';
 
@@ -17,6 +22,50 @@ const ALL_TEST_USERNAMES = [
   TEST_STUDENT_USERNAME,
   TEST_STUDENT2_USERNAME,
 ];
+
+type TestRequester = { id: string; username: string; role: Role };
+
+function makeSut() {
+  return makeListStudentsByInstructor();
+}
+
+function makeRequest(
+  username: string,
+  requester: TestRequester,
+): AuthenticatedRequest<void> {
+  return {
+    body: undefined,
+    params: { username },
+    requester,
+  } as AuthenticatedRequest<void>;
+}
+
+async function createUser(data: {
+  name: string;
+  username: string;
+  role: Role;
+}): Promise<{ id: string; username: string; role: Role }> {
+  const bcrypt = makeBcryptAdapter();
+  const passwordHash = await bcrypt.hash(TEST_PASSWORD);
+  const user = await prisma.user.create({
+    data: {
+      name: data.name,
+      username: data.username,
+      passwordHash,
+      role: data.role,
+    },
+  });
+  return { id: user.id, username: user.username, role: user.role as Role };
+}
+
+async function linkStudentToTeacher(
+  studentId: string,
+  teacherId: string,
+): Promise<void> {
+  await prisma.studentTeacher.create({
+    data: { studentId, teacherId },
+  });
+}
 
 beforeAll(async () => {
   await prisma.$connect();
