@@ -200,5 +200,34 @@ describe('ListStudentsByInstructorController (integration)', () => {
       expect(body).toHaveLength(1);
       expect(body[0].username).toBe(TEST_STUDENT_USERNAME);
     });
+
+    it('should allow an ADMIN to list a TEACHER students by explicit username', async () => {
+      const admin = await createUser({
+        name: 'Admin Teste',
+        username: TEST_ADMIN_USERNAME,
+        role: ROLES.ADMIN,
+      });
+      const teacher = await createUser({
+        name: 'Professor Teste',
+        username: TEST_TEACHER_USERNAME,
+        role: ROLES.TEACHER,
+      });
+      const student = await createUser({
+        name: 'Aluno Um',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      await linkStudentToTeacher(student.id, teacher.id);
+
+      const controller = makeSut();
+      const response = await controller.handle(
+        makeRequest(TEST_TEACHER_USERNAME, admin),
+      );
+
+      expect(response.statusCode).toBe(200);
+      const body = response.body as UserDto[];
+      expect(body).toHaveLength(1);
+      expect(body[0].username).toBe(TEST_STUDENT_USERNAME);
+    });
   });
 });
