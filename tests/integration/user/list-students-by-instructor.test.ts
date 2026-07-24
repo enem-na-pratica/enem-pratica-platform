@@ -89,4 +89,20 @@ afterAll(async () => {
   await prisma.$disconnect();
 });
 
-describe('ListStudentsByInstructorController (integration)', () => {});
+describe('ListStudentsByInstructorController (integration)', () => {
+  describe('GET /api/users/instructors/:username/students — success cases', () => {
+    it('should return 200 with an empty array when the instructor (accessed via "me") has no students', async () => {
+      const teacher = await createUser({
+        name: 'Professor Teste',
+        username: TEST_TEACHER_USERNAME,
+        role: ROLES.TEACHER,
+      });
+
+      const controller = makeSut();
+      const response = await controller.handle(makeRequest('me', teacher));
+
+      expect(response.statusCode).toBe(200);
+      expect(response.body).toEqual([]);
+    });
+  });
+});
