@@ -167,5 +167,38 @@ describe('ListStudentsByInstructorController (integration)', () => {
       expect(found).not.toHaveProperty('passwordHash');
       expect(found?.role).toBe(ROLES.STUDENT);
     });
+
+    it('should only return students linked to the requested instructor, not to other instructors', async () => {
+      const teacher1 = await createUser({
+        name: 'Professor Um',
+        username: TEST_TEACHER_USERNAME,
+        role: ROLES.TEACHER,
+      });
+      const teacher2 = await createUser({
+        name: 'Professor Dois',
+        username: TEST_TEACHER2_USERNAME,
+        role: ROLES.TEACHER,
+      });
+      const student1 = await createUser({
+        name: 'Aluno Um',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      const student2 = await createUser({
+        name: 'Aluno Dois',
+        username: TEST_STUDENT2_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      await linkStudentToTeacher(student1.id, teacher1.id);
+      await linkStudentToTeacher(student2.id, teacher2.id);
+
+      const controller = makeSut();
+      const response = await controller.handle(makeRequest('me', teacher1));
+
+      expect(response.statusCode).toBe(200);
+      const body = response.body as UserDto[];
+      expect(body).toHaveLength(1);
+      expect(body[0].username).toBe(TEST_STUDENT_USERNAME);
+    });
   });
 });
