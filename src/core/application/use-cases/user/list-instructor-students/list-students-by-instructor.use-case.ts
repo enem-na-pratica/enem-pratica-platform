@@ -33,7 +33,7 @@ export class ListStudentsByInstructorUseCase implements UseCase<
     instructorUsername,
     requester,
   }: ListStudentsByInstructorInput): Promise<UserDto[]> {
-    const instructorId = await this.userAccessService.resolveTargetId({
+    const instructorId = await this.userAccessService.resolveManagedTargetId({
       requester,
       targetIdentifier: instructorUsername,
     });
