@@ -261,5 +261,22 @@ describe('ListStudentsByInstructorController (integration)', () => {
 
       expect(response.statusCode).toBe(404);
     });
+
+    it('should return 403 when a STUDENT tries to access the instructor students route', async () => {
+      const student = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+
+      const controller = makeSut();
+      const response = await controller.handle(makeRequest('me', student));
+
+      expect(response.statusCode).toBe(403);
+      expect(response.body).toEqual({
+        message:
+          'You do not have permission to perform actions for users with an equivalent or higher role.',
+      });
+    });
   });
 });
