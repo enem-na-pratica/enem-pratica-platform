@@ -278,5 +278,29 @@ describe('ListStudentsByInstructorController (integration)', () => {
           'You do not have permission to perform actions for users with an equivalent or higher role.',
       });
     });
+
+    it('should return 403 when a TEACHER tries to list another TEACHER students', async () => {
+      const teacher1 = await createUser({
+        name: 'Professor Um',
+        username: TEST_TEACHER_USERNAME,
+        role: ROLES.TEACHER,
+      });
+      await createUser({
+        name: 'Professor Dois',
+        username: TEST_TEACHER2_USERNAME,
+        role: ROLES.TEACHER,
+      });
+
+      const controller = makeSut();
+      const response = await controller.handle(
+        makeRequest(TEST_TEACHER2_USERNAME, teacher1),
+      );
+
+      expect(response.statusCode).toBe(403);
+      expect(response.body).toEqual({
+        message:
+          'You do not have permission to perform actions for users with an equivalent or higher role.',
+      });
+    });
   });
 });
