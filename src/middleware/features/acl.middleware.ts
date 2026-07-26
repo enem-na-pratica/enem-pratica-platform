@@ -1,14 +1,19 @@
-import { NextResponse, type NextRequest } from "next/server";
-import { type Role, hasAtLeastRole } from "@/src/core/domain/auth";
-import { ACL_RULES, ROUTES, HttpMethod } from "../config";
-import type { MiddlewareHandler } from "../types";
+import { type NextRequest, NextResponse } from 'next/server';
 
-export const aclMiddleware: MiddlewareHandler = async (request: NextRequest) => {
+import { type Role, hasAtLeastRole } from '@/src/core/domain/auth';
+import { ForbiddenError } from '@/src/core/domain/errors';
+
+import { ACL_RULES, HttpMethod, ROUTES } from '../config';
+import type { MiddlewareHandler } from '../types';
+
+export const aclMiddleware: MiddlewareHandler = async (
+  request: NextRequest,
+) => {
   const pathname = request.nextUrl.pathname;
   const method = request.method as HttpMethod;
 
   // AuthMiddleware is expected to have already injected this header.
-  const userRole = request.headers.get("x-user-role") as Role;
+  const userRole = request.headers.get('x-user-role') as Role;
 
   // If no role is present (e.g. unauthenticated user on a public route),
   // ACL rules do not apply.
@@ -26,19 +31,29 @@ export const aclMiddleware: MiddlewareHandler = async (request: NextRequest) => 
   });
 
   if (rule) {
-    const isAuthorized = hasAtLeastRole({ requiredRole: rule.minRole, userRole });
+    const isAuthorized = hasAtLeastRole({
+      requiredRole: rule.minRole,
+      userRole,
+    });
 
     if (!isAuthorized) {
       // API routes return JSON errors instead of redirects.
-      if (pathname.startsWith("/api/")) {
+      if (pathname.startsWith('/api/')) {
+        const error = new ForbiddenError();
+
         return NextResponse.json(
-          { message: "Forbidden: Insufficient permissions." },
-          { status: 403 }
+          {
+            message: error.message,
+            category: error.category,
+          },
+          { status: 403 },
         );
       }
 
       // Page routes are redirected to an access denied screen.
-      return NextResponse.redirect(new URL(ROUTES.ACCESS_DENIED_PATH, request.url));
+      return NextResponse.redirect(
+        new URL(ROUTES.ACCESS_DENIED_PATH, request.url),
+      );
     }
   }
 

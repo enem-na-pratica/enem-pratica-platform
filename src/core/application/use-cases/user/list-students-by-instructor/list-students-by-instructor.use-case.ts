@@ -1,5 +1,7 @@
 import type { UserDto } from '@/src/core/application/common/dtos';
 import type { UseCase } from '@/src/core/application/common/interfaces';
+import { ROLES, hasExactRole } from '@/src/core/domain/auth';
+import { ForbiddenError } from '@/src/core/domain/errors';
 import type { Requester, UserAccessService } from '@/src/core/domain/services';
 
 import type { ListStudentsByInstructorQuery } from './list-students-by-instructor.query';
@@ -33,6 +35,12 @@ export class ListStudentsByInstructorUseCase implements UseCase<
     instructorUsername,
     requester,
   }: ListStudentsByInstructorInput): Promise<UserDto[]> {
+    if (
+      hasExactRole({ userRole: requester.role, expectedRole: ROLES.STUDENT })
+    ) {
+      throw new ForbiddenError();
+    }
+
     const instructorId = await this.userAccessService.resolveManagedTargetId({
       requester,
       targetIdentifier: instructorUsername,

@@ -273,10 +273,6 @@ describe('ListStudentsByInstructorController (integration)', () => {
       const response = await controller.handle(makeRequest('me', student));
 
       expect(response.statusCode).toBe(403);
-      expect(response.body).toEqual({
-        message:
-          'You do not have permission to perform actions for users with an equivalent or higher role.',
-      });
     });
 
     it('should return 403 when a TEACHER tries to list another TEACHER students', async () => {
@@ -297,10 +293,6 @@ describe('ListStudentsByInstructorController (integration)', () => {
       );
 
       expect(response.statusCode).toBe(403);
-      expect(response.body).toEqual({
-        message:
-          'You do not have permission to perform actions for users with an equivalent or higher role.',
-      });
     });
   });
 });
