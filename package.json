@@ -15,10 +15,14 @@
     "stats": "npx tsx scripts/project-stats.ts",
     "clean": "npx tsx scripts/clean.ts",
     "check": "npx tsx scripts/check-types.ts",
-    "test": "vitest run",
+    "release": "npx tsx scripts/release.ts",
+    "test:db:up": "docker compose -f docker-compose.test.yml up -d",
+    "test:db:down": "docker compose -f docker-compose.test.yml down -v",
+    "test:run": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "release": "npx tsx scripts/release.ts"
+    "test": "npm run test:db:up && (npm run test:run; status=$?; npm run test:db:down; exit $status)",
+    "test:cov": "npm run test:db:up && (npm run test:coverage; status=$?; npm run test:db:down; exit $status)"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -59,5 +63,12 @@
     "tailwindcss": "^4",
     "typescript": "^5",
     "vitest": "^4.1.2"
+  },
+  "allowScripts": {
+    "bcrypt@6.0.0": true,
+    "sharp@0.34.5": true,
+    "unrs-resolver@1.11.1": true,
+    "prisma@7.8.0": true,
+    "@prisma/engines@7.8.0": true
   }
 }
