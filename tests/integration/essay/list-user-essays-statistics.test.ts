@@ -135,5 +135,26 @@ describe('ListUserEssaysStatisticsController (integration)', () => {
         averagesPerCompetency: { c1: 0, c2: 0, c3: 0, c4: 0, c5: 0 },
       });
     });
+
+    it("should return the requester's own essays when using 'me'", async () => {
+      const student = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      await createEssay(student.id, { theme: 'Redação 1' });
+      const controller = makeSut();
+
+      const response = await controller.handle(makeRequest('me', student));
+
+      expect(response.statusCode).toBe(200);
+      const body = response.body as UserEssaysOverviewDto;
+      expect(body.essays).toHaveLength(1);
+      expect(body.essays[0]).toMatchObject({
+        authorId: student.id,
+        theme: 'Redação 1',
+      });
+      expect(body.statistics.totalCount).toBe(1);
+    });
   });
 });
