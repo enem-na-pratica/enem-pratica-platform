@@ -416,5 +416,25 @@ describe('ListUserEssaysStatisticsController (integration)', () => {
 
       expect(response.statusCode).toBe(403);
     });
+
+    it("should return 403 when a TEACHER tries to view another TEACHER's essays (equal role level)", async () => {
+      const teacher = await createUser({
+        name: 'Professor Teste',
+        username: TEST_TEACHER_USERNAME,
+        role: ROLES.TEACHER,
+      });
+      const teacher2 = await createUser({
+        name: 'Professor Teste Dois',
+        username: TEST_TEACHER2_USERNAME,
+        role: ROLES.TEACHER,
+      });
+      const controller = makeSut();
+
+      const response = await controller.handle(
+        makeRequest(TEST_TEACHER2_USERNAME, teacher),
+      );
+
+      expect(response.statusCode).toBe(403);
+    });
   });
 });
