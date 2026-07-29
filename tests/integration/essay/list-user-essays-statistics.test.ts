@@ -250,5 +250,30 @@ describe('ListUserEssaysStatisticsController (integration)', () => {
         c5: 160,
       });
     });
+
+    it('should return essays ordered by createdAt in descending order', async () => {
+      const student = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      const older = await createEssay(student.id, {
+        theme: 'Redação Antiga',
+        createdAt: new Date('2024-01-01T00:00:00Z'),
+      });
+      const newer = await createEssay(student.id, {
+        theme: 'Redação Recente',
+        createdAt: new Date('2024-06-01T00:00:00Z'),
+      });
+      const controller = makeSut();
+
+      const response = await controller.handle(makeRequest('me', student));
+
+      expect(response.statusCode).toBe(200);
+      const body = response.body as UserEssaysOverviewDto;
+      expect(body.essays).toHaveLength(2);
+      expect(body.essays[0].id).toBe(newer.id);
+      expect(body.essays[1].id).toBe(older.id);
+    });
   });
 });
