@@ -323,5 +323,28 @@ describe('ListUserEssaysStatisticsController (integration)', () => {
       const body = response.body as UserEssaysOverviewDto;
       expect(body.statistics.totalCount).toBe(1);
     });
+
+    it("should allow an ADMIN to view a TEACHER's essays", async () => {
+      const admin = await createUser({
+        name: 'Admin Teste',
+        username: TEST_ADMIN_USERNAME,
+        role: ROLES.ADMIN,
+      });
+      const teacher = await createUser({
+        name: 'Professor Teste',
+        username: TEST_TEACHER_USERNAME,
+        role: ROLES.TEACHER,
+      });
+      await createEssay(teacher.id);
+      const controller = makeSut();
+
+      const response = await controller.handle(
+        makeRequest(TEST_TEACHER_USERNAME, admin),
+      );
+
+      expect(response.statusCode).toBe(200);
+      const body = response.body as UserEssaysOverviewDto;
+      expect(body.statistics.totalCount).toBe(1);
+    });
   });
 });
