@@ -299,5 +299,29 @@ describe('ListUserEssaysStatisticsController (integration)', () => {
       expect(body.statistics.totalCount).toBe(1);
       expect(body.essays[0].authorId).toBe(student.id);
     });
+
+    it('should allow a TEACHER to view the essays of a student assigned to them', async () => {
+      const teacher = await createUser({
+        name: 'Professor Teste',
+        username: TEST_TEACHER_USERNAME,
+        role: ROLES.TEACHER,
+      });
+      const student = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      await linkStudentToTeacher(student.id, teacher.id);
+      await createEssay(student.id);
+      const controller = makeSut();
+
+      const response = await controller.handle(
+        makeRequest(TEST_STUDENT_USERNAME, teacher),
+      );
+
+      expect(response.statusCode).toBe(200);
+      const body = response.body as UserEssaysOverviewDto;
+      expect(body.statistics.totalCount).toBe(1);
+    });
   });
 });
