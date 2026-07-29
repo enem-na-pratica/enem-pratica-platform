@@ -67,7 +67,7 @@ async function createEssay(authorId: string, overrides: EssayOverrides = {}) {
   return prisma.essay.create({
     data: {
       authorId,
-      theme: overrides.theme ?? 'Tema de redacao teste',
+      theme: overrides.theme ?? 'Tema de redação teste',
       competency1: overrides.c1 ?? 100,
       competency2: overrides.c2 ?? 100,
       competency3: overrides.c3 ?? 100,
@@ -76,4 +76,15 @@ async function createEssay(authorId: string, overrides: EssayOverrides = {}) {
       ...(overrides.createdAt ? { createdAt: overrides.createdAt } : {}),
     },
   });
+}
+
+function makeRequest(
+  usernameParam: string,
+  requester: Requester,
+): AuthenticatedRequest<void, ListUserEssaysStatisticsParam> {
+  return {
+    body: undefined,
+    params: { username: usernameParam },
+    requester,
+  };
 }
