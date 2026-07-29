@@ -396,5 +396,25 @@ describe('ListUserEssaysStatisticsController (integration)', () => {
 
       expect(response.statusCode).toBe(403);
     });
+
+    it("should return 403 when a STUDENT tries to view another user's essays", async () => {
+      const student = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      const student2 = await createUser({
+        name: 'Aluno Teste Dois',
+        username: TEST_STUDENT2_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      const controller = makeSut();
+
+      const response = await controller.handle(
+        makeRequest(TEST_STUDENT2_USERNAME, student),
+      );
+
+      expect(response.statusCode).toBe(403);
+    });
   });
 });
