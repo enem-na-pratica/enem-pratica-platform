@@ -115,7 +115,7 @@ afterAll(async () => {
 });
 
 describe('ListUserEssaysStatisticsController (integration)', () => {
-  describe('GET /api/essays/:username/statistics — success cases', () => {
+  describe('GET /api/essays/:username — success cases', () => {
     it("should return the requester's own empty statistics when using 'me' and there are no essays", async () => {
       const student = await createUser({
         name: 'Aluno Teste',
@@ -348,7 +348,7 @@ describe('ListUserEssaysStatisticsController (integration)', () => {
     });
   });
 
-  describe('GET /api/essays/:username/statistics — error cases', () => {
+  describe('GET /api/essays/:username — error cases', () => {
     it('should return 400 when the username has an invalid format', async () => {
       const admin = await createUser({
         name: 'Admin Teste',
