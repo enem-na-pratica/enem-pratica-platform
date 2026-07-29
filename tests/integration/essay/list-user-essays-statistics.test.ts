@@ -275,5 +275,29 @@ describe('ListUserEssaysStatisticsController (integration)', () => {
       expect(body.essays[0].id).toBe(newer.id);
       expect(body.essays[1].id).toBe(older.id);
     });
+
+    it("should allow an ADMIN to view any user's essays by username", async () => {
+      const admin = await createUser({
+        name: 'Admin Teste',
+        username: TEST_ADMIN_USERNAME,
+        role: ROLES.ADMIN,
+      });
+      const student = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      await createEssay(student.id);
+      const controller = makeSut();
+
+      const response = await controller.handle(
+        makeRequest(TEST_STUDENT_USERNAME, admin),
+      );
+
+      expect(response.statusCode).toBe(200);
+      const body = response.body as UserEssaysOverviewDto;
+      expect(body.statistics.totalCount).toBe(1);
+      expect(body.essays[0].authorId).toBe(student.id);
+    });
   });
 });
