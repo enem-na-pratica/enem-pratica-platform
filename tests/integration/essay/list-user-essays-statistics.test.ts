@@ -113,3 +113,27 @@ afterEach(async () => {
 afterAll(async () => {
   await prisma.$disconnect();
 });
+
+describe('ListUserEssaysStatisticsController (integration)', () => {
+  describe('GET /api/essays/:username/statistics — success cases', () => {
+    it("should return the requester's own empty statistics when using 'me' and there are no essays", async () => {
+      const student = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      const controller = makeSut();
+
+      const response = await controller.handle(makeRequest('me', student));
+
+      expect(response.statusCode).toBe(200);
+      const body = response.body as UserEssaysOverviewDto;
+      expect(body.essays).toHaveLength(0);
+      expect(body.statistics).toEqual({
+        totalCount: 0,
+        globalAverage: 0,
+        averagesPerCompetency: { c1: 0, c2: 0, c3: 0, c4: 0, c5: 0 },
+      });
+    });
+  });
+});
