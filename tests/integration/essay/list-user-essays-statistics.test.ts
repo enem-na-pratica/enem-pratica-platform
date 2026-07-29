@@ -376,5 +376,25 @@ describe('ListUserEssaysStatisticsController (integration)', () => {
 
       expect(response.statusCode).toBe(404);
     });
+
+    it('should return 403 when a TEACHER tries to view a student that is not assigned to them', async () => {
+      const teacher = await createUser({
+        name: 'Professor Teste',
+        username: TEST_TEACHER_USERNAME,
+        role: ROLES.TEACHER,
+      });
+      const student = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      const controller = makeSut();
+
+      const response = await controller.handle(
+        makeRequest(TEST_STUDENT_USERNAME, teacher),
+      );
+
+      expect(response.statusCode).toBe(403);
+    });
   });
 });
