@@ -383,7 +383,7 @@ describe('ListUserEssaysStatisticsController (integration)', () => {
         username: TEST_TEACHER_USERNAME,
         role: ROLES.TEACHER,
       });
-      const student = await createUser({
+      await createUser({
         name: 'Aluno Teste',
         username: TEST_STUDENT_USERNAME,
         role: ROLES.STUDENT,
@@ -403,7 +403,7 @@ describe('ListUserEssaysStatisticsController (integration)', () => {
         username: TEST_STUDENT_USERNAME,
         role: ROLES.STUDENT,
       });
-      const student2 = await createUser({
+      await createUser({
         name: 'Aluno Teste Dois',
         username: TEST_STUDENT2_USERNAME,
         role: ROLES.STUDENT,
@@ -423,7 +423,7 @@ describe('ListUserEssaysStatisticsController (integration)', () => {
         username: TEST_TEACHER_USERNAME,
         role: ROLES.TEACHER,
       });
-      const teacher2 = await createUser({
+      await createUser({
         name: 'Professor Teste Dois',
         username: TEST_TEACHER2_USERNAME,
         role: ROLES.TEACHER,
@@ -443,7 +443,7 @@ describe('ListUserEssaysStatisticsController (integration)', () => {
         username: TEST_TEACHER_USERNAME,
         role: ROLES.TEACHER,
       });
-      const admin = await createUser({
+      await createUser({
         name: 'Admin Teste',
         username: TEST_ADMIN_USERNAME,
         role: ROLES.ADMIN,
