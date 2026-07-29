@@ -174,5 +174,40 @@ describe('ListUserEssaysStatisticsController (integration)', () => {
       const body = response.body as UserEssaysOverviewDto;
       expect(body.statistics.totalCount).toBe(1);
     });
+
+    it('should return the correct shape for each essay in the list', async () => {
+      const student = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      await createEssay(student.id, {
+        theme: 'Redação Teste',
+        c1: 120,
+        c2: 100,
+        c3: 80,
+        c4: 160,
+        c5: 140,
+      });
+      const controller = makeSut();
+
+      const response = await controller.handle(makeRequest('me', student));
+
+      expect(response.statusCode).toBe(200);
+      const body = response.body as UserEssaysOverviewDto;
+      const essay = body.essays[0];
+      expect(essay).toHaveProperty('id');
+      expect(essay).toHaveProperty('authorId', student.id);
+      expect(essay).toHaveProperty('theme', 'Redação Teste');
+      expect(essay).toHaveProperty('createdAt');
+      expect(essay.grades).toMatchObject({
+        c1: 120,
+        c2: 100,
+        c3: 80,
+        c4: 160,
+        c5: 140,
+        total: 600,
+      });
+    });
   });
 });
