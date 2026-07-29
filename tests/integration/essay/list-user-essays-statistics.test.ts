@@ -52,3 +52,28 @@ async function linkStudentToTeacher(
     data: { studentId, teacherId },
   });
 }
+
+type EssayOverrides = {
+  theme?: string;
+  c1?: number;
+  c2?: number;
+  c3?: number;
+  c4?: number;
+  c5?: number;
+  createdAt?: Date;
+};
+
+async function createEssay(authorId: string, overrides: EssayOverrides = {}) {
+  return prisma.essay.create({
+    data: {
+      authorId,
+      theme: overrides.theme ?? 'Tema de redacao teste',
+      competency1: overrides.c1 ?? 100,
+      competency2: overrides.c2 ?? 100,
+      competency3: overrides.c3 ?? 100,
+      competency4: overrides.c4 ?? 100,
+      competency5: overrides.c5 ?? 100,
+      ...(overrides.createdAt ? { createdAt: overrides.createdAt } : {}),
+    },
+  });
+}
