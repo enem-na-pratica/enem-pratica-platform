@@ -347,4 +347,19 @@ describe('ListUserEssaysStatisticsController (integration)', () => {
       expect(body.statistics.totalCount).toBe(1);
     });
   });
+
+  describe('GET /api/essays/:username/statistics — error cases', () => {
+    it('should return 400 when the username has an invalid format', async () => {
+      const admin = await createUser({
+        name: 'Admin Teste',
+        username: TEST_ADMIN_USERNAME,
+        role: ROLES.ADMIN,
+      });
+      const controller = makeSut();
+
+      const response = await controller.handle(makeRequest('-invalido', admin));
+
+      expect(response.statusCode).toBe(400);
+    });
+  });
 });
