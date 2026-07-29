@@ -156,5 +156,23 @@ describe('ListUserEssaysStatisticsController (integration)', () => {
       });
       expect(body.statistics.totalCount).toBe(1);
     });
+
+    it('should allow a user to view their own essays by passing their own username directly', async () => {
+      const student = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      await createEssay(student.id);
+      const controller = makeSut();
+
+      const response = await controller.handle(
+        makeRequest(TEST_STUDENT_USERNAME, student),
+      );
+
+      expect(response.statusCode).toBe(200);
+      const body = response.body as UserEssaysOverviewDto;
+      expect(body.statistics.totalCount).toBe(1);
+    });
   });
 });
