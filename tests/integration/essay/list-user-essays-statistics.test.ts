@@ -209,5 +209,46 @@ describe('ListUserEssaysStatisticsController (integration)', () => {
         total: 600,
       });
     });
+
+    it('should calculate globalAverage and averagesPerCompetency correctly across multiple essays', async () => {
+      const student = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      // total = 600
+      await createEssay(student.id, {
+        c1: 120,
+        c2: 120,
+        c3: 120,
+        c4: 120,
+        c5: 120,
+      });
+      // total = 1000
+      await createEssay(student.id, {
+        c1: 200,
+        c2: 200,
+        c3: 200,
+        c4: 200,
+        c5: 200,
+      });
+      const controller = makeSut();
+
+      const response = await controller.handle(makeRequest('me', student));
+
+      expect(response.statusCode).toBe(200);
+      const body = response.body as UserEssaysOverviewDto;
+      expect(body.statistics.totalCount).toBe(2);
+      // global average = (600 + 1000) / 2 = 800
+      expect(body.statistics.globalAverage).toBe(800);
+      // per-competency average = (120 + 200) / 2 = 160 for every competency
+      expect(body.statistics.averagesPerCompetency).toEqual({
+        c1: 160,
+        c2: 160,
+        c3: 160,
+        c4: 160,
+        c5: 160,
+      });
+    });
   });
 });
