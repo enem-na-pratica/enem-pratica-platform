@@ -35,3 +35,25 @@ const VALID_GRADES_TOTAL = Object.values(VALID_GRADES).reduce(
   (acc, val) => acc + val,
   0,
 );
+
+type EssayBody = {
+  theme: string;
+  grades: { c1: number; c2: number; c3: number; c4: number; c5: number };
+};
+
+type Requester = { id: string; username: string; role: Role };
+
+type EssayDtoLike = {
+  id: string;
+  authorId: string;
+  theme: string;
+  grades: {
+    c1: number;
+    c2: number;
+    c3: number;
+    c4: number;
+    c5: number;
+    total: number;
+  };
+  createdAt: string;
+};
