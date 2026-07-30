@@ -431,4 +431,26 @@ describe('CreateEssayController (integration)', () => {
 
     expect(response.statusCode).toBe(404);
   });
+
+  it('should return 400 when the theme is missing', async () => {
+    const student = await createUser({
+      name: 'Aluno Teste',
+      username: TEST_STUDENT_USERNAME,
+      role: ROLES.STUDENT,
+    });
+
+    const controller = makeSut();
+
+    const response = await controller.handle(
+      makeRequest({
+        body: { grades: VALID_GRADES } as Partial<EssayBody>,
+        username: 'me',
+        requester: student,
+      }),
+    );
+
+    expect(response.statusCode).toBe(400);
+    const body = response.body as ErrorResponse;
+    expect(body.message).toBeTruthy();
+  });
 });
