@@ -472,5 +472,25 @@ describe('CreateEssayController (integration)', () => {
 
       expect(response.statusCode).toBe(400);
     });
+
+    it('should return 400 (or a client error) when the theme is shorter than the minimum length', async () => {
+      const student = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+
+      const controller = makeSut();
+
+      const response = await controller.handle(
+        makeRequest({
+          body: { theme: 'Oi', grades: VALID_GRADES },
+          username: 'me',
+          requester: student,
+        }),
+      );
+
+      expect(response.statusCode).toBe(400);
+    });
   });
 });
