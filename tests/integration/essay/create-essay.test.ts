@@ -309,5 +309,29 @@ describe('CreateEssayController (integration)', () => {
           VALID_GRADES.c5,
       );
     });
+
+    it('should apply PT-BR title case capitalization to the theme', async () => {
+      const student = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+
+      const controller = makeSut();
+
+      const response = await controller.handle(
+        makeRequest({
+          body: {
+            theme: 'o impacto das redes sociais para os jovens',
+            grades: VALID_GRADES,
+          },
+          username: 'me',
+          requester: student,
+        }),
+      );
+
+      const body = response.body as EssayDtoLike;
+      expect(body.theme).toBe('O Impacto das Redes Sociais para os Jovens');
+    });
   });
 });
