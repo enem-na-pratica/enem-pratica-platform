@@ -500,7 +500,7 @@ describe('CreateEssayController (integration)', () => {
         role: ROLES.STUDENT,
       });
       await createUser({
-        name: 'Aluno Teste 2',
+        name: 'Aluno Teste Dois',
         username: TEST_STUDENT2_USERNAME,
         role: ROLES.STUDENT,
       });
