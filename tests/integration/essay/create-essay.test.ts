@@ -386,4 +386,29 @@ describe('CreateEssayController (integration)', () => {
 
     expect(response.statusCode).toBe(403);
   });
+
+  it('should return 403 when a TEACHER tries to create an essay for an ADMIN', async () => {
+    const teacher = await createUser({
+      name: 'Professor Teste',
+      username: TEST_TEACHER_USERNAME,
+      role: ROLES.TEACHER,
+    });
+    await createUser({
+      name: 'Admin Teste',
+      username: TEST_ADMIN_USERNAME,
+      role: ROLES.ADMIN,
+    });
+
+    const controller = makeSut();
+
+    const response = await controller.handle(
+      makeRequest({
+        body: { theme: 'tentativa de acesso indevido', grades: VALID_GRADES },
+        username: TEST_ADMIN_USERNAME,
+        requester: teacher,
+      }),
+    );
+
+    expect(response.statusCode).toBe(403);
+  });
 });
