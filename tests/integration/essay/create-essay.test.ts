@@ -90,3 +90,19 @@ async function linkStudentToTeacher(
     data: { studentId, teacherId },
   });
 }
+
+function makeRequest({
+  body,
+  username,
+  requester,
+}: {
+  body: Partial<EssayBody>;
+  username: string;
+  requester: Requester;
+}): AuthenticatedRequest<EssayBody, { username: string }> {
+  return {
+    body: body as EssayBody,
+    params: { username },
+    requester,
+  };
+}
