@@ -244,5 +244,40 @@ describe('CreateEssayController (integration)', () => {
       const body = response.body as EssayDtoLike;
       expect(body.authorId).toBe(student.id);
     });
+
+    it('should persist the essay in the database with the correct data', async () => {
+      const student = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+
+      const controller = makeSut();
+
+      const response = await controller.handle(
+        makeRequest({
+          body: {
+            theme: 'valorização do trabalho no brasil',
+            grades: VALID_GRADES,
+          },
+          username: 'me',
+          requester: student,
+        }),
+      );
+
+      const body = response.body as EssayDtoLike;
+
+      const persisted = await prisma.essay.findUnique({
+        where: { id: body.id },
+      });
+
+      expect(persisted).not.toBeNull();
+      expect(persisted?.authorId).toBe(student.id);
+      expect(persisted?.competency1).toBe(VALID_GRADES.c1);
+      expect(persisted?.competency2).toBe(VALID_GRADES.c2);
+      expect(persisted?.competency3).toBe(VALID_GRADES.c3);
+      expect(persisted?.competency4).toBe(VALID_GRADES.c4);
+      expect(persisted?.competency5).toBe(VALID_GRADES.c5);
+    });
   });
 });
