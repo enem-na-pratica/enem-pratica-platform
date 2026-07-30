@@ -334,4 +334,31 @@ describe('CreateEssayController (integration)', () => {
       expect(body.theme).toBe('O Impacto das Redes Sociais para os Jovens');
     });
   });
+
+  describe('POST /api/essays/users/:username — error cases', () => {
+    it('should return 403 when a STUDENT tries to create an essay for another user', async () => {
+      const student = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      await createUser({
+        name: 'Aluno Teste Dois',
+        username: TEST_STUDENT2_USERNAME,
+        role: ROLES.STUDENT,
+      });
+
+      const controller = makeSut();
+
+      const response = await controller.handle(
+        makeRequest({
+          body: { theme: 'tentativa de acesso indevido', grades: VALID_GRADES },
+          username: TEST_STUDENT2_USERNAME,
+          requester: student,
+        }),
+      );
+
+      expect(response.statusCode).toBe(403);
+    });
+  });
 });
