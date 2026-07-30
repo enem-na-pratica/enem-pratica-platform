@@ -360,117 +360,117 @@ describe('CreateEssayController (integration)', () => {
 
       expect(response.statusCode).toBe(403);
     });
-  });
 
-  it('should return 403 when a TEACHER tries to create an essay for a student not assigned to them', async () => {
-    const teacher = await createUser({
-      name: 'Professor Teste',
-      username: TEST_TEACHER_USERNAME,
-      role: ROLES.TEACHER,
-    });
-    await createUser({
-      name: 'Aluno Teste',
-      username: TEST_STUDENT_USERNAME,
-      role: ROLES.STUDENT,
-    });
-
-    const controller = makeSut();
-
-    const response = await controller.handle(
-      makeRequest({
-        body: { theme: 'tentativa de acesso indevido', grades: VALID_GRADES },
+    it('should return 403 when a TEACHER tries to create an essay for a student not assigned to them', async () => {
+      const teacher = await createUser({
+        name: 'Professor Teste',
+        username: TEST_TEACHER_USERNAME,
+        role: ROLES.TEACHER,
+      });
+      await createUser({
+        name: 'Aluno Teste',
         username: TEST_STUDENT_USERNAME,
-        requester: teacher,
-      }),
-    );
+        role: ROLES.STUDENT,
+      });
 
-    expect(response.statusCode).toBe(403);
-  });
+      const controller = makeSut();
 
-  it('should return 403 when a TEACHER tries to create an essay for an ADMIN', async () => {
-    const teacher = await createUser({
-      name: 'Professor Teste',
-      username: TEST_TEACHER_USERNAME,
-      role: ROLES.TEACHER,
-    });
-    await createUser({
-      name: 'Admin Teste',
-      username: TEST_ADMIN_USERNAME,
-      role: ROLES.ADMIN,
+      const response = await controller.handle(
+        makeRequest({
+          body: { theme: 'tentativa de acesso indevido', grades: VALID_GRADES },
+          username: TEST_STUDENT_USERNAME,
+          requester: teacher,
+        }),
+      );
+
+      expect(response.statusCode).toBe(403);
     });
 
-    const controller = makeSut();
-
-    const response = await controller.handle(
-      makeRequest({
-        body: { theme: 'tentativa de acesso indevido', grades: VALID_GRADES },
+    it('should return 403 when a TEACHER tries to create an essay for an ADMIN', async () => {
+      const teacher = await createUser({
+        name: 'Professor Teste',
+        username: TEST_TEACHER_USERNAME,
+        role: ROLES.TEACHER,
+      });
+      await createUser({
+        name: 'Admin Teste',
         username: TEST_ADMIN_USERNAME,
-        requester: teacher,
-      }),
-    );
+        role: ROLES.ADMIN,
+      });
 
-    expect(response.statusCode).toBe(403);
-  });
+      const controller = makeSut();
 
-  it('should return 404 when the target username does not exist', async () => {
-    const teacher = await createUser({
-      name: 'Professor Teste',
-      username: TEST_TEACHER_USERNAME,
-      role: ROLES.TEACHER,
+      const response = await controller.handle(
+        makeRequest({
+          body: { theme: 'tentativa de acesso indevido', grades: VALID_GRADES },
+          username: TEST_ADMIN_USERNAME,
+          requester: teacher,
+        }),
+      );
+
+      expect(response.statusCode).toBe(403);
     });
 
-    const controller = makeSut();
+    it('should return 404 when the target username does not exist', async () => {
+      const teacher = await createUser({
+        name: 'Professor Teste',
+        username: TEST_TEACHER_USERNAME,
+        role: ROLES.TEACHER,
+      });
 
-    const response = await controller.handle(
-      makeRequest({
-        body: { theme: 'usuário alvo inexistente', grades: VALID_GRADES },
-        username: 'usuario.nao.existe.teste',
-        requester: teacher,
-      }),
-    );
+      const controller = makeSut();
 
-    expect(response.statusCode).toBe(404);
-  });
+      const response = await controller.handle(
+        makeRequest({
+          body: { theme: 'usuário alvo inexistente', grades: VALID_GRADES },
+          username: 'usuario.nao.existe.teste',
+          requester: teacher,
+        }),
+      );
 
-  it('should return 400 when the theme is missing', async () => {
-    const student = await createUser({
-      name: 'Aluno Teste',
-      username: TEST_STUDENT_USERNAME,
-      role: ROLES.STUDENT,
+      expect(response.statusCode).toBe(404);
     });
 
-    const controller = makeSut();
+    it('should return 400 when the theme is missing', async () => {
+      const student = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
 
-    const response = await controller.handle(
-      makeRequest({
-        body: { grades: VALID_GRADES } as Partial<EssayBody>,
-        username: 'me',
-        requester: student,
-      }),
-    );
+      const controller = makeSut();
 
-    expect(response.statusCode).toBe(400);
-    const body = response.body as ErrorResponse;
-    expect(body.message).toBeTruthy();
-  });
+      const response = await controller.handle(
+        makeRequest({
+          body: { grades: VALID_GRADES } as Partial<EssayBody>,
+          username: 'me',
+          requester: student,
+        }),
+      );
 
-  it('should return 400 when grades are missing', async () => {
-    const student = await createUser({
-      name: 'Aluno Teste',
-      username: TEST_STUDENT_USERNAME,
-      role: ROLES.STUDENT,
+      expect(response.statusCode).toBe(400);
+      const body = response.body as ErrorResponse;
+      expect(body.message).toBeTruthy();
     });
 
-    const controller = makeSut();
+    it('should return 400 when grades are missing', async () => {
+      const student = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
 
-    const response = await controller.handle(
-      makeRequest({
-        body: { theme: 'redação sem notas informadas' } as Partial<EssayBody>,
-        username: 'me',
-        requester: student,
-      }),
-    );
+      const controller = makeSut();
 
-    expect(response.statusCode).toBe(400);
+      const response = await controller.handle(
+        makeRequest({
+          body: { theme: 'redação sem notas informadas' } as Partial<EssayBody>,
+          username: 'me',
+          requester: student,
+        }),
+      );
+
+      expect(response.statusCode).toBe(400);
+    });
   });
 });
