@@ -81,3 +81,12 @@ async function createUser(data: {
 
   return { id: user.id, username: user.username, role: user.role };
 }
+
+async function linkStudentToTeacher(
+  studentId: string,
+  teacherId: string,
+): Promise<void> {
+  await prisma.studentTeacher.create({
+    data: { studentId, teacherId },
+  });
+}
