@@ -214,5 +214,35 @@ describe('CreateEssayController (integration)', () => {
       const body = response.body as EssayDtoLike;
       expect(body.authorId).toBe(student.id);
     });
+
+    it('should allow an ADMIN to create an essay for any user, regardless of assignment', async () => {
+      const admin = await createUser({
+        name: 'Admin Teste',
+        username: TEST_ADMIN_USERNAME,
+        role: ROLES.ADMIN,
+      });
+      const student = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+
+      const controller = makeSut();
+
+      const response = await controller.handle(
+        makeRequest({
+          body: {
+            theme: 'desafios da inteligencia artificial',
+            grades: VALID_GRADES,
+          },
+          username: TEST_STUDENT_USERNAME,
+          requester: admin,
+        }),
+      );
+
+      expect(response.statusCode).toBe(201);
+      const body = response.body as EssayDtoLike;
+      expect(body.authorId).toBe(student.id);
+    });
   });
 });
