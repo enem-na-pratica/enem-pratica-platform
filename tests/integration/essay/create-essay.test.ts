@@ -411,4 +411,24 @@ describe('CreateEssayController (integration)', () => {
 
     expect(response.statusCode).toBe(403);
   });
+
+  it('should return 404 when the target username does not exist', async () => {
+    const teacher = await createUser({
+      name: 'Professor Teste',
+      username: TEST_TEACHER_USERNAME,
+      role: ROLES.TEACHER,
+    });
+
+    const controller = makeSut();
+
+    const response = await controller.handle(
+      makeRequest({
+        body: { theme: 'usuário alvo inexistente', grades: VALID_GRADES },
+        username: 'usuario.nao.existe.teste',
+        requester: teacher,
+      }),
+    );
+
+    expect(response.statusCode).toBe(404);
+  });
 });
