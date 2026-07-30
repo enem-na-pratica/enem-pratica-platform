@@ -492,5 +492,34 @@ describe('CreateEssayController (integration)', () => {
 
       expect(response.statusCode).toBe(400);
     });
+
+    it('should not create any essay record when the request is rejected', async () => {
+      const student = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      await createUser({
+        name: 'Aluno Teste 2',
+        username: TEST_STUDENT2_USERNAME,
+        role: ROLES.STUDENT,
+      });
+
+      const controller = makeSut();
+
+      await controller.handle(
+        makeRequest({
+          body: { theme: 'tentativa de acesso indevido', grades: VALID_GRADES },
+          username: TEST_STUDENT2_USERNAME,
+          requester: student,
+        }),
+      );
+
+      const essaysCount = await prisma.essay.count({
+        where: { author: { username: { in: ALL_TEST_USERNAMES } } },
+      });
+
+      expect(essaysCount).toBe(0);
+    });
   });
 });
