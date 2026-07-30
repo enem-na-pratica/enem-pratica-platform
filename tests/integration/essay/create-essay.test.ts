@@ -453,4 +453,24 @@ describe('CreateEssayController (integration)', () => {
     const body = response.body as ErrorResponse;
     expect(body.message).toBeTruthy();
   });
+
+  it('should return 400 when grades are missing', async () => {
+    const student = await createUser({
+      name: 'Aluno Teste',
+      username: TEST_STUDENT_USERNAME,
+      role: ROLES.STUDENT,
+    });
+
+    const controller = makeSut();
+
+    const response = await controller.handle(
+      makeRequest({
+        body: { theme: 'redação sem notas informadas' } as Partial<EssayBody>,
+        username: 'me',
+        requester: student,
+      }),
+    );
+
+    expect(response.statusCode).toBe(400);
+  });
 });
