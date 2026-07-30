@@ -279,5 +279,35 @@ describe('CreateEssayController (integration)', () => {
       expect(persisted?.competency4).toBe(VALID_GRADES.c4);
       expect(persisted?.competency5).toBe(VALID_GRADES.c5);
     });
+
+    it('should return the total score as the sum of the five competencies', async () => {
+      const student = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+
+      const controller = makeSut();
+
+      const response = await controller.handle(
+        makeRequest({
+          body: {
+            theme: 'a importância da leitura hoje',
+            grades: VALID_GRADES,
+          },
+          username: 'me',
+          requester: student,
+        }),
+      );
+
+      const body = response.body as EssayDtoLike;
+      expect(body.grades.total).toBe(
+        VALID_GRADES.c1 +
+          VALID_GRADES.c2 +
+          VALID_GRADES.c3 +
+          VALID_GRADES.c4 +
+          VALID_GRADES.c5,
+      );
+    });
   });
 });
