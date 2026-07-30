@@ -57,3 +57,27 @@ type EssayDtoLike = {
   };
   createdAt: string;
 };
+
+function makeSut() {
+  return makeCreateEssay();
+}
+
+async function createUser(data: {
+  name: string;
+  username: string;
+  role: Role;
+}): Promise<Requester> {
+  const bcrypt = makeBcryptAdapter();
+  const passwordHash = await bcrypt.hash(TEST_PASSWORD);
+
+  const user = await prisma.user.create({
+    data: {
+      name: data.name,
+      username: data.username,
+      passwordHash,
+      role: data.role,
+    },
+  });
+
+  return { id: user.id, username: user.username, role: user.role };
+}
