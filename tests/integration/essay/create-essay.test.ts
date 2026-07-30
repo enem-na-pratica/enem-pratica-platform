@@ -183,5 +183,36 @@ describe('CreateEssayController (integration)', () => {
       const body = response.body as EssayDtoLike;
       expect(body.authorId).toBe(student.id);
     });
+
+    it('should allow a TEACHER to create an essay for a student explicitly assigned to them', async () => {
+      const teacher = await createUser({
+        name: 'Professor Teste',
+        username: TEST_TEACHER_USERNAME,
+        role: ROLES.TEACHER,
+      });
+      const student = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      await linkStudentToTeacher(student.id, teacher.id);
+
+      const controller = makeSut();
+
+      const response = await controller.handle(
+        makeRequest({
+          body: {
+            theme: 'educação no seculo vinte e um',
+            grades: VALID_GRADES,
+          },
+          username: TEST_STUDENT_USERNAME,
+          requester: teacher,
+        }),
+      );
+
+      expect(response.statusCode).toBe(201);
+      const body = response.body as EssayDtoLike;
+      expect(body.authorId).toBe(student.id);
+    });
   });
 });
