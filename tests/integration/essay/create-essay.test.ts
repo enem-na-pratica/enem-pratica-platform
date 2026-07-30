@@ -158,5 +158,30 @@ describe('CreateEssayController (integration)', () => {
       expect(body.theme).toBe('O Brasil na Era Digital');
       expect(body.grades.total).toBe(VALID_GRADES_TOTAL);
     });
+
+    it('should return 201 when the username param matches the requester own username', async () => {
+      const student = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+
+      const controller = makeSut();
+
+      const response = await controller.handle(
+        makeRequest({
+          body: {
+            theme: 'meio ambiente e sustentabilidade',
+            grades: VALID_GRADES,
+          },
+          username: TEST_STUDENT_USERNAME,
+          requester: student,
+        }),
+      );
+
+      expect(response.statusCode).toBe(201);
+      const body = response.body as EssayDtoLike;
+      expect(body.authorId).toBe(student.id);
+    });
   });
 });
