@@ -131,3 +131,32 @@ afterEach(async () => {
 afterAll(async () => {
   await prisma.$disconnect();
 });
+
+describe('CreateEssayController (integration)', () => {
+  describe('POST /api/essays/users/:username — success cases', () => {
+    it('should return 201 and create an essay for the requester itself using "me"', async () => {
+      const student = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+
+      const { controller } = { controller: makeSut() };
+
+      const response = await controller.handle(
+        makeRequest({
+          body: { theme: 'o brasil na era digital', grades: VALID_GRADES },
+          username: 'me',
+          requester: student,
+        }),
+      );
+
+      expect(response.statusCode).toBe(201);
+
+      const body = response.body as EssayDtoLike;
+      expect(body.authorId).toBe(student.id);
+      expect(body.theme).toBe('O Brasil na Era Digital');
+      expect(body.grades.total).toBe(VALID_GRADES_TOTAL);
+    });
+  });
+});
