@@ -1,6 +1,10 @@
-import type { HttpResponse, ErrorResponse } from '@/src/core/presentation/protocols';
+import type { BaseError } from '@/src/core/domain/errors';
+import type {
+  ErrorResponse,
+  HttpResponse,
+} from '@/src/core/presentation/protocols';
+
 import { HttpStatus } from './http-status-code.constants';
-import type { BaseError } from "@/src/core/domain/errors";
 
 export function ok<T>(data: T): HttpResponse<T> {
   return {
@@ -18,12 +22,12 @@ export function created<T>(data: T): HttpResponse<T> {
 
 export function noContent(): HttpResponse<void> {
   return {
-    statusCode: HttpStatus.NO_CONTENT
+    statusCode: HttpStatus.NO_CONTENT,
   };
 }
 
 export function badRequest(
-  error: BaseError & { details?: unknown }
+  error: BaseError & { details?: unknown },
 ): HttpResponse<ErrorResponse> {
   return {
     statusCode: HttpStatus.BAD_REQUEST,
