@@ -245,5 +245,65 @@ describe('ListUserMockExamsStatisticsController (integration)', () => {
         knowledgeGapAverage: 4 * 6,
       });
     });
+
+    it('should correctly aggregate statistics across multiple mock exams', async () => {
+      const studentId = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      await createMockExam({
+        authorId: studentId,
+        title: 'Simulado Mediano',
+        profile: MEDIUM_PROFILE,
+      });
+      await createMockExam({
+        authorId: studentId,
+        title: 'Simulado Perfeito',
+        profile: PERFECT_PROFILE,
+      });
+
+      const controller = makeSut();
+      const response = await controller.handle(
+        makeRequest({
+          username: 'me',
+          requester: {
+            id: studentId,
+            username: TEST_STUDENT_USERNAME,
+            role: ROLES.STUDENT,
+          },
+        }),
+      );
+
+      expect(response.statusCode).toBe(200);
+
+      const body = response.body as UserMockExamsOverviewDto;
+
+      expect(body.mockExams).toHaveLength(2);
+
+      const { statistics } = body;
+
+      expect(statistics.totalMockExams).toBe(2);
+
+      expect(statistics.globalAveragePerformance).toBeCloseTo(5 / 6, 10);
+
+      expect(
+        statistics.performancePerArea.humanities.averagePerformanceRate,
+      ).toBeCloseTo(5 / 6, 10);
+
+      expect(
+        statistics.performancePerArea.humanities.averageCorrectAnswers,
+      ).toBe(37.5);
+
+      expect(statistics.performancePerArea.humanities.totalCriticalErrors).toBe(
+        12,
+      );
+
+      expect(statistics.errorPrevalence).toEqual({
+        distractionAverage: (4 * 5 + 4 * 0) / 2,
+        interpretationAverage: (4 * 4 + 4 * 0) / 2,
+        knowledgeGapAverage: (4 * 6 + 4 * 0) / 2,
+      });
+    });
   });
 });
