@@ -490,5 +490,38 @@ describe('ListUserMockExamsStatisticsController (integration)', () => {
 
       expect(response.statusCode).toBe(404);
     });
+
+    it('should return 403 when a TEACHER tries to view a STUDENT not assigned to them', async () => {
+      const teacherId = await createUser({
+        name: 'Professor Teste',
+        username: TEST_TEACHER_USERNAME,
+        role: ROLES.TEACHER,
+      });
+      const studentId = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+
+      await createMockExam({
+        authorId: studentId,
+        title: 'Simulado do Aluno',
+        profile: MEDIUM_PROFILE,
+      });
+
+      const controller = makeSut();
+      const response = await controller.handle(
+        makeRequest({
+          username: TEST_STUDENT_USERNAME,
+          requester: {
+            id: teacherId,
+            username: TEST_TEACHER_USERNAME,
+            role: ROLES.TEACHER,
+          },
+        }),
+      );
+
+      expect(response.statusCode).toBe(403);
+    });
   });
 });
