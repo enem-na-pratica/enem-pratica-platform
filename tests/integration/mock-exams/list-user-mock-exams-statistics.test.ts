@@ -138,3 +138,44 @@ afterEach(async () => {
 afterAll(async () => {
   await prisma.$disconnect();
 });
+
+describe('ListUserMockExamsStatisticsController (integration)', () => {
+  describe('GET /api/mock-exams/users/:username — success cases', () => {
+    it('should return 200 with zero statistics and an empty mockExams array when the user has no mock exams', async () => {
+      const studentId = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+
+      const controller = makeSut();
+      const response = await controller.handle(
+        makeRequest({
+          username: 'me',
+          requester: {
+            id: studentId,
+            username: TEST_STUDENT_USERNAME,
+            role: ROLES.STUDENT,
+          },
+        }),
+      );
+
+      expect(response.statusCode).toBe(200);
+
+      const body = response.body as UserMockExamsOverviewDto;
+      expect(body.mockExams).toEqual([]);
+      expect(body.statistics.totalMockExams).toBe(0);
+      expect(body.statistics.globalAveragePerformance).toBe(0);
+      expect(body.statistics.errorPrevalence).toEqual({
+        distractionAverage: 0,
+        interpretationAverage: 0,
+        knowledgeGapAverage: 0,
+      });
+      expect(body.statistics.performancePerArea.languages).toEqual({
+        averagePerformanceRate: 0,
+        averageCorrectAnswers: 0,
+        totalCriticalErrors: 0,
+      });
+    });
+  });
+});
