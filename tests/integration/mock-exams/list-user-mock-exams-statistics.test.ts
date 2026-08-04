@@ -349,5 +349,42 @@ describe('ListUserMockExamsStatisticsController (integration)', () => {
         'Simulado Antigo',
       ]);
     });
+
+    it('should allow an ADMIN to view any STUDENT statistics by username', async () => {
+      const adminId = await createUser({
+        name: 'Admin Teste',
+        username: TEST_ADMIN_USERNAME,
+        role: ROLES.ADMIN,
+      });
+      const studentId = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      await createMockExam({
+        authorId: studentId,
+        title: 'Simulado do Aluno',
+        profile: PERFECT_PROFILE,
+      });
+
+      const controller = makeSut();
+      const response = await controller.handle(
+        makeRequest({
+          username: TEST_STUDENT_USERNAME,
+          requester: {
+            id: adminId,
+            username: TEST_ADMIN_USERNAME,
+            role: ROLES.ADMIN,
+          },
+        }),
+      );
+
+      expect(response.statusCode).toBe(200);
+
+      const body = response.body as UserMockExamsOverviewDto;
+      expect(body.mockExams).toHaveLength(1);
+      expect(body.mockExams[0].authorId).toBe(studentId);
+      expect(body.statistics.globalAveragePerformance).toBeCloseTo(1, 10);
+    });
   });
 });
