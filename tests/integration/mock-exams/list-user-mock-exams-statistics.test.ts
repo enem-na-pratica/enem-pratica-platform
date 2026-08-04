@@ -523,5 +523,32 @@ describe('ListUserMockExamsStatisticsController (integration)', () => {
 
       expect(response.statusCode).toBe(403);
     });
+
+    it('should return 403 when a STUDENT tries to view a TEACHER statistics (lower role accessing higher role)', async () => {
+      const studentId = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      await createUser({
+        name: 'Professor Teste',
+        username: TEST_TEACHER_USERNAME,
+        role: ROLES.TEACHER,
+      });
+
+      const controller = makeSut();
+      const response = await controller.handle(
+        makeRequest({
+          username: TEST_TEACHER_USERNAME,
+          requester: {
+            id: studentId,
+            username: TEST_STUDENT_USERNAME,
+            role: ROLES.STUDENT,
+          },
+        }),
+      );
+
+      expect(response.statusCode).toBe(403);
+    });
   });
 });
