@@ -305,5 +305,49 @@ describe('ListUserMockExamsStatisticsController (integration)', () => {
         knowledgeGapAverage: (4 * 6 + 4 * 0) / 2,
       });
     });
+
+    it('should order mockExams by createdAt in descending order', async () => {
+      const studentId = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+
+      const olderDate = new Date('2024-01-01T10:00:00.000Z');
+      const newerDate = new Date('2024-06-01T10:00:00.000Z');
+
+      await createMockExam({
+        authorId: studentId,
+        title: 'Simulado Antigo',
+        profile: MEDIUM_PROFILE,
+        createdAt: olderDate,
+      });
+      await createMockExam({
+        authorId: studentId,
+        title: 'Simulado Recente',
+        profile: MEDIUM_PROFILE,
+        createdAt: newerDate,
+      });
+
+      const controller = makeSut();
+      const response = await controller.handle(
+        makeRequest({
+          username: 'me',
+          requester: {
+            id: studentId,
+            username: TEST_STUDENT_USERNAME,
+            role: ROLES.STUDENT,
+          },
+        }),
+      );
+
+      expect(response.statusCode).toBe(200);
+
+      const body = response.body as UserMockExamsOverviewDto;
+      expect(body.mockExams.map((e) => e.title)).toEqual([
+        'Simulado Recente',
+        'Simulado Antigo',
+      ]);
+    });
   });
 });
