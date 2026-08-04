@@ -446,5 +446,27 @@ describe('ListUserMockExamsStatisticsController (integration)', () => {
 
       expect(response.statusCode).toBe(400);
     });
+
+    it('should return 400 when the username has an invalid format', async () => {
+      const studentId = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+
+      const controller = makeSut();
+      const response = await controller.handle(
+        makeRequest({
+          username: '-invalido',
+          requester: {
+            id: studentId,
+            username: TEST_STUDENT_USERNAME,
+            role: ROLES.STUDENT,
+          },
+        }),
+      );
+
+      expect(response.statusCode).toBe(400);
+    });
   });
 });
