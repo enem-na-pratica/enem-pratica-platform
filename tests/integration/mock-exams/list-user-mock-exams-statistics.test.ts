@@ -424,4 +424,27 @@ describe('ListUserMockExamsStatisticsController (integration)', () => {
       expect(body.statistics.totalMockExams).toBe(1);
     });
   });
+
+  describe('GET /api/mock-exams/users/:username — error cases', () => {
+    it('should return 400 when no username param is provided', async () => {
+      const studentId = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+
+      const controller = makeSut();
+      const response = await controller.handle(
+        makeRequest({
+          requester: {
+            id: studentId,
+            username: TEST_STUDENT_USERNAME,
+            role: ROLES.STUDENT,
+          },
+        }),
+      );
+
+      expect(response.statusCode).toBe(400);
+    });
+  });
 });
