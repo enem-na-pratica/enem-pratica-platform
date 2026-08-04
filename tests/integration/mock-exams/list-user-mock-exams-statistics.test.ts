@@ -115,3 +115,26 @@ function makeRequest(params: {
     requester: params.requester,
   };
 }
+
+beforeAll(async () => {
+  await prisma.$connect();
+});
+
+afterEach(async () => {
+  await prisma.studentTeacher.deleteMany({
+    where: {
+      OR: [
+        { student: { username: { in: ALL_TEST_USERNAMES } } },
+        { teacher: { username: { in: ALL_TEST_USERNAMES } } },
+      ],
+    },
+  });
+
+  await prisma.user.deleteMany({
+    where: { username: { in: ALL_TEST_USERNAMES } },
+  });
+});
+
+afterAll(async () => {
+  await prisma.$disconnect();
+});
