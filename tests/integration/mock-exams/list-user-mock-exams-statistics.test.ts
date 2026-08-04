@@ -177,5 +177,73 @@ describe('ListUserMockExamsStatisticsController (integration)', () => {
         totalCriticalErrors: 0,
       });
     });
+
+    it('should return the correctly mapped mockExams and statistics for a single mock exam', async () => {
+      const studentId = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      await createMockExam({
+        authorId: studentId,
+        title: 'Simulado 1',
+        profile: MEDIUM_PROFILE,
+      });
+
+      const controller = makeSut();
+      const response = await controller.handle(
+        makeRequest({
+          username: 'me',
+          requester: {
+            id: studentId,
+            username: TEST_STUDENT_USERNAME,
+            role: ROLES.STUDENT,
+          },
+        }),
+      );
+
+      expect(response.statusCode).toBe(200);
+
+      const body = response.body as UserMockExamsOverviewDto;
+      expect(body.mockExams).toHaveLength(1);
+
+      const [exam] = body.mockExams;
+      expect(exam.authorId).toBe(studentId);
+      expect(exam.title).toBe('Simulado 1');
+      expect(typeof exam.createdAt).toBe('string');
+
+      const languagesStats = exam.performances.languages.statistics;
+      expect(languagesStats.overallResult).toEqual({
+        totalQuestions: 45,
+        correctAnswers: 30,
+        wrongAnswers: 15,
+        performanceRate: 30 / 45,
+      });
+      expect(languagesStats.qualityAssessment).toEqual({
+        certaintyHits: 20,
+        confidenceRate: 20 / 30,
+        doubtHits: 10,
+        doubtErrors: 3,
+        criticalErrors: 12,
+      });
+      expect(languagesStats.errorAnalysis).toEqual({
+        distractionErrors: 5,
+        interpretationErrors: 4,
+        knowledgeGapsErrors: 6,
+      });
+
+      expect(body.statistics.totalMockExams).toBe(1);
+      expect(body.statistics.globalAveragePerformance).toBeCloseTo(30 / 45, 10);
+      expect(body.statistics.performancePerArea.mathematics).toEqual({
+        averagePerformanceRate: 30 / 45,
+        averageCorrectAnswers: 30,
+        totalCriticalErrors: 12,
+      });
+      expect(body.statistics.errorPrevalence).toEqual({
+        distractionAverage: 4 * 5,
+        interpretationAverage: 4 * 4,
+        knowledgeGapAverage: 4 * 6,
+      });
+    });
   });
 });
