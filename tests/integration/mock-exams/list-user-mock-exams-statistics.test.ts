@@ -386,5 +386,42 @@ describe('ListUserMockExamsStatisticsController (integration)', () => {
       expect(body.mockExams[0].authorId).toBe(studentId);
       expect(body.statistics.globalAveragePerformance).toBeCloseTo(1, 10);
     });
+
+    it('should allow a TEACHER to view statistics of a STUDENT explicitly assigned to them', async () => {
+      const teacherId = await createUser({
+        name: 'Professor Teste',
+        username: TEST_TEACHER_USERNAME,
+        role: ROLES.TEACHER,
+      });
+      const studentId = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      await linkStudentToTeacher(studentId, teacherId);
+      await createMockExam({
+        authorId: studentId,
+        title: 'Simulado do Aluno',
+        profile: MEDIUM_PROFILE,
+      });
+
+      const controller = makeSut();
+      const response = await controller.handle(
+        makeRequest({
+          username: TEST_STUDENT_USERNAME,
+          requester: {
+            id: teacherId,
+            username: TEST_TEACHER_USERNAME,
+            role: ROLES.TEACHER,
+          },
+        }),
+      );
+
+      expect(response.statusCode).toBe(200);
+
+      const body = response.body as UserMockExamsOverviewDto;
+      expect(body.mockExams).toHaveLength(1);
+      expect(body.statistics.totalMockExams).toBe(1);
+    });
   });
 });
