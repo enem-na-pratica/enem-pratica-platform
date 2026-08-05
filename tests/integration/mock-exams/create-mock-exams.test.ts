@@ -513,5 +513,34 @@ describe('CreateMockExamController (integration)', () => {
 
       expect(response.statusCode).toBe(400);
     });
+
+    it('should not persist anything in the database when validation fails', async () => {
+      const studentId = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      const requester = requesterFrom(
+        studentId,
+        TEST_STUDENT_USERNAME,
+        ROLES.STUDENT,
+      );
+      const controller = makeSut();
+
+      const response = await controller.handle(
+        makeRequest({
+          username: 'me',
+          requester,
+          body: { title: 'ab', performances: validPerformances() },
+        }),
+      );
+
+      expect(response.statusCode).toBe(400);
+
+      const mockExams = await prisma.mockExam.findMany({
+        where: { authorId: requester.id },
+      });
+      expect(mockExams).toHaveLength(0);
+    });
   });
 });
