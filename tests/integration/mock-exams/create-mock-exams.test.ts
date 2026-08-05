@@ -465,5 +465,26 @@ describe('CreateMockExamController (integration)', () => {
 
       expect(response.statusCode).toBe(404);
     });
+
+    it('should return 400 when the body is empty or missing required fields', async () => {
+      const studentId = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      const requester = requesterFrom(
+        studentId,
+        TEST_STUDENT_USERNAME,
+        ROLES.STUDENT,
+      );
+
+      const controller = makeSut();
+
+      const response = await controller.handle(
+        makeRequest({ username: 'me', requester, body: {} }),
+      );
+
+      expect(response.statusCode).toBe(400);
+    });
   });
 });
