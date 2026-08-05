@@ -219,6 +219,54 @@ describe('CreateMockExamController (integration)', () => {
         ['LANGUAGES', 'HUMANITIES', 'NATURAL_SCIENCES', 'MATHEMATICS'].sort(),
       );
     });
+
+    it('should correctly compute the derived statistics for each area', async () => {
+      const studentId = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      const requester = requesterFrom(
+        studentId,
+        TEST_STUDENT_USERNAME,
+        ROLES.STUDENT,
+      );
+      const controller = makeSut();
+
+      const response = await controller.handle(
+        makeRequest({
+          username: 'me',
+          requester,
+          body: {
+            title: 'Simulado Estatísticas',
+            performances: validPerformances(),
+          },
+        }),
+      );
+
+      expect(response.statusCode).toBe(201);
+      const mockExam = response.body as MockExamDto;
+      const languages = mockExam.performances.languages;
+
+      expect(languages.statistics.overallResult).toEqual({
+        totalQuestions: 45,
+        correctAnswers: 30,
+        wrongAnswers: 15,
+        performanceRate: 30 / 45,
+      });
+      expect(languages.statistics.qualityAssessment).toEqual({
+        certaintyHits: 20,
+        confidenceRate: 20 / 30,
+        doubtHits: 10,
+        doubtErrors: 5,
+        criticalErrors: 10,
+      });
+      expect(languages.statistics.errorAnalysis).toEqual({
+        distractionErrors: 5,
+        interpretationErrors: 5,
+        knowledgeGapsErrors: 5,
+      });
+    });
   });
 
   describe('POST /api/mock-exams/users/:username — error cases', () => {});
