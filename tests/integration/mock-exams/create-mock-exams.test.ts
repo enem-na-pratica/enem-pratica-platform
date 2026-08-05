@@ -51,6 +51,32 @@ function makeRequest({
   };
 }
 
+async function createUser(data: {
+  name: string;
+  username: string;
+  role: Role;
+}): Promise<string> {
+  const user = await prisma.user.create({
+    data: {
+      name: data.name,
+      username: data.username,
+      passwordHash: 'irrelevant-hash-for-tests',
+      role: data.role,
+    },
+  });
+
+  return user.id;
+}
+
+async function linkStudentToTeacher(
+  studentId: string,
+  teacherId: string,
+): Promise<void> {
+  await prisma.studentTeacher.create({
+    data: { studentId, teacherId },
+  });
+}
+
 function requesterFrom(
   userId: string,
   username: string,
