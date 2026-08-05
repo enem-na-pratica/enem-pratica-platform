@@ -486,5 +486,32 @@ describe('CreateMockExamController (integration)', () => {
 
       expect(response.statusCode).toBe(400);
     });
+
+    it('should return 400 when performance metrics are invalid (e.g., correctCount out of bounds)', async () => {
+      const studentId = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      const requester = requesterFrom(
+        studentId,
+        TEST_STUDENT_USERNAME,
+        ROLES.STUDENT,
+      );
+      const controller = makeSut();
+
+      const performances = validPerformances();
+      performances.languages.correctCount = 100;
+
+      const response = await controller.handle(
+        makeRequest({
+          username: 'me',
+          requester,
+          body: { title: 'Simulado Inválido', performances },
+        }),
+      );
+
+      expect(response.statusCode).toBe(400);
+    });
   });
 });
