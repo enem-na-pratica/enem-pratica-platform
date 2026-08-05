@@ -176,6 +176,49 @@ describe('CreateMockExamController (integration)', () => {
       expect(response.statusCode).toBe(201);
       expect((response.body as MockExamDto).authorId).toBe(studentId);
     });
+
+    it('should persist the mock exam and all four area performances in the database', async () => {
+      const studentId = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      const requester = requesterFrom(
+        studentId,
+        TEST_STUDENT_USERNAME,
+        ROLES.STUDENT,
+      );
+      const controller = makeSut();
+
+      const response = await controller.handle(
+        makeRequest({
+          username: 'me',
+          requester,
+          body: {
+            title: 'Simulado Persistido',
+            performances: validPerformances(),
+          },
+        }),
+      );
+
+      expect(response.statusCode).toBe(201);
+      const created = response.body as MockExamDto;
+
+      const persisted = await prisma.mockExam.findUnique({
+        where: { id: created.id },
+        include: { performances: true },
+      });
+
+      expect(persisted).not.toBeNull();
+      expect(persisted?.title).toBe('Simulado Persistido');
+      expect(persisted?.authorId).toBe(studentId);
+      expect(persisted?.performances).toHaveLength(4);
+
+      const areas = persisted?.performances.map((p) => p.area).sort();
+      expect(areas).toEqual(
+        ['LANGUAGES', 'HUMANITIES', 'NATURAL_SCIENCES', 'MATHEMATICS'].sort(),
+      );
+    });
   });
 
   describe('POST /api/mock-exams/users/:username — error cases', () => {});
