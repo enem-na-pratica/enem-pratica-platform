@@ -7,12 +7,6 @@ import { prisma } from '@/src/core/infrastructure/databases/prisma/prisma';
 import { makeCreateMockExam } from '@/src/core/main/factories/mock-exam/make-create-mock-exam.factory';
 import type { AuthenticatedRequest } from '@/src/core/presentation/protocols';
 
-describe('CreateMockExamController (integration)', () => {
-  describe('POST /api/mock-exams/users/:username — success cases', () => {});
-
-  describe('POST /api/mock-exams/users/:username — error cases', () => {});
-});
-
 type Requester = { id: string; username: string; role: Role };
 
 type CreateMockExamRequestBody = Omit<CreateMockExamDto, 'authorUsername'>;
@@ -116,4 +110,46 @@ afterEach(async () => {
 
 afterAll(async () => {
   await prisma.$disconnect();
+});
+
+describe('CreateMockExamController (integration)', () => {
+  describe('POST /api/mock-exams/users/:username — success cases', () => {
+    it('should return 201 and create a mock exam for the requester themself (params.username = "me")', async () => {
+      const studentId = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      const requester = requesterFrom(
+        studentId,
+        TEST_STUDENT_USERNAME,
+        ROLES.STUDENT,
+      );
+      const { controller } = { controller: makeSut() };
+
+      const response = await controller.handle(
+        makeRequest({
+          username: 'me',
+          requester,
+          body: {
+            title: 'Simulado ENEM 2026',
+            performances: validPerformances(),
+          },
+        }),
+      );
+
+      expect(response.statusCode).toBe(201);
+
+      const mockExam = response.body as MockExamDto;
+      expect(mockExam.id).toBeTruthy();
+      expect(mockExam.authorId).toBe(studentId);
+      expect(mockExam.title).toBe('Simulado ENEM 2026');
+      expect(typeof mockExam.createdAt).toBe('string');
+      expect(Object.keys(mockExam.performances).sort()).toEqual(
+        ['humanities', 'languages', 'mathematics', 'naturalSciences'].sort(),
+      );
+    });
+  });
+
+  describe('POST /api/mock-exams/users/:username — error cases', () => {});
 });
