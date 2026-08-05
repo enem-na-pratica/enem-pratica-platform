@@ -371,5 +371,38 @@ describe('CreateMockExamController (integration)', () => {
 
       expect(response.statusCode).toBe(403);
     });
+
+    it('should return 403 when a STUDENT tries to create a mock exam for another user', async () => {
+      const studentId = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      await createUser({
+        name: 'Outro Aluno',
+        username: TEST_OTHER_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+
+      const requester = requesterFrom(
+        studentId,
+        TEST_STUDENT_USERNAME,
+        ROLES.STUDENT,
+      );
+      const controller = makeSut();
+
+      const response = await controller.handle(
+        makeRequest({
+          username: TEST_OTHER_STUDENT_USERNAME,
+          requester,
+          body: {
+            title: 'Simulado Indevido',
+            performances: validPerformances(),
+          },
+        }),
+      );
+
+      expect(response.statusCode).toBe(403);
+    });
   });
 });
