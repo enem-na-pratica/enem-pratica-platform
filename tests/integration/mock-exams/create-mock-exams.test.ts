@@ -103,3 +103,17 @@ function validPerformances(): CreateMockExamRequestBody['performances'] {
     mathematics: validPerformance(),
   };
 }
+
+beforeAll(async () => {
+  await prisma.$connect();
+});
+
+afterEach(async () => {
+  await prisma.user.deleteMany({
+    where: { username: { in: ALL_TEST_USERNAMES } },
+  });
+});
+
+afterAll(async () => {
+  await prisma.$disconnect();
+});
