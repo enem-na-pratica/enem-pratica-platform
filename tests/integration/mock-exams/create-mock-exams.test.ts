@@ -267,6 +267,41 @@ describe('CreateMockExamController (integration)', () => {
         knowledgeGapsErrors: 5,
       });
     });
+
+    it('should allow a TEACHER to create a mock exam for a student explicitly assigned to them', async () => {
+      const teacherId = await createUser({
+        name: 'Professor Teste',
+        username: TEST_TEACHER_USERNAME,
+        role: ROLES.TEACHER,
+      });
+      const studentId = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      await linkStudentToTeacher(studentId, teacherId);
+
+      const requester = requesterFrom(
+        teacherId,
+        TEST_TEACHER_USERNAME,
+        ROLES.TEACHER,
+      );
+      const controller = makeSut();
+
+      const response = await controller.handle(
+        makeRequest({
+          username: TEST_STUDENT_USERNAME,
+          requester,
+          body: {
+            title: 'Simulado do Aluno',
+            performances: validPerformances(),
+          },
+        }),
+      );
+
+      expect(response.statusCode).toBe(201);
+      expect((response.body as MockExamDto).authorId).toBe(studentId);
+    });
   });
 
   describe('POST /api/mock-exams/users/:username — error cases', () => {});
