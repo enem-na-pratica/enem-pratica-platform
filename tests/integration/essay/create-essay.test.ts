@@ -10,6 +10,7 @@ import type {
 } from '@/src/core/presentation/protocols';
 
 const TEST_PASSWORD = 'Senha@123';
+let cachedPasswordHash: string;
 
 const TEST_STUDENT_USERNAME = 'student.essay.teste';
 const TEST_STUDENT2_USERNAME = 'student2.essay.teste';
@@ -67,14 +68,11 @@ async function createUser(data: {
   username: string;
   role: Role;
 }): Promise<Requester> {
-  const bcrypt = makeBcryptAdapter();
-  const passwordHash = await bcrypt.hash(TEST_PASSWORD);
-
   const user = await prisma.user.create({
     data: {
       name: data.name,
       username: data.username,
-      passwordHash,
+      passwordHash: cachedPasswordHash,
       role: data.role,
     },
   });
@@ -109,6 +107,8 @@ function makeRequest({
 
 beforeAll(async () => {
   await prisma.$connect();
+  const bcrypt = makeBcryptAdapter();
+  cachedPasswordHash = await bcrypt.hash(TEST_PASSWORD);
 });
 
 afterEach(async () => {
