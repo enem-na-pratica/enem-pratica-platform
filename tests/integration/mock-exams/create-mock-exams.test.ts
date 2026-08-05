@@ -30,3 +30,31 @@ const ALL_TEST_USERNAMES = [
   TEST_TEACHER2_USERNAME,
   TEST_ADMIN_USERNAME,
 ];
+
+function makeSut() {
+  return makeCreateMockExam();
+}
+
+function makeRequest({
+  body,
+  requester,
+  username,
+}: {
+  body: Partial<CreateMockExamDto>;
+  requester: Requester;
+  username?: string;
+}): AuthenticatedRequest<CreateMockExamDto, { username: string }> {
+  return {
+    body: body as CreateMockExamDto,
+    params: username ? { username } : undefined,
+    requester,
+  };
+}
+
+function requesterFrom(
+  userId: string,
+  username: string,
+  role: Role,
+): Requester {
+  return { id: userId, username, role };
+}
