@@ -302,6 +302,40 @@ describe('CreateMockExamController (integration)', () => {
       expect(response.statusCode).toBe(201);
       expect((response.body as MockExamDto).authorId).toBe(studentId);
     });
+
+    it('should allow an ADMIN to create a mock exam for any user, even without an explicit link', async () => {
+      const adminId = await createUser({
+        name: 'Admin Teste',
+        username: TEST_ADMIN_USERNAME,
+        role: ROLES.ADMIN,
+      });
+      const studentId = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+
+      const requester = requesterFrom(
+        adminId,
+        TEST_ADMIN_USERNAME,
+        ROLES.ADMIN,
+      );
+      const controller = makeSut();
+
+      const response = await controller.handle(
+        makeRequest({
+          username: TEST_STUDENT_USERNAME,
+          requester,
+          body: {
+            title: 'Simulado via Admin',
+            performances: validPerformances(),
+          },
+        }),
+      );
+
+      expect(response.statusCode).toBe(201);
+      expect((response.body as MockExamDto).authorId).toBe(studentId);
+    });
   });
 
   describe('POST /api/mock-exams/users/:username — error cases', () => {});
