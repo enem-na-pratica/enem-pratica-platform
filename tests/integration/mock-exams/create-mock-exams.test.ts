@@ -338,5 +338,38 @@ describe('CreateMockExamController (integration)', () => {
     });
   });
 
-  describe('POST /api/mock-exams/users/:username — error cases', () => {});
+  describe('POST /api/mock-exams/users/:username — error cases', () => {
+    it('should return 403 when a TEACHER tries to create a mock exam for a student NOT assigned to them', async () => {
+      const teacherId = await createUser({
+        name: 'Professor Teste',
+        username: TEST_TEACHER_USERNAME,
+        role: ROLES.TEACHER,
+      });
+      await createUser({
+        name: 'Aluno Não Vinculado',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+
+      const requester = requesterFrom(
+        teacherId,
+        TEST_TEACHER_USERNAME,
+        ROLES.TEACHER,
+      );
+      const controller = makeSut();
+
+      const response = await controller.handle(
+        makeRequest({
+          username: TEST_STUDENT_USERNAME,
+          requester,
+          body: {
+            title: 'Simulado Indevido',
+            performances: validPerformances(),
+          },
+        }),
+      );
+
+      expect(response.statusCode).toBe(403);
+    });
+  });
 });
