@@ -84,3 +84,22 @@ function requesterFrom(
 ): Requester {
   return { id: userId, username, role };
 }
+
+function validPerformance() {
+  return {
+    correctCount: 30,
+    certaintyCount: 20,
+    doubtErrors: 5,
+    distractionErrors: 5,
+    interpretationErrors: 5,
+  };
+}
+
+function validPerformances(): CreateMockExamRequestBody['performances'] {
+  return {
+    languages: validPerformance(),
+    humanities: validPerformance(),
+    naturalSciences: validPerformance(),
+    mathematics: validPerformance(),
+  };
+}
