@@ -437,5 +437,33 @@ describe('CreateMockExamController (integration)', () => {
 
       expect(response.statusCode).toBe(403);
     });
+
+    it('should return 404 when the target authorUsername does not exist', async () => {
+      const adminId = await createUser({
+        name: 'Admin Teste',
+        username: TEST_ADMIN_USERNAME,
+        role: ROLES.ADMIN,
+      });
+
+      const requester = requesterFrom(
+        adminId,
+        TEST_ADMIN_USERNAME,
+        ROLES.ADMIN,
+      );
+      const controller = makeSut();
+
+      const response = await controller.handle(
+        makeRequest({
+          username: 'usuario.que.nao.existe',
+          requester,
+          body: {
+            title: 'Simulado Fantasma',
+            performances: validPerformances(),
+          },
+        }),
+      );
+
+      expect(response.statusCode).toBe(404);
+    });
   });
 });
