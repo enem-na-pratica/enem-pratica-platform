@@ -149,6 +149,33 @@ describe('CreateMockExamController (integration)', () => {
         ['humanities', 'languages', 'mathematics', 'naturalSciences'].sort(),
       );
     });
+
+    it('should return 201 and create a mock exam for the requester when no params.username is provided', async () => {
+      const studentId = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      const requester = requesterFrom(
+        studentId,
+        TEST_STUDENT_USERNAME,
+        ROLES.STUDENT,
+      );
+      const controller = makeSut();
+
+      const response = await controller.handle(
+        makeRequest({
+          requester,
+          body: {
+            title: 'Simulado sem params',
+            performances: validPerformances(),
+          },
+        }),
+      );
+
+      expect(response.statusCode).toBe(201);
+      expect((response.body as MockExamDto).authorId).toBe(studentId);
+    });
   });
 
   describe('POST /api/mock-exams/users/:username — error cases', () => {});
