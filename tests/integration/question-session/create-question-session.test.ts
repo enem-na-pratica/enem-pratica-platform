@@ -138,3 +138,40 @@ afterEach(async () => {
 afterAll(async () => {
   await prisma.$disconnect();
 });
+
+describe('CreateQuestionSessionController (integration)', () => {
+  describe('POST /api/question-sessions/users/:username — success cases', () => {
+    it('should return 201 and create a question session for the requester when username param is "me"', async () => {
+      const student = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      const topicId = await createTopic();
+      const controller = makeSut();
+      const date = todayDateString();
+
+      const response = await controller.handle(
+        makeRequest({
+          routeUsername: 'me',
+          requester: toRequester(student),
+          body: { topicId, date, total: 10, correct: 7 },
+        }),
+      );
+
+      expect(response.statusCode).toBe(201);
+
+      const body = response.body as QuestionSessionDto;
+      expect(body.authorId).toBe(student.id);
+      expect(body.topicId).toBe(topicId);
+      expect(body.total).toBe(10);
+      expect(body.correct).toBe(7);
+      expect(body.incorrect).toBe(3);
+      expect(body.performance).toBeCloseTo(0.7);
+      expect(body.isReviewed).toBe(false);
+      expect(body.id).toBeTruthy();
+      expect(body.createdAt).toBeTruthy();
+      expect(body.updatedAt).toBeTruthy();
+    });
+  });
+});
