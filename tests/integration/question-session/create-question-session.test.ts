@@ -378,5 +378,27 @@ describe('CreateQuestionSessionController (integration)', () => {
 
       expect(response.statusCode).toBe(404);
     });
+
+    it('should return 400 when correct is greater than total', async () => {
+      const student = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      const topicId = await createTopic();
+      const controller = makeSut();
+
+      const response = await controller.handle(
+        makeRequest({
+          routeUsername: 'me',
+          requester: toRequester(student),
+          body: { topicId, date: todayDateString(), total: 5, correct: 8 },
+        }),
+      );
+
+      expect(response.statusCode).toBe(400);
+      const body = response.body as ErrorResponse;
+      expect(body.details).toHaveProperty('correct');
+    });
   });
 });
