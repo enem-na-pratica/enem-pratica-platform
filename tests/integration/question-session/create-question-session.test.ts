@@ -400,5 +400,32 @@ describe('CreateQuestionSessionController (integration)', () => {
       const body = response.body as ErrorResponse;
       expect(body.details).toHaveProperty('correct');
     });
+
+    it.todo(
+      'should surface a server error when topicId does not reference an existing topic (FK violation)',
+      async () => {
+        const student = await createUser({
+          name: 'Aluno Teste',
+          username: TEST_STUDENT_USERNAME,
+          role: ROLES.STUDENT,
+        });
+        const controller = makeSut();
+
+        const response = await controller.handle(
+          makeRequest({
+            routeUsername: 'me',
+            requester: toRequester(student),
+            body: {
+              topicId: randomUUID(),
+              date: todayDateString(),
+              total: 5,
+              correct: 2,
+            },
+          }),
+        );
+
+        expect(response.statusCode).toBe(422);
+      },
+    );
   });
 });
