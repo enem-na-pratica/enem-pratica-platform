@@ -358,5 +358,25 @@ describe('CreateQuestionSessionController (integration)', () => {
 
       expect(response.statusCode).toBe(403);
     });
+
+    it('should return 404 when the target username does not exist', async () => {
+      const admin = await createUser({
+        name: 'Admin Teste',
+        username: TEST_ADMIN_USERNAME,
+        role: ROLES.ADMIN,
+      });
+      const topicId = await createTopic();
+      const controller = makeSut();
+
+      const response = await controller.handle(
+        makeRequest({
+          routeUsername: 'usuario.que.nao.existe',
+          requester: toRequester(admin),
+          body: { topicId, date: todayDateString(), total: 10, correct: 5 },
+        }),
+      );
+
+      expect(response.statusCode).toBe(404);
+    });
   });
 });
