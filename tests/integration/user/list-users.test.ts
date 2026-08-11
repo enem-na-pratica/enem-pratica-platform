@@ -8,6 +8,7 @@ import { makeListUsers } from '@/src/core/main/factories/user/make-list-users.fa
 import type { AuthenticatedRequest } from '@/src/core/presentation/protocols';
 
 const TEST_PASSWORD = 'Senha@123';
+let cachedPasswordHash: string;
 
 const USERNAMES = {
   teacher: 'teacher.list.teste',
@@ -31,15 +32,15 @@ async function createUser(data: {
   username: string;
   role: Role;
 }) {
-  const bcrypt = makeBcryptAdapter();
-  const passwordHash = await bcrypt.hash(TEST_PASSWORD);
   return prisma.user.create({
-    data: { ...data, passwordHash, role: data.role },
+    data: { ...data, passwordHash: cachedPasswordHash, role: data.role },
   });
 }
 
 beforeAll(async () => {
   await prisma.$connect();
+  const bcrypt = makeBcryptAdapter();
+  cachedPasswordHash = await bcrypt.hash(TEST_PASSWORD);
 });
 
 afterEach(async () => {

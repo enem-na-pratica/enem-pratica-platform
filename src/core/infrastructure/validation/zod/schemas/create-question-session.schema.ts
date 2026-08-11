@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 import { usernameSchema } from './common';
 
-const createCountSchema = (fieldName: string) =>
+const createCountSchema = (fieldName: string, min: number = 0) =>
   z
     .number({
       error: (issue) =>
@@ -11,8 +11,8 @@ const createCountSchema = (fieldName: string) =>
           : `${fieldName} must be a number`,
     })
     .int({ error: `${fieldName} must be an integer` })
-    .min(0, {
-      error: `${fieldName} cannot be less than 0`,
+    .min(min, {
+      error: `${fieldName} cannot be less than ${min}`,
     });
 
 const createDateSchema = (optional = true) => {
@@ -45,7 +45,9 @@ const createDateSchema = (optional = true) => {
 
 export const createQuestionSessionSchema = z
   .object({
-    authorUsername: usernameSchema.optional(),
+    authorUsername: usernameSchema
+      .or(z.uuid({ error: 'authorUsername must be a valid username or UUID' }))
+      .optional(),
 
     topicId: z.uuid({
       error: (issue) =>
@@ -55,7 +57,7 @@ export const createQuestionSessionSchema = z
     }),
 
     date: createDateSchema(),
-    total: createCountSchema('Total'),
+    total: createCountSchema('Total', 1),
     correct: createCountSchema('Correct'),
     isReviewed: z
       .boolean({

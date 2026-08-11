@@ -8,6 +8,7 @@ import { makeListStudentsByInstructor } from '@/src/core/main/factories/user/mak
 import type { AuthenticatedRequest } from '@/src/core/presentation/protocols';
 
 const TEST_PASSWORD = 'Senha@123';
+let cachedPasswordHash: string;
 
 const TEST_TEACHER_USERNAME = 'teacher.liststudents.teste';
 const TEST_TEACHER2_USERNAME = 'teacher2.liststudents.teste';
@@ -45,13 +46,11 @@ async function createUser(data: {
   username: string;
   role: Role;
 }): Promise<{ id: string; username: string; role: Role }> {
-  const bcrypt = makeBcryptAdapter();
-  const passwordHash = await bcrypt.hash(TEST_PASSWORD);
   const user = await prisma.user.create({
     data: {
       name: data.name,
       username: data.username,
-      passwordHash,
+      passwordHash: cachedPasswordHash,
       role: data.role,
     },
   });
@@ -69,6 +68,8 @@ async function linkStudentToTeacher(
 
 beforeAll(async () => {
   await prisma.$connect();
+  const bcrypt = makeBcryptAdapter();
+  cachedPasswordHash = await bcrypt.hash(TEST_PASSWORD);
 });
 
 afterEach(async () => {
