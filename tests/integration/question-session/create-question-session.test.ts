@@ -121,3 +121,20 @@ function daysBetween(a: string, b: string): number {
   const diffMs = new Date(b).getTime() - new Date(a).getTime();
   return Math.round(diffMs / (24 * 60 * 60 * 1000));
 }
+
+beforeAll(async () => {
+  await prisma.$connect();
+  const bcrypt = makeBcryptAdapter();
+  cachedPasswordHash = await bcrypt.hash(TEST_PASSWORD);
+});
+
+afterEach(async () => {
+  await prisma.user.deleteMany({
+    where: { username: { in: ALL_TEST_USERNAMES } },
+  });
+  await prisma.subject.deleteMany({ where: { slug: TEST_SUBJECT_SLUG } });
+});
+
+afterAll(async () => {
+  await prisma.$disconnect();
+});
