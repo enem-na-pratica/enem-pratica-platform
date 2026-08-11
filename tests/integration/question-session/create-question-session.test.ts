@@ -307,4 +307,31 @@ describe('CreateQuestionSessionController (integration)', () => {
       expect(body.nextReviewDate).toBeNull();
     });
   });
+
+  describe('POST /api/question-sessions/users/:username — error cases', () => {
+    it('should return 403 when a TEACHER tries to create a session for a student that is not assigned to them', async () => {
+      const teacher = await createUser({
+        name: 'Professor Teste',
+        username: TEST_TEACHER_USERNAME,
+        role: ROLES.TEACHER,
+      });
+      const student = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      const topicId = await createTopic();
+      const controller = makeSut();
+
+      const response = await controller.handle(
+        makeRequest({
+          routeUsername: student.username,
+          requester: toRequester(teacher),
+          body: { topicId, date: todayDateString(), total: 10, correct: 5 },
+        }),
+      );
+
+      expect(response.statusCode).toBe(403);
+    });
+  });
 });
