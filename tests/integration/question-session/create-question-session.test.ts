@@ -173,5 +173,33 @@ describe('CreateQuestionSessionController (integration)', () => {
       expect(body.createdAt).toBeTruthy();
       expect(body.updatedAt).toBeTruthy();
     });
+
+    it('should allow a TEACHER to create a question session for an assigned student (by username)', async () => {
+      const teacher = await createUser({
+        name: 'Professor Teste',
+        username: TEST_TEACHER_USERNAME,
+        role: ROLES.TEACHER,
+      });
+      const student = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      await linkStudentToTeacher(student.id, teacher.id);
+      const topicId = await createTopic();
+      const controller = makeSut();
+
+      const response = await controller.handle(
+        makeRequest({
+          routeUsername: student.username,
+          requester: toRequester(teacher),
+          body: { topicId, date: todayDateString(), total: 8, correct: 6 },
+        }),
+      );
+
+      expect(response.statusCode).toBe(201);
+      const body = response.body as QuestionSessionDto;
+      expect(body.authorId).toBe(student.id);
+    });
   });
 });
