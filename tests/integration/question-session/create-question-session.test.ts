@@ -253,5 +253,29 @@ describe('CreateQuestionSessionController (integration)', () => {
       expect(body.nextReviewDate).not.toBeNull();
       expect(daysBetween(date, body.nextReviewDate as string)).toBe(21);
     });
+
+    it('should set nextReviewDate to +7 days when performance is below the good threshold (< 75%)', async () => {
+      const student = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      const topicId = await createTopic();
+      const controller = makeSut();
+      const date = todayDateString();
+
+      const response = await controller.handle(
+        makeRequest({
+          routeUsername: 'me',
+          requester: toRequester(student),
+          body: { topicId, date, total: 10, correct: 5 },
+        }),
+      );
+
+      expect(response.statusCode).toBe(201);
+      const body = response.body as QuestionSessionDto;
+      expect(body.performance).toBeCloseTo(0.5);
+      expect(daysBetween(date, body.nextReviewDate as string)).toBe(7);
+    });
   });
 });
