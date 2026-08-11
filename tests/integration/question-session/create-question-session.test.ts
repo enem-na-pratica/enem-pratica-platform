@@ -201,5 +201,32 @@ describe('CreateQuestionSessionController (integration)', () => {
       const body = response.body as QuestionSessionDto;
       expect(body.authorId).toBe(student.id);
     });
+
+    it('should allow an ADMIN to create a question session for any user, without an explicit link', async () => {
+      const admin = await createUser({
+        name: 'Admin Teste',
+        username: TEST_ADMIN_USERNAME,
+        role: ROLES.ADMIN,
+      });
+      const student = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      const topicId = await createTopic();
+      const controller = makeSut();
+
+      const response = await controller.handle(
+        makeRequest({
+          routeUsername: student.username,
+          requester: toRequester(admin),
+          body: { topicId, date: todayDateString(), total: 10, correct: 10 },
+        }),
+      );
+
+      expect(response.statusCode).toBe(201);
+      const body = response.body as QuestionSessionDto;
+      expect(body.authorId).toBe(student.id);
+    });
   });
 });
