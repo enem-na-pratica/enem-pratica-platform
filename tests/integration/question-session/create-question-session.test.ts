@@ -333,5 +333,30 @@ describe('CreateQuestionSessionController (integration)', () => {
 
       expect(response.statusCode).toBe(403);
     });
+
+    it('should return 403 when a STUDENT tries to create a session for another user', async () => {
+      const student = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      const student2 = await createUser({
+        name: 'Aluno Dois Teste',
+        username: 'aluno-2.qs.teste',
+        role: ROLES.STUDENT,
+      });
+      const topicId = await createTopic();
+      const controller = makeSut();
+
+      const response = await controller.handle(
+        makeRequest({
+          routeUsername: student2.username,
+          requester: toRequester(student),
+          body: { topicId, date: todayDateString(), total: 10, correct: 5 },
+        }),
+      );
+
+      expect(response.statusCode).toBe(403);
+    });
   });
 });
