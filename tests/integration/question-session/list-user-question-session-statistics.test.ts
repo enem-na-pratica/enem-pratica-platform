@@ -211,7 +211,7 @@ describe('ListUserQuestionSessionsStatisticsController (integration)', () => {
       await createQuestionSession({
         authorId: student.id,
         topicId,
-        total: 5, 
+        total: 5,
         correct: 5,
       });
 
@@ -226,6 +226,31 @@ describe('ListUserQuestionSessionsStatisticsController (integration)', () => {
 
       expect(adminRes.statusCode).toBe(200);
       expect(teacherRes.statusCode).toBe(200);
+    });
+
+    it('should return zeroed statistics and empty sessions list when user has no sessions', async () => {
+      const student = await createUser({
+        username: STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+
+      const controller = makeSut();
+      const response = await controller.handle(
+        makeRequest({ requester: student, username: 'me' }),
+      );
+
+      expect(response.statusCode).toBe(200);
+      const body = response.body as UserQuestionSessionsOverviewDto;
+      expect(body.questionSessions).toHaveLength(0);
+      expect(body.statistics).toEqual({
+        totalSessions: 0,
+        totalQuestions: 0,
+        totalCorrect: 0,
+        overallAccuracy: 0,
+        weeklyProgress: { totalQuestions: 0, accuracy: 0 },
+        studyStreak: 0,
+        pendingReviewsCount: 0,
+      });
     });
   });
 
