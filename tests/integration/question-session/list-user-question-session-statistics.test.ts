@@ -448,5 +448,23 @@ describe('ListUserQuestionSessionsStatisticsController (integration)', () => {
     });
   });
 
-  describe('GET /api/question-sessions/users/:username — error cases', () => {});
+  describe('GET /api/question-sessions/users/:username — error cases', () => {
+    it('should return 400 when username param is missing or invalid', async () => {
+      const student = await createUser({
+        username: STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      const controller = makeSut();
+
+      const resMissing = await controller.handle(
+        makeRequest({ requester: student }),
+      );
+      const resInvalid = await controller.handle(
+        makeRequest({ requester: student, username: '-invalido' }),
+      );
+
+      expect(resMissing.statusCode).toBe(400);
+      expect(resInvalid.statusCode).toBe(400);
+    });
+  });
 });
