@@ -466,5 +466,19 @@ describe('ListUserQuestionSessionsStatisticsController (integration)', () => {
       expect(resMissing.statusCode).toBe(400);
       expect(resInvalid.statusCode).toBe(400);
     });
+
+    it('should return 404 when target username does not exist', async () => {
+      const student = await createUser({
+        username: STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      const controller = makeSut();
+
+      const response = await controller.handle(
+        makeRequest({ requester: student, username: 'usuario.nao.existe' }),
+      );
+
+      expect(response.statusCode).toBe(404);
+    });
   });
 });
