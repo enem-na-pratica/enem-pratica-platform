@@ -387,6 +387,65 @@ describe('ListUserQuestionSessionsStatisticsController (integration)', () => {
       const body = response.body as UserQuestionSessionsOverviewDto;
       expect(body.statistics.pendingReviewsCount).toBe(1);
     });
+
+    it('should order sessions by pending review date ascending first, then reviewed sessions by updatedAt descending', async () => {
+      const student = await createUser({
+        username: STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      const today = startOfToday();
+
+      const sessionFarReview = await createQuestionSession({
+        authorId: student.id,
+        topicId,
+        total: 10,
+        correct: 10,
+        isReviewed: false,
+        date: today,
+      });
+      const sessionNearReview = await createQuestionSession({
+        authorId: student.id,
+        topicId,
+        total: 10,
+        correct: 5,
+        isReviewed: false,
+        date: today,
+      });
+      const sessionReviewedNewer = await createQuestionSession({
+        authorId: student.id,
+        topicId,
+        total: 10,
+        correct: 10,
+        isReviewed: true,
+        date: today,
+        updatedAt: new Date(),
+      });
+      const sessionReviewedOlder = await createQuestionSession({
+        authorId: student.id,
+        topicId,
+        total: 10,
+        correct: 10,
+        isReviewed: true,
+        date: today,
+        updatedAt: new Date(Date.now() - 3600000),
+      });
+
+      const controller = makeSut();
+      const response = await controller.handle(
+        makeRequest({ requester: student, username: 'me' }),
+      );
+
+      expect(response.statusCode).toBe(200);
+      const body = response.body as UserQuestionSessionsOverviewDto;
+      const orderedIds = body.questionSessions.map((s) => s.id);
+
+      expect(orderedIds).toEqual([
+        sessionNearReview.id,
+        sessionFarReview.id,
+        sessionReviewedNewer.id,
+        sessionReviewedOlder.id,
+      ]);
+    });
   });
 
   describe('GET /api/question-sessions/users/:username — error cases', () => {});
