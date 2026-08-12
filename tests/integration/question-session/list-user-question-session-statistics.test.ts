@@ -162,3 +162,37 @@ afterAll(async () => {
   await prisma.subject.deleteMany({ where: { slug: SUBJECT_SLUG } });
   await prisma.$disconnect();
 });
+
+describe('ListUserQuestionSessionsStatisticsController (integration)', () => {
+  describe('GET /api/question-sessions/users/:username — success cases', () => {
+    it('should return statistics for the requester when username is "me" or matches the requester username', async () => {
+      const student = await createUser({
+        username: STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      await createQuestionSession({
+        authorId: student.id,
+        topicId,
+        total: 10,
+        correct: 7,
+      });
+
+      const controller = makeSut();
+
+      const resMe = await controller.handle(
+        makeRequest({ requester: student, username: 'me' }),
+      );
+      const resUsername = await controller.handle(
+        makeRequest({ requester: student, username: STUDENT_USERNAME }),
+      );
+
+      expect(resMe.statusCode).toBe(200);
+      expect(resUsername.statusCode).toBe(200);
+      expect(
+        (resMe.body as UserQuestionSessionsOverviewDto).questionSessions,
+      ).toHaveLength(1);
+    });
+  });
+
+  describe('GET /api/question-sessions/users/:username — error cases', () => {});
+});
