@@ -25,3 +25,121 @@ const ALL_TEST_USERNAMES = [
 ];
 
 const DAY_MS = 24 * 60 * 60 * 1000;
+
+type TestUser = { id: string; username: string; role: Role };
+
+function makeSut() {
+  return makeListUserQuestionSessionsStatistics();
+}
+
+function startOfToday(): Date {
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+  return now;
+}
+
+function daysBefore(reference: Date, days: number): Date {
+  return new Date(reference.getTime() - days * DAY_MS);
+}
+
+async function createUser(data: {
+  username: string;
+  role: Role;
+  name?: string;
+}): Promise<TestUser> {
+  const user = await prisma.user.create({
+    data: {
+      name: data.name ?? 'Usuário Teste',
+      username: data.username,
+      passwordHash: DUMMY_PASSWORD_HASH,
+      role: data.role,
+    },
+  });
+
+  return { id: user.id, username: user.username, role: user.role as Role };
+}
+
+async function linkStudentToTeacher(
+  studentId: string,
+  teacherId: string,
+): Promise<void> {
+  await prisma.studentTeacher.create({ data: { studentId, teacherId } });
+}
+
+async function ensureSubjectAndTopic(): Promise<{
+  subjectId: string;
+  topicId: string;
+}> {
+  const subject = await prisma.subject.upsert({
+    where: { slug: SUBJECT_SLUG },
+    update: {},
+    create: { name: SUBJECT_NAME, slug: SUBJECT_SLUG, category: 'TEST' },
+  });
+
+  const existingTopic = await prisma.topic.findFirst({
+    where: { subjectId: subject.id, title: TOPIC_TITLE },
+  });
+
+  const topic =
+    existingTopic ??
+    (await prisma.topic.create({
+      data: { title: TOPIC_TITLE, position: 1, subjectId: subject.id },
+    }));
+
+  return { subjectId: subject.id, topicId: topic.id };
+}
+
+type CreateSessionInput = {
+  authorId: string;
+  topicId: string;
+  total: number;
+  correct: number;
+  date?: Date;
+  isReviewed?: boolean;
+  updatedAt?: Date;
+};
+
+async function createQuestionSession(input: CreateSessionInput) {
+  return prisma.questionSession.create({
+    data: {
+      authorId: input.authorId,
+      topicId: input.topicId,
+      total: input.total,
+      correct: input.correct,
+      date: input.date,
+      isReviewed: input.isReviewed ?? false,
+      updatedAt: input.updatedAt,
+    },
+  });
+}
+
+function makeRequest({
+  requester,
+  username,
+}: {
+  requester: TestUser;
+  username?: string;
+}): AuthenticatedRequest<void, { username: string }> {
+  return {
+    body: undefined,
+    params: username === undefined ? undefined : { username },
+    requester,
+  } as AuthenticatedRequest<void, { username: string }>;
+}
+
+async function cleanupTestData(): Promise<void> {
+  await prisma.questionSession.deleteMany({
+    where: { author: { username: { in: ALL_TEST_USERNAMES } } },
+  });
+  await prisma.studentTeacher.deleteMany({
+    where: {
+      OR: [
+        { student: { username: { in: ALL_TEST_USERNAMES } } },
+        { teacher: { username: { in: ALL_TEST_USERNAMES } } },
+      ],
+    },
+  });
+  await prisma.user.deleteMany({
+    where: { username: { in: ALL_TEST_USERNAMES } },
+  });
+}
