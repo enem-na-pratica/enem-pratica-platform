@@ -192,6 +192,41 @@ describe('ListUserQuestionSessionsStatisticsController (integration)', () => {
         (resMe.body as UserQuestionSessionsOverviewDto).questionSessions,
       ).toHaveLength(1);
     });
+
+    it('should allow authorized users (ADMIN and assigned TEACHER) to view student statistics', async () => {
+      const admin = await createUser({
+        username: ADMIN_USERNAME,
+        role: ROLES.ADMIN,
+      });
+      const teacher = await createUser({
+        username: TEACHER_USERNAME,
+        role: ROLES.TEACHER,
+      });
+      const student = await createUser({
+        username: STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+
+      await linkStudentToTeacher(student.id, teacher.id);
+      await createQuestionSession({
+        authorId: student.id,
+        topicId,
+        total: 5, 
+        correct: 5,
+      });
+
+      const controller = makeSut();
+
+      const adminRes = await controller.handle(
+        makeRequest({ requester: admin, username: STUDENT_USERNAME }),
+      );
+      const teacherRes = await controller.handle(
+        makeRequest({ requester: teacher, username: STUDENT_USERNAME }),
+      );
+
+      expect(adminRes.statusCode).toBe(200);
+      expect(teacherRes.statusCode).toBe(200);
+    });
   });
 
   describe('GET /api/question-sessions/users/:username — error cases', () => {});
