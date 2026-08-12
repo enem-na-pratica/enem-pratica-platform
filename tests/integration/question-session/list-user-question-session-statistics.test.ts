@@ -298,6 +298,50 @@ describe('ListUserQuestionSessionsStatisticsController (integration)', () => {
       expect(body.statistics.totalCorrect).toBe(11);
       expect(body.statistics.overallAccuracy).toBeCloseTo(11 / 15, 10);
     });
+
+    it('should calculate weekly progress and study streak based on session dates', async () => {
+      const student = await createUser({
+        username: STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      const today = startOfToday();
+
+      // Sessions in consecutive days (today and yesterday) -> streak 2
+      await createQuestionSession({
+        authorId: student.id,
+        topicId,
+        total: 10,
+        correct: 5,
+        date: today,
+      });
+      await createQuestionSession({
+        authorId: student.id,
+        topicId,
+        total: 10,
+        correct: 5,
+        date: daysBefore(today, 1),
+      });
+      // Session outside the 7-day window (10 days ago)
+      await createQuestionSession({
+        authorId: student.id,
+        topicId,
+        total: 20,
+        correct: 20,
+        date: daysBefore(today, 10),
+      });
+
+      const controller = makeSut();
+      const response = await controller.handle(
+        makeRequest({ requester: student, username: 'me' }),
+      );
+
+      expect(response.statusCode).toBe(200);
+      const body = response.body as UserQuestionSessionsOverviewDto;
+
+      expect(body.statistics.studyStreak).toBe(2);
+      expect(body.statistics.weeklyProgress.totalQuestions).toBe(20);
+      expect(body.statistics.weeklyProgress.accuracy).toBeCloseTo(10 / 20, 10);
+    });
   });
 
   describe('GET /api/question-sessions/users/:username — error cases', () => {});
