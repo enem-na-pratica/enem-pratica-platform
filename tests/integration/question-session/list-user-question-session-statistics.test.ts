@@ -252,6 +252,52 @@ describe('ListUserQuestionSessionsStatisticsController (integration)', () => {
         pendingReviewsCount: 0,
       });
     });
+
+    it('should aggregate total statistics correctly for the target user', async () => {
+      const student = await createUser({
+        username: STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      const otherStudent = await createUser({
+        username: STUDENT2_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      const today = startOfToday();
+
+      await createQuestionSession({
+        authorId: student.id,
+        topicId,
+        total: 10,
+        correct: 8,
+        date: today,
+      });
+      await createQuestionSession({
+        authorId: student.id,
+        topicId,
+        total: 5,
+        correct: 3,
+        date: today,
+      });
+      await createQuestionSession({
+        authorId: otherStudent.id,
+        topicId,
+        total: 10,
+        correct: 10,
+      });
+
+      const controller = makeSut();
+      const response = await controller.handle(
+        makeRequest({ requester: student, username: 'me' }),
+      );
+
+      expect(response.statusCode).toBe(200);
+      const body = response.body as UserQuestionSessionsOverviewDto;
+
+      expect(body.statistics.totalSessions).toBe(2);
+      expect(body.statistics.totalQuestions).toBe(15);
+      expect(body.statistics.totalCorrect).toBe(11);
+      expect(body.statistics.overallAccuracy).toBeCloseTo(11 / 15, 10);
+    });
   });
 
   describe('GET /api/question-sessions/users/:username — error cases', () => {});
