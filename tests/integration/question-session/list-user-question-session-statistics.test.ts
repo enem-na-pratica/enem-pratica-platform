@@ -510,5 +510,26 @@ describe('ListUserQuestionSessionsStatisticsController (integration)', () => {
 
       expect(response.statusCode).toBe(403);
     });
+
+    it('should return 403 when a TEACHER tries to view another TEACHER statistics', async () => {
+      const teacher = await createUser({
+        username: TEACHER_USERNAME,
+        role: ROLES.TEACHER,
+      });
+      await createUser({
+        username: 'other.teacher.qss.teste',
+        role: ROLES.TEACHER,
+      });
+
+      const controller = makeSut();
+      const response = await controller.handle(
+        makeRequest({
+          requester: teacher,
+          username: 'other.teacher.qss.teste',
+        }),
+      );
+
+      expect(response.statusCode).toBe(403);
+    });
   });
 });
