@@ -143,3 +143,22 @@ async function cleanupTestData(): Promise<void> {
     where: { username: { in: ALL_TEST_USERNAMES } },
   });
 }
+
+let topicId: string;
+
+beforeAll(async () => {
+  await prisma.$connect();
+  await cleanupTestData();
+  const refs = await ensureSubjectAndTopic();
+  topicId = refs.topicId;
+});
+
+afterEach(async () => {
+  await cleanupTestData();
+});
+
+afterAll(async () => {
+  await prisma.topic.deleteMany({ where: { id: topicId } });
+  await prisma.subject.deleteMany({ where: { slug: SUBJECT_SLUG } });
+  await prisma.$disconnect();
+});
