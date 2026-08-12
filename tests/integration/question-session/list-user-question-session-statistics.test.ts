@@ -342,6 +342,51 @@ describe('ListUserQuestionSessionsStatisticsController (integration)', () => {
       expect(body.statistics.weeklyProgress.totalQuestions).toBe(20);
       expect(body.statistics.weeklyProgress.accuracy).toBeCloseTo(10 / 20, 10);
     });
+
+    it('should count pending reviews correctly', async () => {
+      const student = await createUser({
+        username: STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      const today = startOfToday();
+
+      // Overdue service (poor performance 10 days ago)
+      await createQuestionSession({
+        authorId: student.id,
+        topicId,
+        total: 10,
+        correct: 5,
+        isReviewed: false,
+        date: daysBefore(today, 10),
+      });
+      // Not overdue (from today)
+      await createQuestionSession({
+        authorId: student.id,
+        topicId,
+        total: 10,
+        correct: 5,
+        isReviewed: false,
+        date: today,
+      });
+      // Already reviewed
+      await createQuestionSession({
+        authorId: student.id,
+        topicId,
+        total: 10,
+        correct: 5,
+        isReviewed: true,
+        date: daysBefore(today, 10),
+      });
+
+      const controller = makeSut();
+      const response = await controller.handle(
+        makeRequest({ requester: student, username: 'me' }),
+      );
+
+      expect(response.statusCode).toBe(200);
+      const body = response.body as UserQuestionSessionsOverviewDto;
+      expect(body.statistics.pendingReviewsCount).toBe(1);
+    });
   });
 
   describe('GET /api/question-sessions/users/:username — error cases', () => {});
