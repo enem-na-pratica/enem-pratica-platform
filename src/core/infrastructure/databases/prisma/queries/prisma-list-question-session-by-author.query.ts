@@ -3,8 +3,10 @@ import type {
   QuestionSessionWithTopicAndSubjectDto,
 } from '@/src/core/application/use-cases/question-session/list-user-question-session-statistics';
 import type { Mapper } from '@/src/core/domain/contracts/mappers';
-import type { PrismaQuestionSessionWithTopicAndSubject } from '@/src/core/infrastructure/databases/prisma/types';
-import { prismaQuestionSessionWithTopicAndSubjectInclude } from '@/src/core/infrastructure/databases/prisma/types';
+import {
+  type PrismaQuestionSessionWithTopicAndSubject,
+  prismaQuestionSessionWithTopicAndSubjectInclude,
+} from '@/src/core/infrastructure/databases/prisma/types';
 import type { PrismaClient } from '@/src/generated/prisma/client';
 
 type PrismaListQuestionSessionsByAuthorQueryDeps = {
