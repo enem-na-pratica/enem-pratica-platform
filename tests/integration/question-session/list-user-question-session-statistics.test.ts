@@ -480,5 +480,20 @@ describe('ListUserQuestionSessionsStatisticsController (integration)', () => {
 
       expect(response.statusCode).toBe(404);
     });
+
+    it('should return 403 when a STUDENT tries to view another user statistics', async () => {
+      const student1 = await createUser({
+        username: STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      await createUser({ username: STUDENT2_USERNAME, role: ROLES.STUDENT });
+
+      const controller = makeSut();
+      const response = await controller.handle(
+        makeRequest({ requester: student1, username: STUDENT2_USERNAME }),
+      );
+
+      expect(response.statusCode).toBe(403);
+    });
   });
 });
