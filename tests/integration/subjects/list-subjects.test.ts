@@ -67,5 +67,33 @@ describe('ListSubjectsController (integration)', () => {
       const testSubjects = body.filter((s) => ALL_TEST_SLUGS.includes(s.slug));
       expect(testSubjects).toHaveLength(0);
     });
+
+    it('should return 200 and include a created subject with the correct shape', async () => {
+      await createSubject({
+        name: TEST_SUBJECT_NAME,
+        slug: TEST_SUBJECT_SLUG,
+        category: TEST_SUBJECT_CATEGORY,
+      });
+
+      const controller = makeSut();
+      const response = await controller.handle();
+
+      expect(response.statusCode).toBe(200);
+
+      const body = response.body as SubjectDto[];
+      const found = body.find((s) => s.slug === TEST_SUBJECT_SLUG);
+
+      expect(found).toBeDefined();
+      expect(found).toEqual({
+        id: expect.any(String),
+        name: TEST_SUBJECT_NAME,
+        slug: TEST_SUBJECT_SLUG,
+        category: TEST_SUBJECT_CATEGORY,
+        createdAt: expect.any(String),
+      });
+
+      expect(() => new Date(found!.createdAt).toISOString()).not.toThrow();
+      expect(new Date(found!.createdAt).toISOString()).toBe(found!.createdAt);
+    });
   });
 });
