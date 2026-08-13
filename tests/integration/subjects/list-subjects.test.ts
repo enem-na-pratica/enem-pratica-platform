@@ -95,5 +95,24 @@ describe('ListSubjectsController (integration)', () => {
       expect(() => new Date(found!.createdAt).toISOString()).not.toThrow();
       expect(new Date(found!.createdAt).toISOString()).toBe(found!.createdAt);
     });
+
+    it('should return category as null when the subject has no category', async () => {
+      await createSubject({
+        name: TEST_SUBJECT2_NAME,
+        slug: TEST_SUBJECT2_SLUG,
+        category: null,
+      });
+
+      const controller = makeSut();
+      const response = await controller.handle();
+
+      expect(response.statusCode).toBe(200);
+
+      const body = response.body as SubjectDto[];
+      const found = body.find((s) => s.slug === TEST_SUBJECT2_SLUG);
+
+      expect(found).toBeDefined();
+      expect(found?.category).toBeNull();
+    });
   });
 });
