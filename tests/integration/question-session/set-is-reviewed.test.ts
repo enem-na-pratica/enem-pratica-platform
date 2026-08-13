@@ -167,5 +167,35 @@ describe('SetIsReviewedController (integration)', () => {
       });
       expect(updated.isReviewed).toBe(true);
     });
+
+    it('should allow toggling isReviewed back to false', async () => {
+      const studentId = await createUser({
+        name: 'Aluno Teste',
+        username: STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      const fixedDate = new Date('2026-01-01T00:00:00.000Z');
+      const session = await createQuestionSession({
+        authorId: studentId,
+        total: 10,
+        correct: 9,
+        isReviewed: true,
+        date: fixedDate,
+      });
+
+      const controller = makeSut();
+      const response = await controller.handle(
+        makeRequest({
+          questionSessionId: session.id,
+          body: { isReviewed: false },
+          requester: requesterFor(studentId, STUDENT_USERNAME, ROLES.STUDENT),
+        }),
+      );
+
+      expect(response.statusCode).toBe(200);
+      const body = response.body as QuestionSessionDto;
+      expect(body.isReviewed).toBe(false);
+      expect(body.nextReviewDate).not.toBeNull();
+    });
   });
 });
