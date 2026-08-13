@@ -133,4 +133,39 @@ afterAll(async () => {
   await prisma.$disconnect();
 });
 
-describe('SetIsReviewedController (integration)', () => {});
+describe('SetIsReviewedController (integration)', () => {
+  describe('PATCH /api/question-sessions/:questionSessionId — success cases', () => {
+    it('should allow a STUDENT to mark their own question session as reviewed and persist in database', async () => {
+      const studentId = await createUser({
+        name: 'Aluno Teste',
+        username: STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      const session = await createQuestionSession({
+        authorId: studentId,
+        total: 10,
+        correct: 9,
+        isReviewed: false,
+      });
+
+      const controller = makeSut();
+      const response = await controller.handle(
+        makeRequest({
+          questionSessionId: session.id,
+          body: { isReviewed: true },
+          requester: requesterFor(studentId, STUDENT_USERNAME, ROLES.STUDENT),
+        }),
+      );
+
+      expect(response.statusCode).toBe(200);
+      const body = response.body as QuestionSessionDto;
+      expect(body.id).toBe(session.id);
+      expect(body.isReviewed).toBe(true);
+
+      const updated = await prisma.questionSession.findUniqueOrThrow({
+        where: { id: session.id },
+      });
+      expect(updated.isReviewed).toBe(true);
+    });
+  });
+});
