@@ -34,6 +34,73 @@ const SUBJECT_SLUG = `${PREFIX}-subject-teste`;
 let topicId: string;
 let subjectId: string;
 
+function makeSut() {
+  return makeSetIsReviewed();
+}
+
+async function createUser(data: {
+  name: string;
+  username: string;
+  role: Role;
+}): Promise<string> {
+  const user = await prisma.user.create({
+    data: {
+      name: data.name,
+      username: data.username,
+      passwordHash: cachedPasswordHash,
+      role: data.role,
+    },
+  });
+
+  return user.id;
+}
+
+async function linkStudentToTeacher(
+  studentId: string,
+  teacherId: string,
+): Promise<void> {
+  await prisma.studentTeacher.create({
+    data: { studentId, teacherId },
+  });
+}
+
+async function createQuestionSession(data: {
+  authorId: string;
+  total: number;
+  correct: number;
+  isReviewed?: boolean;
+  date?: Date;
+}) {
+  return prisma.questionSession.create({
+    data: {
+      authorId: data.authorId,
+      topicId,
+      total: data.total,
+      correct: data.correct,
+      isReviewed: data.isReviewed ?? false,
+      ...(data.date ? { date: data.date } : {}),
+    },
+  });
+}
+
+function requesterFor(id: string, username: string, role: Role): Requester {
+  return { id, username, role };
+}
+
+type BodyType = { isReviewed: boolean };
+
+function makeRequest(options: {
+  questionSessionId?: string;
+  body?: unknown;
+  requester: Requester;
+}): AuthenticatedRequest<BodyType, { questionSessionId: string }> {
+  return {
+    body: (options.body ?? {}) as BodyType,
+    params: { questionSessionId: options.questionSessionId as string },
+    requester: options.requester,
+  };
+}
+
 beforeAll(async () => {
   await prisma.$connect();
 
