@@ -114,5 +114,43 @@ describe('ListSubjectsController (integration)', () => {
       expect(found).toBeDefined();
       expect(found?.category).toBeNull();
     });
+
+    it('should list multiple created subjects independently and accurately', async () => {
+      await createSubject({
+        name: TEST_SUBJECT_NAME,
+        slug: TEST_SUBJECT_SLUG,
+        category: TEST_SUBJECT_CATEGORY,
+      });
+      await createSubject({
+        name: TEST_SUBJECT2_NAME,
+        slug: TEST_SUBJECT2_SLUG,
+        category: null,
+      });
+      await createSubject({
+        name: TEST_SUBJECT3_NAME,
+        slug: TEST_SUBJECT3_SLUG,
+        category: 'Humanas',
+      });
+
+      const controller = makeSut();
+      const response = await controller.handle();
+
+      expect(response.statusCode).toBe(200);
+
+      const body = response.body as SubjectDto[];
+      const testSubjects = body.filter((s) => ALL_TEST_SLUGS.includes(s.slug));
+
+      expect(testSubjects).toHaveLength(3);
+
+      const slugs = testSubjects.map((s) => s.slug);
+      expect(slugs).toContain(TEST_SUBJECT_SLUG);
+      expect(slugs).toContain(TEST_SUBJECT2_SLUG);
+      expect(slugs).toContain(TEST_SUBJECT3_SLUG);
+
+      const subject1 = testSubjects.find((s) => s.slug === TEST_SUBJECT_SLUG);
+      const subject3 = testSubjects.find((s) => s.slug === TEST_SUBJECT3_SLUG);
+      expect(subject1?.category).toBe(TEST_SUBJECT_CATEGORY);
+      expect(subject3?.category).toBe('Humanas');
+    });
   });
 });
