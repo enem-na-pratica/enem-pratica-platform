@@ -197,5 +197,38 @@ describe('SetIsReviewedController (integration)', () => {
       expect(body.isReviewed).toBe(false);
       expect(body.nextReviewDate).not.toBeNull();
     });
+
+    it('should allow a TEACHER to update a session of an assigned STUDENT', async () => {
+      const teacherId = await createUser({
+        name: 'Professor Teste',
+        username: TEACHER_USERNAME,
+        role: ROLES.TEACHER,
+      });
+      const studentId = await createUser({
+        name: 'Aluno Teste',
+        username: STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      await linkStudentToTeacher(studentId, teacherId);
+
+      const session = await createQuestionSession({
+        authorId: studentId,
+        total: 10,
+        correct: 6,
+        isReviewed: false,
+      });
+
+      const controller = makeSut();
+      const response = await controller.handle(
+        makeRequest({
+          questionSessionId: session.id,
+          body: { isReviewed: true },
+          requester: requesterFor(teacherId, TEACHER_USERNAME, ROLES.TEACHER),
+        }),
+      );
+
+      expect(response.statusCode).toBe(200);
+      expect((response.body as QuestionSessionDto).isReviewed).toBe(true);
+    });
   });
 });
