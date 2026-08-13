@@ -53,3 +53,19 @@ afterEach(async () => {
 afterAll(async () => {
   await prisma.$disconnect();
 });
+
+describe('ListSubjectsController (integration)', () => {
+  describe('GET /api/subjects — success cases', () => {
+    it('should return 200 with an array not containing test subjects when none were created', async () => {
+      const controller = makeSut();
+      const response = await controller.handle();
+
+      expect(response.statusCode).toBe(200);
+      expect(Array.isArray(response.body)).toBe(true);
+
+      const body = response.body as SubjectDto[];
+      const testSubjects = body.filter((s) => ALL_TEST_SLUGS.includes(s.slug));
+      expect(testSubjects).toHaveLength(0);
+    });
+  });
+});
