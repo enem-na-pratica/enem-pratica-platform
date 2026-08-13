@@ -342,5 +342,24 @@ describe('SetIsReviewedController (integration)', () => {
 
       expect(response.statusCode).toBe(404);
     });
+
+    it('should return 400 when questionSessionId is not a valid UUID', async () => {
+      const studentId = await createUser({
+        name: 'Aluno Teste',
+        username: STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+
+      const controller = makeSut();
+      const response = await controller.handle(
+        makeRequest({
+          questionSessionId: 'not-a-valid-uuid',
+          body: { isReviewed: true },
+          requester: requesterFor(studentId, STUDENT_USERNAME, ROLES.STUDENT),
+        }),
+      );
+
+      expect(response.statusCode).toBe(400);
+    });
   });
 });
