@@ -361,5 +361,30 @@ describe('SetIsReviewedController (integration)', () => {
 
       expect(response.statusCode).toBe(400);
     });
+
+    it('should return 400 when isReviewed is missing from the body', async () => {
+      const studentId = await createUser({
+        name: 'Aluno Teste',
+        username: STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      const session = await createQuestionSession({
+        authorId: studentId,
+        total: 10,
+        correct: 6,
+        isReviewed: false,
+      });
+
+      const controller = makeSut();
+      const response = await controller.handle(
+        makeRequest({
+          questionSessionId: session.id,
+          body: {},
+          requester: requesterFor(studentId, STUDENT_USERNAME, ROLES.STUDENT),
+        }),
+      );
+
+      expect(response.statusCode).toBe(400);
+    });
   });
 });
