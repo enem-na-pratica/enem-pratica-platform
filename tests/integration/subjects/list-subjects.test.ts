@@ -152,5 +152,25 @@ describe('ListSubjectsController (integration)', () => {
       expect(subject1?.category).toBe(TEST_SUBJECT_CATEGORY);
       expect(subject3?.category).toBe('Humanas');
     });
+
+    it('should not include fields other than those defined by SubjectDto', async () => {
+      await createSubject({
+        name: TEST_SUBJECT_NAME,
+        slug: TEST_SUBJECT_SLUG,
+        category: TEST_SUBJECT_CATEGORY,
+      });
+
+      const controller = makeSut();
+      const response = await controller.handle();
+
+      const body = response.body as SubjectDto[];
+      const found = body.find((s) => s.slug === TEST_SUBJECT_SLUG);
+
+      expect(found).toBeDefined();
+      // Ensure mapper doesn't leak relations (like topics) to the DTO
+      expect(Object.keys(found!).sort()).toEqual(
+        ['category', 'createdAt', 'id', 'name', 'slug'].sort(),
+      );
+    });
   });
 });
