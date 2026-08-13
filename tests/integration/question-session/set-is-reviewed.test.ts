@@ -262,4 +262,36 @@ describe('SetIsReviewedController (integration)', () => {
       expect((response.body as QuestionSessionDto).isReviewed).toBe(true);
     });
   });
+
+  describe('PATCH /api/question-sessions/:questionSessionId — error cases', () => {
+    it('should return 403 when a TEACHER tries to update an unassigned STUDENT session', async () => {
+      const teacherId = await createUser({
+        name: 'Professor Teste',
+        username: TEACHER_USERNAME,
+        role: ROLES.TEACHER,
+      });
+      const studentId = await createUser({
+        name: 'Aluno Teste',
+        username: STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      const session = await createQuestionSession({
+        authorId: studentId,
+        total: 10,
+        correct: 6,
+        isReviewed: false,
+      });
+
+      const controller = makeSut();
+      const response = await controller.handle(
+        makeRequest({
+          questionSessionId: session.id,
+          body: { isReviewed: true },
+          requester: requesterFor(teacherId, TEACHER_USERNAME, ROLES.TEACHER),
+        }),
+      );
+
+      expect(response.statusCode).toBe(403);
+    });
+  });
 });
