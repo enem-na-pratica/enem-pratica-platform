@@ -293,5 +293,35 @@ describe('SetIsReviewedController (integration)', () => {
 
       expect(response.statusCode).toBe(403);
     });
+
+    it('should return 403 when a STUDENT tries to update another STUDENT session', async () => {
+      const studentId = await createUser({
+        name: 'Aluno Teste',
+        username: STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      const student2Id = await createUser({
+        name: 'Aluno Teste Dois',
+        username: STUDENT2_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      const session = await createQuestionSession({
+        authorId: student2Id,
+        total: 10,
+        correct: 6,
+        isReviewed: false,
+      });
+
+      const controller = makeSut();
+      const response = await controller.handle(
+        makeRequest({
+          questionSessionId: session.id,
+          body: { isReviewed: true },
+          requester: requesterFor(studentId, STUDENT_USERNAME, ROLES.STUDENT),
+        }),
+      );
+
+      expect(response.statusCode).toBe(403);
+    });
   });
 });
