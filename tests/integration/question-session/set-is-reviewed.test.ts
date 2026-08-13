@@ -230,5 +230,36 @@ describe('SetIsReviewedController (integration)', () => {
       expect(response.statusCode).toBe(200);
       expect((response.body as QuestionSessionDto).isReviewed).toBe(true);
     });
+
+    it('should allow an ADMIN to update a STUDENT session without an explicit link', async () => {
+      const adminId = await createUser({
+        name: 'Admin Teste',
+        username: ADMIN_USERNAME,
+        role: ROLES.ADMIN,
+      });
+      const studentId = await createUser({
+        name: 'Aluno Teste',
+        username: STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      const session = await createQuestionSession({
+        authorId: studentId,
+        total: 10,
+        correct: 6,
+        isReviewed: false,
+      });
+
+      const controller = makeSut();
+      const response = await controller.handle(
+        makeRequest({
+          questionSessionId: session.id,
+          body: { isReviewed: true },
+          requester: requesterFor(adminId, ADMIN_USERNAME, ROLES.ADMIN),
+        }),
+      );
+
+      expect(response.statusCode).toBe(200);
+      expect((response.body as QuestionSessionDto).isReviewed).toBe(true);
+    });
   });
 });
