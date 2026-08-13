@@ -323,5 +323,24 @@ describe('SetIsReviewedController (integration)', () => {
 
       expect(response.statusCode).toBe(403);
     });
+
+    it('should return 404 when the question session does not exist', async () => {
+      const studentId = await createUser({
+        name: 'Aluno Teste',
+        username: STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+
+      const controller = makeSut();
+      const response = await controller.handle(
+        makeRequest({
+          questionSessionId: randomUUID(),
+          body: { isReviewed: true },
+          requester: requesterFor(studentId, STUDENT_USERNAME, ROLES.STUDENT),
+        }),
+      );
+
+      expect(response.statusCode).toBe(404);
+    });
   });
 });
