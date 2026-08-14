@@ -467,5 +467,32 @@ describe('SetTopicStatusController (integration)', () => {
 
       expect(response.statusCode).toBe(404);
     });
+
+    it.todo(
+      'should return 404 when topicId is a well-formed UUID but the topic does not exist',
+      async () => {
+        const studentId = await createUser({
+          name: 'Aluno Teste',
+          username: TEST_STUDENT_USERNAME,
+          role: ROLES.STUDENT,
+        });
+        const controller = makeSut();
+        const requester = makeRequester({
+          id: studentId,
+          username: TEST_STUDENT_USERNAME,
+          role: ROLES.STUDENT,
+        });
+
+        const response = await controller.handle(
+          makeRequest({
+            body: { topicId: randomUUID(), status: TOPIC_STATUS.PRACTICE },
+            username: 'me',
+            requester,
+          }),
+        );
+
+        expect(response.statusCode).toBe(404);
+      },
+    );
   });
 });
