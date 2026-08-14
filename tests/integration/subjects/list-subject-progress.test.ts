@@ -293,5 +293,43 @@ describe('ListSubjectProgressController (integration)', () => {
       expect(body).toHaveLength(1);
       expect(body[0].progress).toBeNull();
     });
+
+    it('should allow a TEACHER to list the progress of a student explicitly assigned to them', async () => {
+      const teacherId = await createUser({
+        name: 'Professor Teste',
+        username: TEST_TEACHER_USERNAME,
+        role: ROLES.TEACHER,
+      });
+      const studentId = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      await linkStudentToTeacher(studentId, teacherId);
+      const { topicIds } = await createSubjectWithTopics(SUBJECT_SLUG, [
+        { title: 'Funções', position: 1 },
+      ]);
+      await createProgress(studentId, topicIds[0], 'PRACTICE');
+
+      const controller = makeSut();
+      const requester = makeRequester({
+        id: teacherId,
+        username: TEST_TEACHER_USERNAME,
+        role: ROLES.TEACHER,
+      });
+
+      const response = await controller.handle(
+        makeRequest({
+          requester,
+          subjectSlug: SUBJECT_SLUG,
+          username: TEST_STUDENT_USERNAME,
+        }),
+      );
+
+      expect(response.statusCode).toBe(200);
+      const body = response.body as TopicProgressDto[];
+      expect(body).toHaveLength(1);
+      expect(body[0].progress?.authorId).toBe(studentId);
+    });
   });
 });
