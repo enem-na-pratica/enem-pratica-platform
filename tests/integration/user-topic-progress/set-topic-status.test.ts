@@ -241,5 +241,50 @@ describe('SetTopicStatusController (integration)', () => {
       expect(response.statusCode).toBe(200);
       expect(response.body).toMatchObject({ authorId: studentId });
     });
+
+    it('should upsert instead of duplicating when the same author/topic pair is set twice', async () => {
+      const studentId = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      const controller = makeSut();
+      const requester = makeRequester({
+        id: studentId,
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+
+      const firstResponse = await controller.handle(
+        makeRequest({
+          body: { topicId: testTopicId, status: TOPIC_STATUS.PRACTICE },
+          username: 'me',
+          requester,
+        }),
+      );
+
+      const secondResponse = await controller.handle(
+        makeRequest({
+          body: { topicId: testTopicId, status: TOPIC_STATUS.COMPREHENDED },
+          username: 'me',
+          requester,
+        }),
+      );
+
+      expect(firstResponse.statusCode).toBe(200);
+      expect(secondResponse.statusCode).toBe(200);
+
+      const firstBody = firstResponse.body as { id: string };
+      const secondBody = secondResponse.body as {
+        id: string;
+        status: string;
+      };
+
+      expect(secondBody.id).toBe(firstBody.id);
+      expect(secondBody.status).toBe(TOPIC_STATUS.COMPREHENDED);
+
+      const rowCount = await countProgressRows(studentId, testTopicId);
+      expect(rowCount).toBe(1);
+    });
   });
 });
