@@ -470,5 +470,30 @@ describe('ListSubjectProgressController (integration)', () => {
 
       expect(response.statusCode).toBe(403);
     });
+
+    it('should return 404 when the target username does not exist', async () => {
+      const teacherId = await createUser({
+        name: 'Professor Teste',
+        username: TEST_TEACHER_USERNAME,
+        role: ROLES.TEACHER,
+      });
+
+      const controller = makeSut();
+      const requester = makeRequester({
+        id: teacherId,
+        username: TEST_TEACHER_USERNAME,
+        role: ROLES.TEACHER,
+      });
+
+      const response = await controller.handle(
+        makeRequest({
+          requester,
+          subjectSlug: SUBJECT_SLUG,
+          username: 'nao.existe.teste',
+        }),
+      );
+
+      expect(response.statusCode).toBe(404);
+    });
   });
 });
