@@ -201,5 +201,36 @@ describe('ListSubjectProgressController (integration)', () => {
         'Terceiro Tópico',
       ]);
     });
+
+    it("should include the requester's own progress record for a topic when it exists", async () => {
+      const studentId = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      const { topicIds } = await createSubjectWithTopics(SUBJECT_SLUG, [
+        { title: 'Funções', position: 1 },
+      ]);
+      await createProgress(studentId, topicIds[0], 'COMPREHENDED');
+
+      const controller = makeSut();
+      const requester = makeRequester({
+        id: studentId,
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+
+      const response = await controller.handle(
+        makeRequest({ requester, subjectSlug: SUBJECT_SLUG }),
+      );
+
+      expect(response.statusCode).toBe(200);
+      const body = response.body as TopicProgressDto[];
+      expect(body).toHaveLength(1);
+      expect(body[0].progress).not.toBeNull();
+      expect(body[0].progress?.status).toBe(TOPIC_STATUS.COMPREHENDED);
+      expect(body[0].progress?.authorId).toBe(studentId);
+      expect(body[0].progress?.topicId).toBe(topicIds[0]);
+    });
   });
 });
