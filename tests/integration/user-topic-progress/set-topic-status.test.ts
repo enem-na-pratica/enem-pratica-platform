@@ -494,5 +494,35 @@ describe('SetTopicStatusController (integration)', () => {
         expect(response.statusCode).toBe(404);
       },
     );
+
+    it('should return 403 when a STUDENT tries to set the status of another user', async () => {
+      const studentId = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      await createUser({
+        name: 'Aluno Dois Teste',
+        username: TEST_STUDENT2_USERNAME,
+        role: ROLES.STUDENT,
+      });
+
+      const controller = makeSut();
+      const requester = makeRequester({
+        id: studentId,
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+
+      const response = await controller.handle(
+        makeRequest({
+          body: { topicId: testTopicId, status: TOPIC_STATUS.PRACTICE },
+          username: TEST_STUDENT2_USERNAME,
+          requester,
+        }),
+      );
+
+      expect(response.statusCode).toBe(403);
+    });
   });
 });
