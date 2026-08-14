@@ -443,5 +443,29 @@ describe('SetTopicStatusController (integration)', () => {
       const rowCount = await countProgressRows(studentId, testTopicId);
       expect(rowCount).toBe(0);
     });
+
+    it('should return 404 when the target username does not exist', async () => {
+      const teacherId = await createUser({
+        name: 'Professor Teste',
+        username: TEST_TEACHER_USERNAME,
+        role: ROLES.TEACHER,
+      });
+      const controller = makeSut();
+      const requester = makeRequester({
+        id: teacherId,
+        username: TEST_TEACHER_USERNAME,
+        role: ROLES.TEACHER,
+      });
+
+      const response = await controller.handle(
+        makeRequest({
+          body: { topicId: testTopicId, status: TOPIC_STATUS.PRACTICE },
+          username: 'nao.existe.teste',
+          requester,
+        }),
+      );
+
+      expect(response.statusCode).toBe(404);
+    });
   });
 });
