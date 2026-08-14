@@ -33,3 +33,57 @@ let testTopicId: string;
 let testTopic2Id: string;
 
 type RequestBody = Partial<{ topicId: string; status: string }>;
+
+beforeAll(async () => {
+  await prisma.$connect();
+
+  const bcrypt = makeBcryptAdapter();
+  cachedPasswordHash = await bcrypt.hash(TEST_PASSWORD);
+
+  const subject = await prisma.subject.create({
+    data: { name: 'Subject SetTopicStatus Teste', slug: TEST_SUBJECT_SLUG },
+  });
+
+  const topic = await prisma.topic.create({
+    data: {
+      title: 'Topic SetTopicStatus Teste',
+      position: 1,
+      subjectId: subject.id,
+    },
+  });
+  testTopicId = topic.id;
+
+  const topic2 = await prisma.topic.create({
+    data: {
+      title: 'Topic 2 SetTopicStatus Teste',
+      position: 2,
+      subjectId: subject.id,
+    },
+  });
+  testTopic2Id = topic2.id;
+});
+
+afterEach(async () => {
+  await prisma.userTopicProgress.deleteMany({
+    where: { author: { username: { in: ALL_TEST_USERNAMES } } },
+  });
+  await prisma.studentTeacher.deleteMany({
+    where: {
+      OR: [
+        { student: { username: { in: ALL_TEST_USERNAMES } } },
+        { teacher: { username: { in: ALL_TEST_USERNAMES } } },
+      ],
+    },
+  });
+  await prisma.user.deleteMany({
+    where: { username: { in: ALL_TEST_USERNAMES } },
+  });
+});
+
+afterAll(async () => {
+  await prisma.topic.deleteMany({
+    where: { subject: { slug: TEST_SUBJECT_SLUG } },
+  });
+  await prisma.subject.deleteMany({ where: { slug: TEST_SUBJECT_SLUG } });
+  await prisma.$disconnect();
+});
