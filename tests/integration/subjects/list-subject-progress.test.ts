@@ -27,3 +27,105 @@ const EMPTY_SUBJECT_SLUG = 'fisica-progresso-teste-vazio';
 
 type ListSubjectProgressParam = { subjectSlug: string; username: string };
 type ListSubjectProgressQuery = { status: string | string[] };
+
+function makeSut() {
+  return makeListSubjectProgress();
+}
+
+async function createUser(data: {
+  name: string;
+  username: string;
+  role: Role;
+}): Promise<string> {
+  const user = await prisma.user.create({
+    data: {
+      name: data.name,
+      username: data.username,
+      passwordHash: 'irrelevant-hash-for-this-suite',
+      role: data.role,
+    },
+  });
+
+  return user.id;
+}
+
+async function linkStudentToTeacher(
+  studentId: string,
+  teacherId: string,
+): Promise<void> {
+  await prisma.studentTeacher.create({
+    data: { studentId, teacherId },
+  });
+}
+
+async function createSubjectWithTopics(
+  slug: string,
+  topics: { title: string; position: number }[] = [],
+): Promise<{ subjectId: string; topicIds: string[] }> {
+  const subject = await prisma.subject.create({
+    data: { name: slug, slug },
+  });
+
+  const topicIds: string[] = [];
+  for (const topic of topics) {
+    const created = await prisma.topic.create({
+      data: {
+        title: topic.title,
+        position: topic.position,
+        subjectId: subject.id,
+      },
+    });
+    topicIds.push(created.id);
+  }
+
+  return { subjectId: subject.id, topicIds };
+}
+
+async function createProgress(
+  authorId: string,
+  topicId: string,
+  status: keyof typeof TOPIC_STATUS,
+): Promise<void> {
+  await prisma.userTopicProgress.create({
+    data: {
+      authorId,
+      topicId,
+      status: TOPIC_STATUS[status],
+    },
+  });
+}
+
+function makeRequester(overrides: Partial<Requester> = {}): Requester {
+  return {
+    id: crypto.randomUUID(),
+    username: 'requester.fake.teste',
+    role: ROLES.STUDENT,
+    ...overrides,
+  };
+}
+
+function makeRequest({
+  requester,
+  subjectSlug,
+  username = 'me',
+  status,
+}: {
+  requester: Requester;
+  subjectSlug?: string;
+  username?: string;
+  status?: string | string[];
+}): AuthenticatedRequest<
+  void,
+  ListSubjectProgressParam,
+  ListSubjectProgressQuery
+> {
+  return {
+    body: undefined,
+    requester,
+    params: {
+      subjectSlug: subjectSlug as string,
+      username: username as string,
+    },
+    query: status !== undefined ? { status } : undefined,
+  };
+}
