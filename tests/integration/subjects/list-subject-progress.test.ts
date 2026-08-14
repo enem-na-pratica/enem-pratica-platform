@@ -156,7 +156,7 @@ afterAll(async () => {
 });
 
 describe('ListSubjectProgressController (integration)', () => {
-  describe('GET /api/subjects/:subjectSlug/progress/:username — success cases', () => {
+  describe('GET /api/subjects/:subjectSlug/topics/users/:username — success cases', () => {
     it("should resolve the requester's own progress when username param is 'me'", async () => {
       const studentId = await createUser({
         name: 'Aluno Teste',
@@ -407,6 +407,38 @@ describe('ListSubjectProgressController (integration)', () => {
       });
       expect(typeof entry.progress?.createdAt).toBe('string');
       expect(typeof entry.progress?.updatedAt).toBe('string');
+    });
+  });
+
+  describe('GET /api/subjects/:subjectSlug/topics/users/:username — error cases', () => {
+    it('should return 403 when a TEACHER tries to access a student who is not assigned to them', async () => {
+      const teacherId = await createUser({
+        name: 'Professor Teste',
+        username: TEST_TEACHER_USERNAME,
+        role: ROLES.TEACHER,
+      });
+      await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+
+      const controller = makeSut();
+      const requester = makeRequester({
+        id: teacherId,
+        username: TEST_TEACHER_USERNAME,
+        role: ROLES.TEACHER,
+      });
+
+      const response = await controller.handle(
+        makeRequest({
+          requester,
+          subjectSlug: SUBJECT_SLUG,
+          username: TEST_STUDENT_USERNAME,
+        }),
+      );
+
+      expect(response.statusCode).toBe(403);
     });
   });
 });
