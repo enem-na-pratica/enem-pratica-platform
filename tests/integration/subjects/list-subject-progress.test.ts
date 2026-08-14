@@ -495,5 +495,20 @@ describe('ListSubjectProgressController (integration)', () => {
 
       expect(response.statusCode).toBe(404);
     });
+
+    it('should return 400 when the target username has an invalid format', async () => {
+      const controller = makeSut();
+      const requester = makeRequester();
+
+      const response = await controller.handle(
+        makeRequest({
+          requester,
+          subjectSlug: SUBJECT_SLUG,
+          username: '-invalido',
+        }),
+      );
+
+      expect(response.statusCode).toBe(400);
+    });
   });
 });
