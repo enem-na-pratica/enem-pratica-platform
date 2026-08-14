@@ -318,5 +318,37 @@ describe('SetTopicStatusController (integration)', () => {
       expect(response.statusCode).toBe(200);
       expect(response.body).toMatchObject({ authorId: studentId });
     });
+
+    it('should let a TEACHER set the topic status of an assigned student using the student id', async () => {
+      const teacherId = await createUser({
+        name: 'Professor Teste',
+        username: TEST_TEACHER_USERNAME,
+        role: ROLES.TEACHER,
+      });
+      const studentId = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      await linkStudentToTeacher(studentId, teacherId);
+
+      const controller = makeSut();
+      const requester = makeRequester({
+        id: teacherId,
+        username: TEST_TEACHER_USERNAME,
+        role: ROLES.TEACHER,
+      });
+
+      const response = await controller.handle(
+        makeRequest({
+          body: { topicId: testTopicId, status: TOPIC_STATUS.PRACTICE },
+          username: studentId,
+          requester,
+        }),
+      );
+
+      expect(response.statusCode).toBe(200);
+      expect(response.body).toMatchObject({ authorId: studentId });
+    });
   });
 });
