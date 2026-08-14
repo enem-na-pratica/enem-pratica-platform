@@ -34,6 +34,77 @@ let testTopic2Id: string;
 
 type RequestBody = Partial<{ topicId: string; status: string }>;
 
+function makeSut() {
+  return makeSetTopicStatus();
+}
+
+async function createUser(data: {
+  name: string;
+  username: string;
+  role: Role;
+}): Promise<string> {
+  const user = await prisma.user.create({
+    data: {
+      name: data.name,
+      username: data.username,
+      passwordHash: cachedPasswordHash,
+      role: data.role,
+    },
+  });
+
+  return user.id;
+}
+
+async function linkStudentToTeacher(
+  studentId: string,
+  teacherId: string,
+): Promise<void> {
+  await prisma.studentTeacher.create({
+    data: { studentId, teacherId },
+  });
+}
+
+function makeRequester({
+  id,
+  username,
+  role,
+}: {
+  id: string;
+  username: string;
+  role: Role;
+}): Requester {
+  return { id, username, role };
+}
+
+function makeRequest({
+  body,
+  username,
+  requester,
+}: {
+  body: RequestBody;
+  username?: string;
+  requester: Requester;
+}): AuthenticatedRequest<
+  { topicId: string; status: (typeof TOPIC_STATUS)[keyof typeof TOPIC_STATUS] },
+  { username: string }
+> {
+  return {
+    body: body as {
+      topicId: string;
+      status: (typeof TOPIC_STATUS)[keyof typeof TOPIC_STATUS];
+    },
+    params:
+      username !== undefined
+        ? ({ username } as { username: string })
+        : undefined,
+    requester,
+  };
+}
+
+async function countProgressRows(authorId: string, topicId: string) {
+  return prisma.userTopicProgress.count({ where: { authorId, topicId } });
+}
+
 beforeAll(async () => {
   await prisma.$connect();
 
