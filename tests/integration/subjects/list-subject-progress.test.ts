@@ -331,5 +331,40 @@ describe('ListSubjectProgressController (integration)', () => {
       expect(body).toHaveLength(1);
       expect(body[0].progress?.authorId).toBe(studentId);
     });
+
+    it('should allow an ADMIN to list the progress of any student, even without an explicit assignment', async () => {
+      const adminId = await createUser({
+        name: 'Admin Teste',
+        username: TEST_ADMIN_USERNAME,
+        role: ROLES.ADMIN,
+      });
+      await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      await createSubjectWithTopics(SUBJECT_SLUG, [
+        { title: 'Funções', position: 1 },
+      ]);
+
+      const controller = makeSut();
+      const requester = makeRequester({
+        id: adminId,
+        username: TEST_ADMIN_USERNAME,
+        role: ROLES.ADMIN,
+      });
+
+      const response = await controller.handle(
+        makeRequest({
+          requester,
+          subjectSlug: SUBJECT_SLUG,
+          username: TEST_STUDENT_USERNAME,
+        }),
+      );
+
+      expect(response.statusCode).toBe(200);
+      const body = response.body as TopicProgressDto[];
+      expect(body).toHaveLength(1);
+    });
   });
 });
