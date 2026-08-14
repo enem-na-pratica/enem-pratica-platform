@@ -510,5 +510,16 @@ describe('ListSubjectProgressController (integration)', () => {
 
       expect(response.statusCode).toBe(400);
     });
+
+    it('should return 400 when the subjectSlug is too short', async () => {
+      const controller = makeSut();
+      const requester = makeRequester();
+
+      const response = await controller.handle(
+        makeRequest({ requester, subjectSlug: 'ab' }),
+      );
+
+      expect(response.statusCode).toBe(400);
+    });
   });
 });
