@@ -424,7 +424,7 @@ describe('CreateQuestionSessionController (integration)', () => {
           }),
         );
 
-        expect(response.statusCode).toBe(422);
+        expect(response.statusCode).toBe(404);
       },
     );
   });

@@ -3,6 +3,7 @@ export const TOPIC_STATUS = {
   PRACTICE: 'PRACTICE',
   REVIEW: 'REVIEW',
 } as const;
+
 export type TopicStatus = (typeof TOPIC_STATUS)[keyof typeof TOPIC_STATUS];
 
 type UserTopicProgressProps = {
