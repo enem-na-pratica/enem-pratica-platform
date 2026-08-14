@@ -440,5 +440,35 @@ describe('ListSubjectProgressController (integration)', () => {
 
       expect(response.statusCode).toBe(403);
     });
+
+    it('should return 403 when a STUDENT tries to access another STUDENT', async () => {
+      const student1Id = await createUser({
+        name: 'Aluno Um',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      await createUser({
+        name: 'Aluno Dois',
+        username: TEST_STUDENT2_USERNAME,
+        role: ROLES.STUDENT,
+      });
+
+      const controller = makeSut();
+      const requester = makeRequester({
+        id: student1Id,
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+
+      const response = await controller.handle(
+        makeRequest({
+          requester,
+          subjectSlug: SUBJECT_SLUG,
+          username: TEST_STUDENT2_USERNAME,
+        }),
+      );
+
+      expect(response.statusCode).toBe(403);
+    });
   });
 });
