@@ -11,7 +11,9 @@ const topicStatusSchema = z.enum(TOPIC_STATUS_VALUES, {
 });
 
 export const setTopicStatusSchema = z.object({
-  authorUsername: usernameSchema.optional(),
+  authorUsername: usernameSchema
+    .or(z.uuid({ error: 'authorUsername must be a valid username or UUID' }))
+    .optional(),
 
   topicId: z.uuid({
     error: (issue) =>
