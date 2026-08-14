@@ -157,6 +157,34 @@ afterAll(async () => {
 
 describe('ListSubjectProgressController (integration)', () => {
   describe('GET /api/subjects/:subjectSlug/progress/:username — success cases', () => {
+    it("should resolve the requester's own progress when username param is 'me'", async () => {
+      const studentId = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      const { topicIds } = await createSubjectWithTopics(SUBJECT_SLUG, [
+        { title: 'Funções', position: 1 },
+      ]);
+      await createProgress(studentId, topicIds[0], 'REVIEW');
+
+      const controller = makeSut();
+      const requester = makeRequester({
+        id: studentId,
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+
+      const response = await controller.handle(
+        makeRequest({ requester, subjectSlug: SUBJECT_SLUG, username: 'me' }),
+      );
+
+      expect(response.statusCode).toBe(200);
+      const body = response.body as TopicProgressDto[];
+      expect(body).toHaveLength(1);
+      expect(body[0].progress?.status).toBe(TOPIC_STATUS.REVIEW);
+    });
+
     it('should return 200 with an empty array when the subject has no topics', async () => {
       await createSubjectWithTopics(EMPTY_SUBJECT_SLUG, []);
       const controller = makeSut();
