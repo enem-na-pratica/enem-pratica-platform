@@ -158,3 +158,36 @@ afterAll(async () => {
   await prisma.subject.deleteMany({ where: { slug: TEST_SUBJECT_SLUG } });
   await prisma.$disconnect();
 });
+
+describe('SetTopicStatusController (integration)', () => {
+  describe('POST /api/user-topic-progress/users/:username — success cases', () => {
+    it("should let a STUDENT set their own topic status via username 'me'", async () => {
+      const studentId = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      const controller = makeSut();
+      const requester = makeRequester({
+        id: studentId,
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+
+      const response = await controller.handle(
+        makeRequest({
+          body: { topicId: testTopicId, status: TOPIC_STATUS.PRACTICE },
+          username: 'me',
+          requester,
+        }),
+      );
+
+      expect(response.statusCode).toBe(200);
+      expect(response.body).toMatchObject({
+        authorId: studentId,
+        topicId: testTopicId,
+        status: TOPIC_STATUS.PRACTICE,
+      });
+    });
+  });
+});
