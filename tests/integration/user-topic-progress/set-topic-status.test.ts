@@ -189,5 +189,32 @@ describe('SetTopicStatusController (integration)', () => {
         status: TOPIC_STATUS.PRACTICE,
       });
     });
+
+    it('should let a STUDENT set their own topic status when no username param is provided', async () => {
+      const studentId = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      const controller = makeSut();
+      const requester = makeRequester({
+        id: studentId,
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+
+      const response = await controller.handle(
+        makeRequest({
+          body: { topicId: testTopicId, status: TOPIC_STATUS.REVIEW },
+          requester,
+        }),
+      );
+
+      expect(response.statusCode).toBe(200);
+      expect(response.body).toMatchObject({
+        authorId: studentId,
+        status: TOPIC_STATUS.REVIEW,
+      });
+    });
   });
 });
