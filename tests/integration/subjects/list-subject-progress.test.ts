@@ -232,5 +232,38 @@ describe('ListSubjectProgressController (integration)', () => {
       expect(body[0].progress?.authorId).toBe(studentId);
       expect(body[0].progress?.topicId).toBe(topicIds[0]);
     });
+
+    it("should not leak another user's progress for the same topic", async () => {
+      const studentId = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      const otherStudentId = await createUser({
+        name: 'Outro Aluno Teste',
+        username: TEST_STUDENT2_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      const { topicIds } = await createSubjectWithTopics(SUBJECT_SLUG, [
+        { title: 'Funções', position: 1 },
+      ]);
+      await createProgress(otherStudentId, topicIds[0], 'COMPREHENDED');
+
+      const controller = makeSut();
+      const requester = makeRequester({
+        id: studentId,
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+
+      const response = await controller.handle(
+        makeRequest({ requester, subjectSlug: SUBJECT_SLUG }),
+      );
+
+      expect(response.statusCode).toBe(200);
+      const body = response.body as TopicProgressDto[];
+      expect(body).toHaveLength(1);
+      expect(body[0].progress).toBeNull();
+    });
   });
 });
