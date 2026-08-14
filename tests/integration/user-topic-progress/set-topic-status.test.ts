@@ -381,5 +381,38 @@ describe('SetTopicStatusController (integration)', () => {
       expect(response.statusCode).toBe(200);
       expect(response.body).toMatchObject({ authorId: studentId });
     });
+
+    it('should return the full UserTopicProgressDto shape', async () => {
+      const studentId = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      const controller = makeSut();
+      const requester = makeRequester({
+        id: studentId,
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+
+      const response = await controller.handle(
+        makeRequest({
+          body: { topicId: testTopicId, status: TOPIC_STATUS.PRACTICE },
+          username: 'me',
+          requester,
+        }),
+      );
+
+      expect(response.statusCode).toBe(200);
+
+      const body = response.body as Record<string, unknown>;
+      expect(body).toHaveProperty('id');
+      expect(body).toHaveProperty('authorId', studentId);
+      expect(body).toHaveProperty('topicId', testTopicId);
+      expect(body).toHaveProperty('status', TOPIC_STATUS.PRACTICE);
+      expect(typeof body.createdAt).toBe('string');
+      expect(typeof body.updatedAt).toBe('string');
+      expect(() => new Date(body.createdAt as string)).not.toThrow();
+    });
   });
 });
