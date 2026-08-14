@@ -415,4 +415,33 @@ describe('SetTopicStatusController (integration)', () => {
       expect(() => new Date(body.createdAt as string)).not.toThrow();
     });
   });
+
+  describe('POST /api/user-topic-progress/users/:username — error cases', () => {
+    it('should return 400 when body parameters are invalid', async () => {
+      const studentId = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      const controller = makeSut();
+      const requester = makeRequester({
+        id: studentId,
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+
+      const response = await controller.handle(
+        makeRequest({
+          body: { topicId: 'invalid-uuid', status: 'INVALID_STATUS' },
+          username: 'me',
+          requester,
+        }),
+      );
+
+      expect(response.statusCode).toBe(400);
+
+      const rowCount = await countProgressRows(studentId, testTopicId);
+      expect(rowCount).toBe(0);
+    });
+  });
 });
