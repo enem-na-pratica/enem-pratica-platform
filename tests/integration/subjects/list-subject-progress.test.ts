@@ -169,5 +169,37 @@ describe('ListSubjectProgressController (integration)', () => {
       expect(response.statusCode).toBe(200);
       expect(response.body).toEqual([]);
     });
+
+    it('should return the topics ordered by position, ascending', async () => {
+      const studentId = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      await createSubjectWithTopics(SUBJECT_SLUG, [
+        { title: 'Terceiro Tópico', position: 3 },
+        { title: 'Primeiro Tópico', position: 1 },
+        { title: 'Segundo Tópico', position: 2 },
+      ]);
+
+      const controller = makeSut();
+      const requester = makeRequester({
+        id: studentId,
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+
+      const response = await controller.handle(
+        makeRequest({ requester, subjectSlug: SUBJECT_SLUG }),
+      );
+
+      expect(response.statusCode).toBe(200);
+      const body = response.body as TopicProgressDto[];
+      expect(body.map((entry) => entry.topic.title)).toEqual([
+        'Primeiro Tópico',
+        'Segundo Tópico',
+        'Terceiro Tópico',
+      ]);
+    });
   });
 });
