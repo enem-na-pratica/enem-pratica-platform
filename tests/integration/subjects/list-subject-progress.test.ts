@@ -154,3 +154,20 @@ afterEach(async () => {
 afterAll(async () => {
   await prisma.$disconnect();
 });
+
+describe('ListSubjectProgressController (integration)', () => {
+  describe('GET /api/subjects/:subjectSlug/progress/:username — success cases', () => {
+    it('should return 200 with an empty array when the subject has no topics', async () => {
+      await createSubjectWithTopics(EMPTY_SUBJECT_SLUG, []);
+      const controller = makeSut();
+      const requester = makeRequester();
+
+      const response = await controller.handle(
+        makeRequest({ requester, subjectSlug: EMPTY_SUBJECT_SLUG }),
+      );
+
+      expect(response.statusCode).toBe(200);
+      expect(response.body).toEqual([]);
+    });
+  });
+});
