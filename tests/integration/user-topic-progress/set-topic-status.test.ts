@@ -350,5 +350,36 @@ describe('SetTopicStatusController (integration)', () => {
       expect(response.statusCode).toBe(200);
       expect(response.body).toMatchObject({ authorId: studentId });
     });
+
+    it('should let an ADMIN set the topic status of a student even without an explicit assignment', async () => {
+      const adminId = await createUser({
+        name: 'Admin Teste',
+        username: TEST_ADMIN_USERNAME,
+        role: ROLES.ADMIN,
+      });
+      const studentId = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+
+      const controller = makeSut();
+      const requester = makeRequester({
+        id: adminId,
+        username: TEST_ADMIN_USERNAME,
+        role: ROLES.ADMIN,
+      });
+
+      const response = await controller.handle(
+        makeRequest({
+          body: { topicId: testTopic2Id, status: TOPIC_STATUS.REVIEW },
+          username: TEST_STUDENT_USERNAME,
+          requester,
+        }),
+      );
+
+      expect(response.statusCode).toBe(200);
+      expect(response.body).toMatchObject({ authorId: studentId });
+    });
   });
 });
