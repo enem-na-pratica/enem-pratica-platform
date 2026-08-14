@@ -366,5 +366,47 @@ describe('ListSubjectProgressController (integration)', () => {
       const body = response.body as TopicProgressDto[];
       expect(body).toHaveLength(1);
     });
+
+    it('should return the correct shape for each entry (topic + progress DTOs)', async () => {
+      const studentId = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      const { topicIds } = await createSubjectWithTopics(SUBJECT_SLUG, [
+        { title: 'Funções', position: 1 },
+      ]);
+      await createProgress(studentId, topicIds[0], 'COMPREHENDED');
+
+      const controller = makeSut();
+      const requester = makeRequester({
+        id: studentId,
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+
+      const response = await controller.handle(
+        makeRequest({ requester, subjectSlug: SUBJECT_SLUG }),
+      );
+
+      expect(response.statusCode).toBe(200);
+      const body = response.body as TopicProgressDto[];
+      const [entry] = body;
+
+      expect(entry).toHaveProperty('topic');
+      expect(entry).toHaveProperty('progress');
+      expect(entry.topic).toMatchObject({
+        id: topicIds[0],
+        title: 'Funções',
+        position: 1,
+      });
+      expect(entry.progress).toMatchObject({
+        authorId: studentId,
+        topicId: topicIds[0],
+        status: TOPIC_STATUS.COMPREHENDED,
+      });
+      expect(typeof entry.progress?.createdAt).toBe('string');
+      expect(typeof entry.progress?.updatedAt).toBe('string');
+    });
   });
 });
