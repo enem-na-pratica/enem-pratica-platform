@@ -129,3 +129,28 @@ function makeRequest({
     query: status !== undefined ? { status } : undefined,
   };
 }
+
+beforeAll(async () => {
+  await prisma.$connect();
+});
+
+afterEach(async () => {
+  await prisma.subject.deleteMany({
+    where: { slug: { in: [SUBJECT_SLUG, EMPTY_SUBJECT_SLUG] } },
+  });
+  await prisma.studentTeacher.deleteMany({
+    where: {
+      OR: [
+        { student: { username: { in: ALL_TEST_USERNAMES } } },
+        { teacher: { username: { in: ALL_TEST_USERNAMES } } },
+      ],
+    },
+  });
+  await prisma.user.deleteMany({
+    where: { username: { in: ALL_TEST_USERNAMES } },
+  });
+});
+
+afterAll(async () => {
+  await prisma.$disconnect();
+});
