@@ -116,4 +116,10 @@ cp .env.example .env
 cp .env.test.example .env.test
 ```
 
+#### 3. Instalar as Dependências
+
+```bash
+npm install
+```
+
 ---
