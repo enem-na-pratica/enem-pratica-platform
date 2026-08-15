@@ -40,4 +40,9 @@ O projeto foi construído priorizando **escalabilidade, manutenibilidade, tipage
 - Separação clara entre as regras de negócio do domínio e os detalhes de infraestrutura/framework.
 - Módulos desacoplados que facilitam a evolução de novas regras pedagógicas sem impactar o restante do sistema.
 
+### 2. Gestão de Banco de Dados & Performance
+
+- **PostgreSQL + Prisma ORM:** Modelagem relacional robusta cobrindo entidades complexas de alunos, simulados e desempenhos por área.
+- **Prisma Singleton Pattern:** Implementação de padrão Singleton para reutilização eficiente de conexões com o banco, evitando gargalos no ecossistema serverless do Next.js.
+
 ---
