@@ -151,3 +151,7 @@ npm run test
 ```
 
 ---
+
+## 👨‍💻 Autor / Desenvolvedor
+
+Desenvolvido por **Jefferson da Silva Simplicio** — Software Engineer / Full Stack Developer.
