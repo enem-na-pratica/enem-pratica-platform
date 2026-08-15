@@ -122,4 +122,10 @@ cp .env.test.example .env.test
 npm install
 ```
 
+#### 4. Subir os Containers (Banco de Dados)
+
+```bash
+docker compose up -d
+```
+
 ---
