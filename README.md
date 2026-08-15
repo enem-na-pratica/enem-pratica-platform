@@ -60,9 +60,12 @@ O projeto foi construído priorizando **escalabilidade, manutenibilidade, tipage
 
 ## 🧰 Tech Stack
 
-| Camada       | Tecnologias Utilizadas                                                              |
-| :----------- | :---------------------------------------------------------------------------------- |
-| **Frontend** | React, Next.js (App Router), TypeScript, Tailwind CSS, PostCSS                      |
-| **Backend**  | Node.js, Next.js API Routes / Server Actions, TypeScript, Validation Error Handling |
+| Camada               | Tecnologias Utilizadas                                                              |
+| :------------------- | :---------------------------------------------------------------------------------- |
+| **Frontend**         | React, Next.js (App Router), TypeScript, Tailwind CSS, PostCSS                      |
+| **Backend**          | Node.js, Next.js API Routes / Server Actions, TypeScript, Validation Error Handling |
+| **Banco de Dados**   | PostgreSQL, Prisma ORM                                                              |
+| **Testes**           | Vitest, Dockerized PostgreSQL Test Environment                                      |
+| **DevOps & Tooling** | Docker, Docker Compose, Git, ESLint, Prettier, Vercel                               |
 
 ---
