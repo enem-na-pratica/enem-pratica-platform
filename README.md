@@ -134,4 +134,14 @@ docker compose up -d
 npx prisma migrate dev
 ```
 
+#### 6. Iniciar o Servidor de Desenvolvimento
+
+```bash
+npm run dev
+```
+
+A aplicação estará disponível em:
+
+<http://localhost:3000>
+
 ---
