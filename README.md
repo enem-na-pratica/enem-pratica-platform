@@ -33,6 +33,11 @@ Com o crescimento da base de alunos, a gestão via planilhas tornou-se insustent
 
 ## 🛠️ Arquitetura & Decisões Técnicas de Engenharia
 
-O projeto foi construído priorizando **escalabilidade, manutenibilidade, tipagem estrita e qualidade de código**, aplicando padrões consolidados na indústria de software.
+O projeto foi construído priorizando **escalabilidade, manutenibilidade, tipagem estrita e qualidade de código**, aplicando padrões consolidados na indústria de software:
+
+### 1. Domain-Driven Design (DDD) & Clean Architecture
+
+- Separação clara entre as regras de negócio do domínio e os detalhes de infraestrutura/framework.
+- Módulos desacoplados que facilitam a evolução de novas regras pedagógicas sem impactar o restante do sistema.
 
 ---
