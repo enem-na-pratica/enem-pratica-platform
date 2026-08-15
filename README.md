@@ -155,3 +155,9 @@ npm run test
 ## 👨‍💻 Autor / Desenvolvedor
 
 Desenvolvido por **Jefferson da Silva Simplicio** — Software Engineer / Full Stack Developer.
+
+- LinkedIn: <https://www.linkedin.com/in/jefferson-simplicio/>
+- GitHub: <https://github.com/JeffersonSimplicio>
+- E-mail: <jeffersonsimplicio.js@gmail.com>
+
+> _Sinta-se à vontade para entrar em contato caso tenha dúvidas sobre a arquitetura do projeto ou queira discutir oportunidades profissionais!_
