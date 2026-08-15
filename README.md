@@ -10,3 +10,11 @@
 [![Vitest](https://img.shields.io/badge/Vitest-Testing-6E9F18?style=for-the-badge&logo=vitest)](https://vitest.dev/)
 
 ---
+
+## 📌 Contexto do Projeto & Impacto Real
+
+O **Enem Na Prática** nasceu para resolver uma dor real de gestão acadêmica de um cursinho preparatório para o ENEM.
+
+Anteriormente, todo o acompanhamento individualizado dos alunos — incluindo diagnósticos por área do conhecimento (_Linguagens, Humanas, Natureza e Matemática_), controle de erros em questões, agendamento de mentorias e acompanhamento de metas — era feito manualmente via tabelas no Google Sheets.
+
+---
