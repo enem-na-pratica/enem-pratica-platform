@@ -30,3 +30,9 @@ Com o crescimento da base de alunos, a gestão via planilhas tornou-se insustent
 - 🔐 **Autenticação & Controle de Acesso:** Acesso seguro com perfis diferenciados para estudantes e equipe pedagógica.
 
 ---
+
+## 🛠️ Arquitetura & Decisões Técnicas de Engenharia
+
+O projeto foi construído priorizando **escalabilidade, manutenibilidade, tipagem estrita e qualidade de código**, aplicando padrões consolidados na indústria de software.
+
+---
