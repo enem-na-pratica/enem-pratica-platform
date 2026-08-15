@@ -144,4 +144,10 @@ A aplicação estará disponível em:
 
 <http://localhost:3000>
 
+#### 7. Executar a Suíte de Testes
+
+```bash
+npm run test
+```
+
 ---
