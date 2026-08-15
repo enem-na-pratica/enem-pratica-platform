@@ -23,4 +23,7 @@ Com o crescimento da base de alunos, a gestão via planilhas tornou-se insustent
 
 ## 🚀 Principais Funcionalidades
 
+- 📊 **Análise de Desempenho por Área de Conhecimento:** Diagnósticos detalhados dos pontos fortes e fracos do aluno com base no histórico de simulados.
+- 📅 **Cronograma de Estudos Dinâmico:** Organização personalizada de rotinas de estudo adaptadas à evolução individual.
+
 ---
