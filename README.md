@@ -20,3 +20,7 @@ Anteriormente, todo o acompanhamento individualizado dos alunos — incluindo di
 Com o crescimento da base de alunos, a gestão via planilhas tornou-se insustentável. Esta plataforma foi desenvolvida para **substituir o fluxo manual por uma solução SaaS personalizada**, centralizando a jornada do estudante em uma interface moderna e automatizada.
 
 ---
+
+## 🚀 Principais Funcionalidades
+
+---
