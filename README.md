@@ -57,3 +57,10 @@ O projeto foi construído priorizando **escalabilidade, manutenibilidade, tipage
 - Padronização completa do ambiente de desenvolvimento via **Docker** e **Docker Compose**, permitindo que qualquer desenvolvedor suba a aplicação completa (_App + Banco de Dados_) em minutos com um único comando.
 
 ---
+
+## 🧰 Tech Stack
+
+| Camada       | Tecnologias Utilizadas                                                              |
+| :----------- | :---------------------------------------------------------------------------------- |
+
+---
