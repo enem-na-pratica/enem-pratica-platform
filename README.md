@@ -128,4 +128,10 @@ npm install
 docker compose up -d
 ```
 
+#### 5. Executar as Migrations
+
+```bash
+npx prisma migrate dev
+```
+
 ---
