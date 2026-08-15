@@ -46,4 +46,9 @@ O projeto foi construído priorizando **escalabilidade, manutenibilidade, tipage
 - **Prisma Singleton Pattern:** Implementação de padrão Singleton para reutilização eficiente de conexões com o banco, evitando gargalos no ecossistema serverless do Next.js.
 - **Orquestração de Seeds:** Scripts customizados de povoamento de banco de dados para rápida inicialização em ambientes de dev e teste.
 
+### 3. Estratégia de Testes Automatizados Isolados
+
+- **Vitest:** Suíte completa de testes unitários e de integração.
+- **Test Database Containerized:** Uso do `docker-compose.test.yml` para subir instâncias dedicadas de PostgreSQL para testes, garantindo que a suíte rode em um banco real sem contaminar dados de desenvolvimento ou produção.
+
 ---
