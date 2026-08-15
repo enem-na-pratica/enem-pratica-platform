@@ -52,4 +52,8 @@ O projeto foi construído priorizando **escalabilidade, manutenibilidade, tipage
 - **Test Database Containerized:** Uso do `docker-compose.test.yml` para subir instâncias dedicadas de PostgreSQL para testes, garantindo que a suíte rode em um banco real sem contaminar dados de desenvolvimento ou produção.
 - **Performance de Testes:** Otimizações como _hashing_ prévio de senhas e mocks estratégicos para garantir tempos de execução extremamente rápidos em rotinas de CI/CD.
 
+### 4. Conteinerização & DevOps
+
+- Padronização completa do ambiente de desenvolvimento via **Docker** e **Docker Compose**, permitindo que qualquer desenvolvedor suba a aplicação completa (_App + Banco de Dados_) em minutos com um único comando.
+
 ---
