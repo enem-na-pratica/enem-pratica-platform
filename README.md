@@ -44,5 +44,6 @@ O projeto foi construído priorizando **escalabilidade, manutenibilidade, tipage
 
 - **PostgreSQL + Prisma ORM:** Modelagem relacional robusta cobrindo entidades complexas de alunos, simulados e desempenhos por área.
 - **Prisma Singleton Pattern:** Implementação de padrão Singleton para reutilização eficiente de conexões com o banco, evitando gargalos no ecossistema serverless do Next.js.
+- **Orquestração de Seeds:** Scripts customizados de povoamento de banco de dados para rápida inicialização em ambientes de dev e teste.
 
 ---
