@@ -87,3 +87,7 @@ enem-pratica-platform/
 ```
 
 ---
+
+## 💻 Como Rodar o Projeto Localmente
+
+---
