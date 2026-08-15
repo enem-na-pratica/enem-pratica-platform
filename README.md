@@ -90,4 +90,12 @@ enem-pratica-platform/
 
 ## 💻 Como Rodar o Projeto Localmente
 
+### Pré-requisitos
+
+Antes de começar, certifique-se de ter instalado:
+
+- Node.js (v22+ recomendado)
+- Docker
+- Docker Compose
+
 ---
