@@ -62,5 +62,7 @@ O projeto foi construído priorizando **escalabilidade, manutenibilidade, tipage
 
 | Camada       | Tecnologias Utilizadas                                                              |
 | :----------- | :---------------------------------------------------------------------------------- |
+| **Frontend** | React, Next.js (App Router), TypeScript, Tailwind CSS, PostCSS                      |
+| **Backend**  | Node.js, Next.js API Routes / Server Actions, TypeScript, Validation Error Handling |
 
 ---
