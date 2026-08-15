@@ -25,5 +25,8 @@ Com o crescimento da base de alunos, a gestão via planilhas tornou-se insustent
 
 - 📊 **Análise de Desempenho por Área de Conhecimento:** Diagnósticos detalhados dos pontos fortes e fracos do aluno com base no histórico de simulados.
 - 📅 **Cronograma de Estudos Dinâmico:** Organização personalizada de rotinas de estudo adaptadas à evolução individual.
+- 📝 **Gestão de Simulados & Correções:** Registro e monitoramento de acertos/erros para identificação de lacunas de aprendizado.
+- 🤝 **Agendamento de Mentorias:** Integração de fluxo para marcação de sessões individuais de acompanhamento pedagógico.
+- 🔐 **Autenticação & Controle de Acesso:** Acesso seguro com perfis diferenciados para estudantes e equipe pedagógica.
 
 ---
