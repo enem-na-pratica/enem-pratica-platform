@@ -98,4 +98,13 @@ Antes de começar, certifique-se de ter instalado:
 - Docker
 - Docker Compose
 
+### Passo a Passo
+
+#### 1. Clonar o repositório
+
+```bash
+git clone https://github.com/enem-na-pratica/enem-pratica-platform.git
+cd enem-pratica-platform
+```
+
 ---
