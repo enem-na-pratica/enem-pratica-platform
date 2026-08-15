@@ -50,5 +50,6 @@ O projeto foi construído priorizando **escalabilidade, manutenibilidade, tipage
 
 - **Vitest:** Suíte completa de testes unitários e de integração.
 - **Test Database Containerized:** Uso do `docker-compose.test.yml` para subir instâncias dedicadas de PostgreSQL para testes, garantindo que a suíte rode em um banco real sem contaminar dados de desenvolvimento ou produção.
+- **Performance de Testes:** Otimizações como _hashing_ prévio de senhas e mocks estratégicos para garantir tempos de execução extremamente rápidos em rotinas de CI/CD.
 
 ---
