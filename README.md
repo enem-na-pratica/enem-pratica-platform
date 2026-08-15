@@ -69,3 +69,21 @@ O projeto foi construído priorizando **escalabilidade, manutenibilidade, tipage
 | **DevOps & Tooling** | Docker, Docker Compose, Git, ESLint, Prettier, Vercel                               |
 
 ---
+
+## 📂 Arquitetura de Pastas (Simplificada)
+
+```text
+enem-pratica-platform/
+├── prisma/                 # Schema relacional, migrations e seeds do banco
+├── scripts/                # Scripts de orquestração de banco e utilitários
+├── src/
+│   ├── app/                # Next.js App Router (Páginas, layouts e rotas de API)
+│   ├── web/                # Componentes de interface reutilizáveis e hooks
+│   └── core/               # Camadas de domínio (DDD), casos de uso e repositórios
+├── tests/                  # Testes de integração e unitários
+├── docker-compose.yml      # Configuração do ambiente Docker principal
+├── docker-compose.test.yml # Instância isolada para banco de testes
+└── vitest.config.ts        # Configurações otimizadas do runner de testes
+```
+
+---
