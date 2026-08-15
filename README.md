@@ -107,4 +107,13 @@ git clone https://github.com/enem-na-pratica/enem-pratica-platform.git
 cd enem-pratica-platform
 ```
 
+#### 2. Configurar as Variáveis de Ambiente
+
+Duplique os arquivos de exemplo e preencha as variáveis conforme necessário:
+
+```bash
+cp .env.example .env
+cp .env.test.example .env.test
+```
+
 ---
