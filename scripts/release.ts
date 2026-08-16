@@ -86,3 +86,49 @@ const calculateSimulatedVersion = (
   };
   return strategies[bumpType] ?? bumpType;
 };
+async function promptMode(): Promise<Mode> {
+  console.log('O que você deseja fazer?');
+  console.log('1) Apenas atualizar a versão (package*.json + commit)');
+  console.log('2) Apenas criar a tag');
+  console.log('3) Ambos (versão + commit + tag)');
+
+  const choice = (await ask('Escolha (1-3): ')).trim();
+
+  switch (choice) {
+    case '1':
+      return 'version';
+    case '2':
+      return 'tag';
+    case '3':
+      return 'both';
+    default:
+      throw new Error('Opção inválida.');
+  }
+}
+
+async function promptBumpType(): Promise<BumpType> {
+  console.log('\nQual o tipo de atualização?');
+  console.log('1) patch\n2) minor\n3) major\n4) manual');
+
+  const choice = (await ask('Escolha (1-4): ')).trim();
+
+  switch (choice) {
+    case '1':
+      return 'patch';
+    case '2':
+      return 'minor';
+    case '3':
+      return 'major';
+    case '4': {
+      const manualVersion = (
+        await ask('Digite a nova versão (ex: 0.17.0): ')
+      ).trim();
+      if (!isValidSemver(manualVersion))
+        throw new Error('Versão inválida. Use o formato semver.');
+      return manualVersion;
+    }
+    default:
+      throw new Error('Opção inválida.');
+  }
+}
+ 
