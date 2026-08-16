@@ -172,46 +172,83 @@ async function runVersionBumpFlow(): Promise<string> {
 
   return newVersion;
 }
-async function pushBranch(): Promise<void> {  
-  const pushNow = await ask('\nDeseja dar push agora? (s/n): ');  
-  if (pushNow.trim().toLowerCase() === 's') {  
-    const currentBranch = executeSilent('git rev-parse --abbrev-ref HEAD');  
-    executeGit(['push', 'origin', currentBranch]);  
-  }  
+async function pushBranch(): Promise<void> {
+  const pushNow = await ask('\nDeseja dar push agora? (s/n): ');
+  if (pushNow.trim().toLowerCase() === 's') {
+    const currentBranch = executeSilent('git rev-parse --abbrev-ref HEAD');
+    executeGit(['push', 'origin', currentBranch]);
+  }
 }
 
-async function pushTag(version: string): Promise<void> {  
-  const pushNow = await ask('\nDeseja dar push da tag agora? (s/n): ');  
-  if (pushNow.trim().toLowerCase() === 's') {  
-    executeGit(['push', 'origin', `v${version}`]);  
-  }  
+async function pushTag(version: string): Promise<void> {
+  const pushNow = await ask('\nDeseja dar push da tag agora? (s/n): ');
+  if (pushNow.trim().toLowerCase() === 's') {
+    executeGit(['push', 'origin', `v${version}`]);
+  }
 }
 
-async function pushBranchAndTag(version: string): Promise<void> {  
-  const pushNow = await ask('\nDeseja dar push agora? (s/n): ');  
-  if (pushNow.trim().toLowerCase() === 's') {  
-    const currentBranch = executeSilent('git rev-parse --abbrev-ref HEAD');  
-    executeGit(['push', 'origin', currentBranch]);  
-    executeGit(['push', 'origin', `v${version}`]);  
-  }  
+async function pushBranchAndTag(version: string): Promise<void> {
+  const pushNow = await ask('\nDeseja dar push agora? (s/n): ');
+  if (pushNow.trim().toLowerCase() === 's') {
+    const currentBranch = executeSilent('git rev-parse --abbrev-ref HEAD');
+    executeGit(['push', 'origin', currentBranch]);
+    executeGit(['push', 'origin', `v${version}`]);
+  }
 }
 
-async function runTagFlow(version: string): Promise<void> {  
-  console.log(`${COLORS.cyan}--- Configuração da Tag ---${COLORS.reset}`);  
-  const tagDesc = await ask(  
-    `Padrão: Version ${version}: [DESCRIÇÃO]\nDigite a descrição: `,  
+async function runTagFlow(version: string): Promise<void> {
+  console.log(`${COLORS.cyan}--- Configuração da Tag ---${COLORS.reset}`);
+  const tagDesc = await ask(
+    `Padrão: Version ${version}: [DESCRIÇÃO]\nDigite a descrição: `,
   );
 
-  executeGit([  
-    'tag',  
-    '-a',  
-    `v${version}`,  
-    '-m',  
-    `Version ${version}: ${tagDesc}`,  
+  executeGit([
+    'tag',
+    '-a',
+    `v${version}`,
+    '-m',
+    `Version ${version}: ${tagDesc}`,
   ]);
 
-  console.log(`\n${COLORS.green}✔ Tag criada!${COLORS.reset}`);  
-  console.log(  
-    `Tag: ${COLORS.cyan}v${version} - Version ${version}: ${tagDesc}${COLORS.reset}`,  
-  );  
+  console.log(`\n${COLORS.green}✔ Tag criada!${COLORS.reset}`);
+  console.log(
+    `Tag: ${COLORS.cyan}v${version} - Version ${version}: ${tagDesc}${COLORS.reset}`,
+  );
 }
+async function main(): Promise<void> {
+  try {
+    if (DRY_RUN) {
+      console.log(
+        `${COLORS.yellow}⚠ Modo dry-run ativo — nenhum comando Git será executado.${COLORS.reset}`,
+      );
+    }
+
+    const mode = await promptMode();
+
+    if (mode === 'version') {
+      await runVersionBumpFlow();
+      await pushBranch();
+    } else if (mode === 'tag') {
+      const currentVersion = getPackageData().version;
+      console.log(
+        `\nVersão atual: ${COLORS.yellow}${currentVersion}${COLORS.reset}`,
+      );
+      await runTagFlow(currentVersion);
+      await pushTag(currentVersion);
+    } else {
+      const newVersion = await runVersionBumpFlow();
+      await runTagFlow(newVersion);
+      await pushBranchAndTag(newVersion);
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.error(
+      `\n${COLORS.red}Erro durante a execução:${COLORS.reset}`,
+      message,
+    );
+  } finally {
+    rl.close();
+  }
+}
+
+main();
