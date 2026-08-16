@@ -1,3 +1,20 @@
+/**
+ * Git Versioning and Tagging Automation CLI
+ *
+ * This script automates the package.json version bump flow, commit creation,
+ * annotated tags, and remote repository synchronization (push).
+ *
+ * Usage:
+ *   npm run release [--dry-run]
+ *
+ * Execution Modes:
+ *   1. Version only: Updates package.json and creates a commit.
+ *   2. Tag only: Creates an annotated tag on the current commit.
+ *   3. Both: Combines version bump, commit, and tag creation.
+ *
+ * Options:
+ *   --dry-run: Simulates execution without modifying files or running git commands.
+ */
 import {
   ExecSyncOptions,
   ExecSyncOptionsWithStringEncoding,
