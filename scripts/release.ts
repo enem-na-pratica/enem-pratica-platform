@@ -66,3 +66,23 @@ const executeGit = (args: string[]): void => {
     throw new Error(`git ${args[0]} falhou com código ${result.status}`);
   }
 };
+
+const getPackageData = (): PackageJson => {
+  return JSON.parse(fs.readFileSync('./package.json', 'utf8'));
+};
+
+const isValidSemver = (version: string): boolean =>
+  /^\d+\.\d+\.\d+([-.][a-zA-Z0-9.]+)?$/.test(version);
+
+const calculateSimulatedVersion = (
+  currentVersion: string,
+  bumpType: string,
+): string => {
+  const [major, minor, patch] = currentVersion.split('.').map(Number);
+  const strategies: Record<string, string> = {
+    patch: `${major}.${minor}.${patch + 1}`,
+    minor: `${major}.${minor + 1}.0`,
+    major: `${major + 1}.0.0`,
+  };
+  return strategies[bumpType] ?? bumpType;
+};
