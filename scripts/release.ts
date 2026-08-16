@@ -86,6 +86,7 @@ const calculateSimulatedVersion = (
   };
   return strategies[bumpType] ?? bumpType;
 };
+
 async function promptMode(): Promise<Mode> {
   console.log('O que você deseja fazer?');
   console.log('1) Apenas atualizar a versão (package*.json + commit)');
@@ -131,6 +132,7 @@ async function promptBumpType(): Promise<BumpType> {
       throw new Error('Opção inválida.');
   }
 }
+
 async function performVersionBump(bumpType: BumpType): Promise<string> {
   const pkg = getPackageData();
 
@@ -142,6 +144,30 @@ async function performVersionBump(bumpType: BumpType): Promise<string> {
 
   executeSilent(`npm version ${bumpType} --no-git-tag-version`);
   return getPackageData().version;
+}
+
+async function pushBranch(): Promise<void> {
+  const pushNow = await ask('\nDeseja dar push agora? (s/n): ');
+  if (pushNow.trim().toLowerCase() === 's') {
+    const currentBranch = executeSilent('git rev-parse --abbrev-ref HEAD');
+    executeGit(['push', 'origin', currentBranch]);
+  }
+}
+
+async function pushTag(version: string): Promise<void> {
+  const pushNow = await ask('\nDeseja dar push da tag agora? (s/n): ');
+  if (pushNow.trim().toLowerCase() === 's') {
+    executeGit(['push', 'origin', `v${version}`]);
+  }
+}
+
+async function pushBranchAndTag(version: string): Promise<void> {
+  const pushNow = await ask('\nDeseja dar push agora? (s/n): ');
+  if (pushNow.trim().toLowerCase() === 's') {
+    const currentBranch = executeSilent('git rev-parse --abbrev-ref HEAD');
+    executeGit(['push', 'origin', currentBranch]);
+    executeGit(['push', 'origin', `v${version}`]);
+  }
 }
 
 async function runVersionBumpFlow(): Promise<string> {
@@ -172,29 +198,6 @@ async function runVersionBumpFlow(): Promise<string> {
 
   return newVersion;
 }
-async function pushBranch(): Promise<void> {
-  const pushNow = await ask('\nDeseja dar push agora? (s/n): ');
-  if (pushNow.trim().toLowerCase() === 's') {
-    const currentBranch = executeSilent('git rev-parse --abbrev-ref HEAD');
-    executeGit(['push', 'origin', currentBranch]);
-  }
-}
-
-async function pushTag(version: string): Promise<void> {
-  const pushNow = await ask('\nDeseja dar push da tag agora? (s/n): ');
-  if (pushNow.trim().toLowerCase() === 's') {
-    executeGit(['push', 'origin', `v${version}`]);
-  }
-}
-
-async function pushBranchAndTag(version: string): Promise<void> {
-  const pushNow = await ask('\nDeseja dar push agora? (s/n): ');
-  if (pushNow.trim().toLowerCase() === 's') {
-    const currentBranch = executeSilent('git rev-parse --abbrev-ref HEAD');
-    executeGit(['push', 'origin', currentBranch]);
-    executeGit(['push', 'origin', `v${version}`]);
-  }
-}
 
 async function runTagFlow(version: string): Promise<void> {
   console.log(`${COLORS.cyan}--- Configuração da Tag ---${COLORS.reset}`);
@@ -215,6 +218,7 @@ async function runTagFlow(version: string): Promise<void> {
     `Tag: ${COLORS.cyan}v${version} - Version ${version}: ${tagDesc}${COLORS.reset}`,
   );
 }
+
 async function main(): Promise<void> {
   try {
     if (DRY_RUN) {
