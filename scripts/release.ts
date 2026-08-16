@@ -131,4 +131,44 @@ async function promptBumpType(): Promise<BumpType> {
       throw new Error('Opção inválida.');
   }
 }
- 
+async function performVersionBump(bumpType: BumpType): Promise<string> {
+  const pkg = getPackageData();
+
+  if (DRY_RUN) {
+    const newVersion = calculateSimulatedVersion(pkg.version, bumpType);
+    logDryRun(`npm version ${bumpType} --no-git-tag-version`);
+    return newVersion;
+  }
+
+  executeSilent(`npm version ${bumpType} --no-git-tag-version`);
+  return getPackageData().version;
+}
+
+async function runVersionBumpFlow(): Promise<string> {
+  const initialPkg = getPackageData();
+  console.log(
+    `\nVersão atual: ${COLORS.yellow}${initialPkg.version}${COLORS.reset}`,
+  );
+
+  const bumpType = await promptBumpType();
+  const newVersion = await performVersionBump(bumpType);
+
+  console.log(
+    `${COLORS.green}Próxima versão:${COLORS.reset} ${COLORS.yellow}${newVersion}${COLORS.reset}\n`,
+  );
+
+  const defaultCommit = `chore: bump version to ${newVersion}`;
+  const commitInput = await ask(
+    `${COLORS.cyan}--- Configuração do Commit ---${COLORS.reset}\nMensagem [${defaultCommit}]: `,
+  );
+  const commitMsg = commitInput.trim() || defaultCommit;
+
+  console.log(`\n${COLORS.yellow}Executando comandos Git...${COLORS.reset}`);
+  executeShell('git add -u');
+  executeGit(['commit', '-m', commitMsg]);
+
+  console.log(`\n${COLORS.green}✔ Sucesso!${COLORS.reset}`);
+  console.log(`Commit: ${COLORS.cyan}${commitMsg}${COLORS.reset}`);
+
+  return newVersion;
+}
