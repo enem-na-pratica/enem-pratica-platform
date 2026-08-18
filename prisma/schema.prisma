@@ -13,8 +13,8 @@ model User {
   username     String   @unique
   passwordHash String
   role         Role
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  createdAt    DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt    DateTime @updatedAt @db.Timestamptz(3)
 
   /// Relações onde este usuário é o ALUNO (quem recebe a mentoria)
   mentorshipsAsStudent StudentTeacher[] @relation("StudentRelation")
@@ -27,7 +27,7 @@ model User {
   questionSessions    QuestionSession[]
 
   @@index([username])
-  @@map("users") // Garante que o nome da tabela no BD seja 'users' (plural snake_case)
+  @@map("users") //(plural and snake_case)
 }
 
 model StudentTeacher {
@@ -39,10 +39,10 @@ model StudentTeacher {
   teacherId String
   teacher   User   @relation("TeacherRelation", fields: [teacherId], references: [id], onDelete: Cascade)
 
-  assignedAt DateTime @default(now())
+  assignedAt DateTime @default(now()) @db.Timestamptz(3)
 
   @@unique([studentId, teacherId])
-  @@map("student_teachers") // Nome da tabela no banco (snake_case)
+  @@map("student_teachers")
 }
 
 model Essay {
@@ -61,7 +61,7 @@ model Essay {
 
   createdAt DateTime @default(now())
 
-  @@map("essays") // Nome da tabela no banco (snake_case)
+  @@map("essays")
 }
 
 model Subject {
@@ -102,7 +102,7 @@ model MockExam {
   authorId String
   author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
-  @@map("mock_exams") // Nome da tabela no banco de dados (snake_case)
+  @@map("mock_exams")
 }
 
 model AreaPerformance {
