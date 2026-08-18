@@ -1,31 +1,28 @@
+import type { UserDto } from '@/src/core/application/common/dtos';
 import type { UseCase } from '@/src/core/application/common/interfaces';
-import type { CreateUserDto } from './create-user.dto';
-import type { UserRepository } from '@/src/core/domain/contracts/repositories';
-import type { Hasher } from '@/src/core/domain/contracts/crypto';
 import type { Role } from '@/src/core/domain/auth';
-import type { Mapper } from "@/src/core/domain/contracts/mappers";
-import type { UserDto } from "@/src/core/application/common/dtos";
 import { ROLES } from '@/src/core/domain/auth';
 import { hasExactRole } from '@/src/core/domain/auth';
-import { UserAlreadyExistsError } from "@/src/core/domain/errors";
-import { User } from "@/src/core/domain/entities";
+import type { Hasher } from '@/src/core/domain/contracts/crypto';
+import type { Mapper } from '@/src/core/domain/contracts/mappers';
+import type { UserRepository } from '@/src/core/domain/contracts/repositories';
+import { User } from '@/src/core/domain/entities';
+import { UserAlreadyExistsError } from '@/src/core/domain/errors';
+
+import type { CreateUserDto } from './create-user.dto';
 
 type CreateUserUseCaseDeps = {
   userRepository: UserRepository;
   hasher: Hasher;
   mapper: Mapper<User, UserDto>;
-}
+};
 
 export class CreateUserUseCase implements UseCase<CreateUserDto, UserDto> {
   private readonly userRepository: UserRepository;
   private readonly hasher: Hasher;
   private readonly mapper: Mapper<User, UserDto>;
 
-  constructor({
-    userRepository,
-    hasher,
-    mapper
-  }: CreateUserUseCaseDeps) {
+  constructor({ userRepository, hasher, mapper }: CreateUserUseCaseDeps) {
     this.userRepository = userRepository;
     this.hasher = hasher;
     this.mapper = mapper;
