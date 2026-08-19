@@ -17,5 +17,5 @@ export const EssayMapper = {
       statistics: { ...dto.statistics },
       essays: dto.essays.map((essayDto) => EssayMapper.toModel(essayDto)),
     };
-  }
+  },
 };

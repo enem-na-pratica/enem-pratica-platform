@@ -1,4 +1,4 @@
-import { HttpClient } from '@/src/web/api/shared';
+import type { HttpClient } from '@/src/web/api/shared';
 
 import type { EssayDto, UserEssaysOverviewDto } from './essay.dto';
 import { EssayMapper } from './essay.mapper';

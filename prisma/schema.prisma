@@ -59,7 +59,7 @@ model Essay {
   competency4 Int
   competency5 Int
 
-  createdAt DateTime @default(now())
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
 
   @@map("essays")
 }

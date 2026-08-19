@@ -1,4 +1,4 @@
-import type { EssayDto } from "@/src/core/application/common/dtos";
+import type { EssayDto } from '@/src/core/application/common/dtos';
 import type { Grades } from '@/src/core/domain/value-objects';
 
 export type EssayStatisticsDto = {

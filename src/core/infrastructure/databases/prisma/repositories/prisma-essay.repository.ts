@@ -1,10 +1,10 @@
+import type { Mapper } from '@/src/core/domain/contracts/mappers';
 import type { EssayRepository } from '@/src/core/domain/contracts/repositories';
 import type { Essay } from '@/src/core/domain/entities';
 import type {
   PrismaClient,
-  Essay as PrismaEssay
-} from "@/src/generated/prisma/client";
-import type { Mapper } from "@/src/core/domain/contracts/mappers";
+  Essay as PrismaEssay,
+} from '@/src/generated/prisma/client';
 
 type PrismaEssayRepositoryDeps = {
   prisma: PrismaClient;
@@ -30,9 +30,9 @@ export class PrismaEssayRepository implements EssayRepository {
         competency4: essay.competency4,
         competency5: essay.competency5,
         author: {
-          connect: { id: essay.authorId }
-        }
-      }
+          connect: { id: essay.authorId },
+        },
+      },
     });
 
     return this.mapper.map(newEssay);
