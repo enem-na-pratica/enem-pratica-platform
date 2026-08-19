@@ -1,7 +1,7 @@
-import { Role } from '@/src/web/config';
+import type { Role } from '@/src/web/config';
 
-import { InstructorWithStudentCountDto, UserDto } from './user.dto';
-import { InstructorWithStudentCount, User } from './user.model';
+import type { InstructorWithStudentCountDto, UserDto } from './user.dto';
+import type { InstructorWithStudentCount, User } from './user.model';
 
 export const UserMapper = {
   toModel(dto: UserDto): User {
