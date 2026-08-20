@@ -44,7 +44,7 @@ export class PrismaQuestionSessionWithTopicAndSubjectDtoMapper implements Mapper
       title: topic.title,
       position: topic.position,
       subjectId: topic.subjectId,
-      createdAt: topic.createdAt,
+      createdAt: topic.createdAt.toISOString(),
       subject: this.mapSubject(topic.subject),
     };
   }

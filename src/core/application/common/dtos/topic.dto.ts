@@ -3,5 +3,5 @@ export type TopicDto = {
   title: string;
   position: number;
   subjectId: string;
-  createdAt: Date;
+  createdAt: string;
 };
