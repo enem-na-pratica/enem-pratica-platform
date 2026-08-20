@@ -1,0 +1,9 @@
+-- AlterTable
+ALTER TABLE "subjects" ALTER COLUMN "createdAt" SET DATA TYPE TIMESTAMPTZ(3);
+
+-- AlterTable
+ALTER TABLE "topics" ALTER COLUMN "createdAt" SET DATA TYPE TIMESTAMPTZ(3);
+
+-- AlterTable
+ALTER TABLE "user_topic_progress" ALTER COLUMN "updatedAt" SET DATA TYPE TIMESTAMPTZ(3),
+ALTER COLUMN "createdAt" SET DATA TYPE TIMESTAMPTZ(3);
