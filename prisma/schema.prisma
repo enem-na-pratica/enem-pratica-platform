@@ -70,7 +70,7 @@ model Subject {
   slug      String   @unique
   category  String?
   topics    Topic[]
-  createdAt DateTime @default(now())
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
 
   @@index([slug])
   @@map("subjects")
@@ -84,7 +84,7 @@ model Topic {
   subjectId String
   subject   Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
 
-  createdAt           DateTime            @default(now())
+  createdAt           DateTime            @default(now()) @db.Timestamptz(3)
   userTopicProgresses UserTopicProgress[]
   questionSessions    QuestionSession[]
 
@@ -133,8 +133,8 @@ model UserTopicProgress {
   topic   Topic  @relation(fields: [topicId], references: [id], onDelete: Cascade)
 
   status    TopicStatus
-  updatedAt DateTime    @updatedAt
-  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt @db.Timestamptz(3)
+  createdAt DateTime    @default(now()) @db.Timestamptz(3)
 
   @@unique([authorId, topicId])
   @@map("user_topic_progress")
