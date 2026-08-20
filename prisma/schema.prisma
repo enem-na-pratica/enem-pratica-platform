@@ -17,51 +17,29 @@ model User {
   updatedAt    DateTime @updatedAt @db.Timestamptz(3)
 
   /// Relações onde este usuário é o ALUNO (quem recebe a mentoria)
-  mentorshipsAsStudent StudentTeacher[] @relation("StudentRelation")
+  mentorshipsAsStudent StudentTeacher[]    @relation("StudentRelation")
   /// Relações onde este usuário é o PROFESSOR (quem dá a mentoria)
-  mentorshipsAsTeacher StudentTeacher[] @relation("TeacherRelation")
-
-  essays              Essay[]
-  mockExams           MockExam[]
-  userTopicProgresses UserTopicProgress[]
-  questionSessions    QuestionSession[]
+  mentorshipsAsTeacher StudentTeacher[]    @relation("TeacherRelation")
+  essays               Essay[]
+  mockExams            MockExam[]
+  userTopicProgresses  UserTopicProgress[]
+  questionSessions     QuestionSession[]
 
   @@index([username])
   @@map("users") //(plural and snake_case)
 }
 
 model StudentTeacher {
-  id String @id @default(uuid())
-
-  studentId String
-  student   User   @relation("StudentRelation", fields: [studentId], references: [id], onDelete: Cascade)
-
-  teacherId String
-  teacher   User   @relation("TeacherRelation", fields: [teacherId], references: [id], onDelete: Cascade)
-
+  id         String   @id @default(uuid())
+  studentId  String
+  teacherId  String
   assignedAt DateTime @default(now()) @db.Timestamptz(3)
+
+  student User @relation("StudentRelation", fields: [studentId], references: [id], onDelete: Cascade)
+  teacher User @relation("TeacherRelation", fields: [teacherId], references: [id], onDelete: Cascade)
 
   @@unique([studentId, teacherId])
   @@map("student_teachers")
-}
-
-model Essay {
-  id String @id @default(uuid())
-
-  authorId String
-  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
-
-  theme String
-
-  competency1 Int
-  competency2 Int
-  competency3 Int
-  competency4 Int
-  competency5 Int
-
-  createdAt DateTime @default(now()) @db.Timestamptz(3)
-
-  @@map("essays")
 }
 
 model Subject {
@@ -69,22 +47,22 @@ model Subject {
   name      String   @unique
   slug      String   @unique
   category  String?
-  topics    Topic[]
   createdAt DateTime @default(now()) @db.Timestamptz(3)
+
+  topics Topic[]
 
   @@index([slug])
   @@map("subjects")
 }
 
 model Topic {
-  id       String @id @default(uuid())
-  title    String
-  position Int
-
+  id        String   @id @default(uuid())
   subjectId String
-  subject   Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  title     String
+  position  Int
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
 
-  createdAt           DateTime            @default(now()) @db.Timestamptz(3)
+  subject             Subject             @relation(fields: [subjectId], references: [id], onDelete: Cascade)
   userTopicProgresses UserTopicProgress[]
   questionSessions    QuestionSession[]
 
@@ -92,70 +70,78 @@ model Topic {
   @@map("topics")
 }
 
+model Essay {
+  id          String   @id @default(uuid())
+  authorId    String
+  theme       String
+  competency1 Int
+  competency2 Int
+  competency3 Int
+  competency4 Int
+  competency5 Int
+  createdAt   DateTime @default(now()) @db.Timestamptz(3)
+
+  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@map("essays")
+}
+
 model MockExam {
   id        String   @id @default(uuid())
+  authorId  String
   title     String
   createdAt DateTime @default(now()) @db.Timestamptz(3)
 
+  author       User              @relation(fields: [authorId], references: [id], onDelete: Cascade)
   performances AreaPerformance[]
-
-  authorId String
-  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
   @@map("mock_exams")
 }
 
 model AreaPerformance {
-  id String @id @default(uuid())
-
-  mockExamId String
-  mockExam   MockExam @relation(fields: [mockExamId], references: [id], onDelete: Cascade)
-
-  area KnowledgeArea
-
+  id                   String        @id @default(uuid())
+  mockExamId           String
+  area                 KnowledgeArea
   correctCount         Int // Acertos
   certaintyCount       Int // Certeza
   doubtErrors          Int // Dúvida - Erro
   distractionErrors    Int // Erro por Distração
   interpretationErrors Int // Erro por Interpretação
 
+  mockExam MockExam @relation(fields: [mockExamId], references: [id], onDelete: Cascade)
+
   @@unique([mockExamId, area])
   @@map("area_performances")
 }
 
 model UserTopicProgress {
-  id String @id @default(uuid())
-
-  authorId String
-  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
-
-  topicId String
-  topic   Topic  @relation(fields: [topicId], references: [id], onDelete: Cascade)
-
+  id        String      @id @default(uuid())
+  authorId  String
+  topicId   String
   status    TopicStatus
-  updatedAt DateTime    @updatedAt @db.Timestamptz(3)
   createdAt DateTime    @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime    @updatedAt @db.Timestamptz(3)
+
+  author User  @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  topic  Topic @relation(fields: [topicId], references: [id], onDelete: Cascade)
 
   @@unique([authorId, topicId])
   @@map("user_topic_progress")
 }
 
 model QuestionSession {
-  id String @id @default(uuid())
-
-  authorId String
-  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
-
-  topicId String
-  topic   Topic  @relation(fields: [topicId], references: [id], onDelete: Cascade)
-
+  id         String   @id @default(uuid())
+  authorId   String
+  topicId    String
   date       DateTime @default(now())
   total      Int
   correct    Int
   isReviewed Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  author User  @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  topic  Topic @relation(fields: [topicId], references: [id], onDelete: Cascade)
 
   @@map("question_sessions")
 }
