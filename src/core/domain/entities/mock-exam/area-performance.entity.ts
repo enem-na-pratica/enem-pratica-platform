@@ -207,6 +207,7 @@ export class AreaPerformance {
       .map(([, message]) => message);
 
     if (errors.length > 0) {
+      // TODO: Consider creating a more specific error type for performance validation errors.
       throw new ValidationError({
         metrics: errors,
       });
