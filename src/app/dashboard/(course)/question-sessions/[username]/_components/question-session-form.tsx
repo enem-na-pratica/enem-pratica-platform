@@ -25,6 +25,13 @@ export function QuestionSessionForm({
   subjects,
   targetUsername,
 }: EssayFormProps) {
+  const today = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'America/Sao_Paulo',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(new Date());
+
   const [isOpen, setIsOpen] = useState(false);
 
   // Cascading select state
@@ -44,7 +51,7 @@ export function QuestionSessionForm({
     mode: 'onChange',
     defaultValues: {
       topicId: '',
-      date: new Date().toISOString().slice(0, 10),
+      date: today,
       total: 10,
       correct: 0,
       isReviewed: false,
@@ -90,7 +97,7 @@ export function QuestionSessionForm({
     setTopics([]);
     reset({
       topicId: '',
-      date: new Date().toISOString().slice(0, 10),
+      date: today,
       total: 10,
       correct: 0,
       isReviewed: false,
@@ -246,6 +253,7 @@ export function QuestionSessionForm({
               </label>
               <input
                 type="date"
+                max={today}
                 className={`input transition-all ${
                   errors.date
                     ? 'animate-shake border-(--error) ring-1 ring-(--error)'

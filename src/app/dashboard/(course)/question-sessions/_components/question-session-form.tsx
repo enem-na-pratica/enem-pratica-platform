@@ -17,7 +17,12 @@ import { fetchTopicsBySubject } from '../api';
 import { ChevronIcon, SpinnerIcon } from './icons';
 
 export function QuestionSessionForm({ subjects }: { subjects: Subject[] }) {
-  const today = new Date().toISOString().split('T')[0];
+  const today = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'America/Sao_Paulo',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(new Date());
 
   const [isOpen, setIsOpen] = useState(false);
 
