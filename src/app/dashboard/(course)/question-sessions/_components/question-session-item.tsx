@@ -15,6 +15,11 @@ export function QuestionSessionItem({
   const [isReviewed, setIsReviewed] = useState(session.isReviewed);
   const [isUpdating, setIsUpdating] = useState(false);
 
+  const formatIsoToBrDate = (dataIso: string): string => {
+    const [ano, mes, dia] = dataIso.split('-');
+    return `${dia}/${mes}/${ano}`;
+  };
+
   const handleToggleReview = async () => {
     if (isUpdating) return;
     const next = !isReviewed;
@@ -38,18 +43,6 @@ export function QuestionSessionItem({
     }
   };
 
-  const date = new Date(session.date).toLocaleDateString('pt-BR', {
-    timeZone: 'UTC',
-  });
-
-  const nextReviewLabel = isReviewed
-    ? null
-    : session.nextReviewDate
-      ? new Date(session.nextReviewDate).toLocaleDateString('pt-BR', {
-          timeZone: 'UTC',
-        })
-      : null;
-
   return (
     <div
       className={`card card-interactive flex flex-col gap-4 border-l-4 py-4 transition-all duration-300 md:flex-row md:items-center md:gap-8 ${
@@ -59,7 +52,7 @@ export function QuestionSessionItem({
       {/* Left: subject + topic + date + next review */}
       <div className="min-w-0 flex-1">
         <span className="font-mono text-[10px] tracking-tighter uppercase opacity-50">
-          {date} · {session.topic.subject.name}
+          {formatIsoToBrDate(session.date)} · {session.topic.subject.name}
         </span>
         <h3
           className="truncate text-base font-bold"
@@ -68,10 +61,10 @@ export function QuestionSessionItem({
           {session.topic.title}
         </h3>
         {/* Next review date — only when session is not yet reviewed */}
-        {nextReviewLabel && (
+        {session.nextReviewDate && (
           <span className="mt-1 inline-flex items-center gap-1.5 rounded-full border border-(--error)/20 bg-(--error)/10 px-2 py-0.5 text-[10px] font-bold tracking-wider text-(--error) uppercase">
             <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-(--error)" />
-            Revisar em {nextReviewLabel}
+            Revisar em {formatIsoToBrDate(session.nextReviewDate)}
           </span>
         )}
         {/* {isReviewed && (
