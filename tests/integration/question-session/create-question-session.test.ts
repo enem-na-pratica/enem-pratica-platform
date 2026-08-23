@@ -114,7 +114,14 @@ function makeRequest(params: {
 }
 
 function todayDateString(): string {
-  return new Date().toISOString().slice(0, 10);
+  const formatter = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'America/Sao_Paulo',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  });
+
+  return formatter.format(new Date());
 }
 
 function daysBetween(a: string, b: string): number {
