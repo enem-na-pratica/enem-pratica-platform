@@ -24,7 +24,7 @@ export class PrismaQuestionSessionRepository implements QuestionSessionRepositor
   async create(questionSession: QuestionSession): Promise<QuestionSession> {
     const newQuestionSession = await this.prisma.questionSession.create({
       data: {
-        date: questionSession.date,
+        date: new Date(`${questionSession.date}T00:00:00.000Z`),
         total: questionSession.total,
         correct: questionSession.correct,
         isReviewed: questionSession.isReviewed,
