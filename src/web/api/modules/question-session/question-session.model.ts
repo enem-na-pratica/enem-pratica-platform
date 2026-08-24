@@ -4,13 +4,13 @@ export type QuestionSession = {
   id: string;
   authorId: string;
   topicId: string;
-  date: Date;
+  date: string; // YYYY-MM-DD format
   total: number;
   correct: number;
   isReviewed: boolean;
   incorrect: number;
   performance: number;
-  nextReviewDate: Date | null;
+  nextReviewDate: string | null; // YYYY-MM-DD format
   createdAt: Date;
   updatedAt: Date;
 };

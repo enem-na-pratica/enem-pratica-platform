@@ -133,12 +133,18 @@ model QuestionSession {
   id         String   @id @default(uuid())
   authorId   String
   topicId    String
-  date       DateTime @default(now())
+  // NOTE: Postgres normalizes this expression when saving (it rewrites AT TIME ZONE 
+  // and adds extra parentheses). If you need to edit this default, apply it to the database 
+  // first, then run:
+  //   npx prisma migrate diff --from-schema prisma/schema.prisma --to-config-datasource --script
+  // and copy the EXACT output into dbgenerated below. Otherwise, Prisma will 
+  // keep flagging a false drift forever.
+  date       DateTime @default(dbgenerated("((now() AT TIME ZONE 'America/Sao_Paulo'::text))::date")) @db.Date
   total      Int
   correct    Int
   isReviewed Boolean  @default(false)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  createdAt  DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt  DateTime @updatedAt @db.Timestamptz(3)
 
   author User  @relation(fields: [authorId], references: [id], onDelete: Cascade)
   topic  Topic @relation(fields: [topicId], references: [id], onDelete: Cascade)
