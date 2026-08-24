@@ -1,5 +1,13 @@
-import { EssayTheme, EssayGrades } from "@/src/core/domain/value-objects";
-import type { CompetencyIndex, Grades } from "@/src/core/domain/value-objects";
+import { EssayGrades, EssayTheme } from '@/src/core/domain/value-objects';
+import type { CompetencyIndex, Grades } from '@/src/core/domain/value-objects';
+
+const Competency = {
+  FIRST: 1,
+  SECOND: 2,
+  THIRD: 3,
+  FOURTH: 4,
+  FIFTH: 5,
+} as const;
 
 type EssayProps = {
   id?: string;
@@ -11,9 +19,9 @@ type EssayProps = {
   competency4: number;
   competency5: number;
   createdAt?: Date;
-}
+};
 
-type CreateEssayProps = Prettify<Omit<EssayProps, "id" | "createdAt">>;
+type CreateEssayProps = Prettify<Omit<EssayProps, 'id' | 'createdAt'>>;
 
 type LoadEssayProps = Prettify<Required<EssayProps>>;
 
@@ -33,7 +41,7 @@ export class Essay {
       c2: props.competency2,
       c3: props.competency3,
       c4: props.competency4,
-      c5: props.competency5
+      c5: props.competency5,
     });
     this._createdAt = props.createdAt || new Date();
   }
@@ -47,15 +55,33 @@ export class Essay {
   }
 
   // --- Getters ---
-  public get id(): string | undefined { return this._id; }
-  public get authorId(): string { return this._authorId; }
-  public get theme(): string { return this._theme.value; }
-  public get competency1(): number { return this._grades.getScore(1); }
-  public get competency2(): number { return this._grades.getScore(2); }
-  public get competency3(): number { return this._grades.getScore(3); }
-  public get competency4(): number { return this._grades.getScore(4); }
-  public get competency5(): number { return this._grades.getScore(5); }
-  public get createdAt(): Date { return this._createdAt; }
+  public get id(): string | undefined {
+    return this._id;
+  }
+  public get authorId(): string {
+    return this._authorId;
+  }
+  public get theme(): string {
+    return this._theme.value;
+  }
+  public get competency1(): number {
+    return this._grades.getScore(Competency.FIRST);
+  }
+  public get competency2(): number {
+    return this._grades.getScore(Competency.SECOND);
+  }
+  public get competency3(): number {
+    return this._grades.getScore(Competency.THIRD);
+  }
+  public get competency4(): number {
+    return this._grades.getScore(Competency.FOURTH);
+  }
+  public get competency5(): number {
+    return this._grades.getScore(Competency.FIFTH);
+  }
+  public get createdAt(): Date {
+    return this._createdAt;
+  }
 
   public getCompetency(index: CompetencyIndex): number {
     return this._grades.getScore(index);
@@ -70,9 +96,7 @@ export class Essay {
     this._theme = EssayTheme.create(newTheme);
   }
 
-  public changeGrades(
-    grades: Partial<Grades>
-  ): void {
+  public changeGrades(grades: Partial<Grades>): void {
     this._grades = this._grades.updateGrades(grades);
   }
 }

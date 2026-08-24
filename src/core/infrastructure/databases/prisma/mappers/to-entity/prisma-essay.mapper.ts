@@ -1,6 +1,6 @@
-import { Essay } from "@/src/core/domain/entities";
-import { Mapper } from "@/src/core/domain/contracts/mappers";
-import { Essay as PrismaEssay } from "@/src/generated/prisma/client";
+import type { Mapper } from '@/src/core/domain/contracts/mappers';
+import { Essay } from '@/src/core/domain/entities';
+import type { Essay as PrismaEssay } from '@/src/generated/prisma/client';
 
 export class EssayEntityMapper implements Mapper<PrismaEssay, Essay> {
   map(prismaEssay: PrismaEssay): Essay {

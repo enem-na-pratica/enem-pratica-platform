@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "question_sessions" ALTER COLUMN "date" SET DEFAULT (now() AT TIME ZONE 'America/Sao_Paulo')::date,
+ALTER COLUMN "date" SET DATA TYPE DATE,
+ALTER COLUMN "createdAt" SET DATA TYPE TIMESTAMPTZ(3),
+ALTER COLUMN "updatedAt" SET DATA TYPE TIMESTAMPTZ(3);

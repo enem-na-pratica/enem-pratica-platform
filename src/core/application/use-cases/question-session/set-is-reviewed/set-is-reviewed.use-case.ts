@@ -2,7 +2,7 @@ import type { QuestionSessionDto } from '@/src/core/application/common/dtos';
 import type { UseCase } from '@/src/core/application/common/interfaces';
 import type { Mapper } from '@/src/core/domain/contracts/mappers';
 import type { QuestionSessionRepository } from '@/src/core/domain/contracts/repositories';
-import { QuestionSession } from '@/src/core/domain/entities';
+import type { QuestionSession } from '@/src/core/domain/entities';
 import type { Requester, UserAccessService } from '@/src/core/domain/services';
 
 import type { SetIsReviewedDto } from './set-is-reviewed.dto';

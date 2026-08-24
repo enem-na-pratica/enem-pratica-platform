@@ -1,6 +1,6 @@
-import { UserDto } from '@/src/core/application/common/dtos';
-import { Mapper } from '@/src/core/domain/contracts/mappers/mapper.interface';
-import { User } from '@/src/core/domain/entities/user.entity';
+import type { UserDto } from '@/src/core/application/common/dtos';
+import type { Mapper } from '@/src/core/domain/contracts/mappers/mapper.interface';
+import type { User } from '@/src/core/domain/entities/user.entity';
 
 export class UserDtoMapper implements Mapper<User, UserDto> {
   public map(user: User): UserDto {

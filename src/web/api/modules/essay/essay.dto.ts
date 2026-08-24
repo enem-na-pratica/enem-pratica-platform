@@ -4,7 +4,7 @@ type Grades = {
   c3: number;
   c4: number;
   c5: number;
-}
+};
 
 export type EssayDto = {
   id: string;

@@ -15,7 +15,7 @@ export class PrismaTopicProgressDtoMapper implements Mapper<
         title: prismaTopic.title,
         position: prismaTopic.position,
         subjectId: prismaTopic.subjectId,
-        createdAt: prismaTopic.createdAt,
+        createdAt: prismaTopic.createdAt.toISOString(),
       },
       progress: userProgress
         ? {

@@ -2,7 +2,7 @@ type QuestionSessionProps = {
   id?: string;
   authorId: string;
   topicId: string;
-  date?: Date;
+  date?: string;
   total: number;
   correct: number;
   isReviewed?: boolean;
@@ -31,7 +31,7 @@ export class QuestionSession {
   private _id: string | undefined;
   private _authorId: string;
   private _topicId: string;
-  private _date: Date;
+  private _date: string;
   private _total: number;
   private _correct: number;
   private _isReviewed: boolean;
@@ -41,15 +41,21 @@ export class QuestionSession {
   private constructor(props: QuestionSessionProps) {
     this.validateScores(props.total, props.correct);
 
+    if (props.date) {
+      this.validateDateFormat(props.date);
+      this._date = props.date;
+    } else {
+      const todayString = QuestionSession.getTodayInTimeZone();
+      this._date = todayString;
+    }
+
     this._id = props.id;
     this._authorId = props.authorId;
     this._topicId = props.topicId;
-    const now = new Date();
-    this._date = props.date || now;
     this._total = props.total;
     this._correct = props.correct;
     this._isReviewed = props.isReviewed ?? false;
-    this._createdAt = props.createdAt || now;
+    this._createdAt = props.createdAt || new Date();
     this._updatedAt = props.updatedAt || this._createdAt;
   }
 
@@ -59,6 +65,38 @@ export class QuestionSession {
 
   public static load(props: LoadQuestionSessionProps): QuestionSession {
     return new QuestionSession(props);
+  }
+
+  private validateDateFormat(dateString: string): void {
+    const isoFormatRegex = /^\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\d|3[01])$/;
+
+    if (!isoFormatRegex.test(dateString)) {
+      throw new Error('Invalid date format. Expected YYYY-MM-DD.');
+    }
+
+    const [year, month, day] = dateString.split('-').map(Number);
+    const parsedDate = new Date(year, month - 1, day);
+
+    if (
+      parsedDate.getFullYear() !== year ||
+      parsedDate.getMonth() !== month - 1 ||
+      parsedDate.getDate() !== day
+    ) {
+      throw new Error('The provided date does not exist in the calendar.');
+    }
+  }
+
+  private static getTodayInTimeZone(
+    timeZone: string = 'America/Sao_Paulo',
+  ): string {
+    const formatter = new Intl.DateTimeFormat('en-CA', {
+      timeZone: timeZone,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    });
+
+    return formatter.format(new Date());
   }
 
   // --- Getters ---
@@ -71,7 +109,7 @@ export class QuestionSession {
   public get topicId(): string {
     return this._topicId;
   }
-  public get date(): Date {
+  public get date(): string {
     return this._date;
   }
   public get total(): number {
@@ -100,7 +138,7 @@ export class QuestionSession {
     return this._correct / this._total;
   }
 
-  public get nextReviewDate(): Date | null {
+  public get nextReviewDate(): string | null {
     if (this._total === 0 || this._isReviewed) {
       return null;
     }
@@ -110,7 +148,7 @@ export class QuestionSession {
     const nextDate = new Date(this._date);
     nextDate.setDate(nextDate.getDate() + daysToAdd);
 
-    return nextDate;
+    return nextDate.toISOString().split('T')[0];
   }
 
   private calculateDaysToAdd(performance: number): number {

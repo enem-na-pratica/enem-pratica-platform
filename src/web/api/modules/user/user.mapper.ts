@@ -1,6 +1,7 @@
-import { Role } from "@/src/web/config";
-import { InstructorWithStudentCountDto, UserDto } from "./user.dto";
-import { InstructorWithStudentCount, User } from "./user.model";
+import type { Role } from '@/src/web/config';
+
+import type { InstructorWithStudentCountDto, UserDto } from './user.dto';
+import type { InstructorWithStudentCount, User } from './user.model';
 
 export const UserMapper = {
   toModel(dto: UserDto): User {
@@ -14,10 +15,12 @@ export const UserMapper = {
     };
   },
 
-  toInstructorModel(dto: InstructorWithStudentCountDto): InstructorWithStudentCount {
+  toInstructorModel(
+    dto: InstructorWithStudentCountDto,
+  ): InstructorWithStudentCount {
     return {
       instructor: UserMapper.toModel(dto.instructor),
       studentsCount: dto.studentsCount,
     };
-  }
+  },
 };

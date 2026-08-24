@@ -4,4 +4,4 @@ export type CreateEssayDto = {
   authorUsername?: string;
   theme: string;
   grades: Grades;
-}
+};

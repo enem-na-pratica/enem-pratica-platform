@@ -1,6 +1,6 @@
-import { Mapper } from "@/src/core/domain/contracts/mappers/mapper.interface";
-import { Essay } from "@/src/core/domain/entities/essay.entity";
-import { EssayDto } from "@/src/core/application/common/dtos";
+import type { EssayDto } from '@/src/core/application/common/dtos';
+import type { Mapper } from '@/src/core/domain/contracts/mappers/mapper.interface';
+import type { Essay } from '@/src/core/domain/entities/essay.entity';
 
 export class EssayDtoMapper implements Mapper<Essay, EssayDto> {
   public map(essay: Essay): EssayDto {

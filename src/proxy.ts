@@ -1,8 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from 'next/server';
+
 import {
-  executeMiddlewareChain,
+  aclMiddleware,
   authMiddleware,
-  aclMiddleware
+  executeMiddlewareChain,
 } from '@/src/middleware';
 
 export const config = {
@@ -26,16 +27,13 @@ export const config = {
    *   can be redirected to the dashboard if necessary.
    */
   matcher: [
-    "/((?!api/auth/login|_next/static|_next/image|favicon.ico|access-denied|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)"
+    '/((?!api/auth/login|_next/static|_next/image|favicon.ico|access-denied|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 };
 
 // The order of middlewares matters.
 // Middlewares are executed sequentially in the same order they are listed here.
-const middlewares = [
-  authMiddleware,
-  aclMiddleware,
-];
+const middlewares = [authMiddleware, aclMiddleware];
 
 export async function proxy(request: NextRequest) {
   const response = await executeMiddlewareChain(request, middlewares);
@@ -49,6 +47,6 @@ export async function proxy(request: NextRequest) {
   return NextResponse.next({
     request: {
       headers: request.headers,
-    }
+    },
   });
 }

@@ -13,8 +13,8 @@ export const QuestionSessionMapper = {
   toModel(dto: QuestionSessionDto): QuestionSession {
     return {
       ...dto,
-      date: new Date(dto.date),
-      nextReviewDate: dto.nextReviewDate ? new Date(dto.nextReviewDate) : null,
+      date: dto.date,
+      nextReviewDate: dto.nextReviewDate ? dto.nextReviewDate : null,
       createdAt: new Date(dto.createdAt),
       updatedAt: new Date(dto.updatedAt),
     };

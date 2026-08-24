@@ -1,7 +1,10 @@
-import type { ListEssaysByAuthorQuery } from "@/src/core/application/use-cases/essay";
-import type { Mapper } from "@/src/core/domain/contracts/mappers";
-import type { EssayDto } from "@/src/core/application/common/dtos";
-import type { PrismaClient, Essay as PrismaEssay } from "@/src/generated/prisma/client";
+import type { EssayDto } from '@/src/core/application/common/dtos';
+import type { ListEssaysByAuthorQuery } from '@/src/core/application/use-cases/essay';
+import type { Mapper } from '@/src/core/domain/contracts/mappers';
+import type {
+  PrismaClient,
+  Essay as PrismaEssay,
+} from '@/src/generated/prisma/client';
 
 type PrismaListEssaysByAuthorQueryDeps = {
   prisma: PrismaClient;

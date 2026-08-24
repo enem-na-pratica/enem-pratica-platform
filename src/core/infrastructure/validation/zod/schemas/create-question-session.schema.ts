@@ -2,6 +2,15 @@ import { z } from 'zod';
 
 import { usernameSchema } from './common';
 
+const getTodayInSaoPaulo = (): string => {
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'America/Sao_Paulo',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(new Date());
+};
+
 const createCountSchema = (fieldName: string, min: number = 0) =>
   z
     .number({
@@ -17,9 +26,43 @@ const createCountSchema = (fieldName: string, min: number = 0) =>
 
 const createDateSchema = (optional = true) => {
   const schema = z
-    .string()
+    .preprocess((val) => {
+      if (val instanceof Date && !isNaN(val.getTime())) {
+        return val.toISOString().split('T')[0];
+      }
+
+      if (typeof val === 'string') {
+        const cleanVal = val.trim();
+
+        if (/^\d{4}-\d{2}-\d{2}T/.test(cleanVal)) {
+          return cleanVal.split('T')[0];
+        }
+
+        if (/^\d{4}[-/]\d{2}[-/]\d{2}$/.test(cleanVal)) {
+          return cleanVal.replace(/\//g, '-');
+        }
+
+        const dmyMatch = cleanVal.match(/^(\d{2})([-/])(\d{2})\2(\d{4})$/);
+        if (dmyMatch) {
+          const [, day, , month, year] = dmyMatch;
+          return `${year}-${month}-${day}`;
+        }
+      }
+
+      return val;
+    }, z.string())
     .superRefine((val, ctx) => {
-      if (isNaN(new Date(val).getTime())) {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(val)) {
+        ctx.addIssue({
+          code: 'custom',
+          message: `Invalid date format. Use YYYY-MM-DD, DD/MM/YYYY, etc.`,
+        });
+        return;
+      }
+
+      const inputDate = new Date(`${val}T00:00:00Z`);
+
+      if (isNaN(inputDate.getTime())) {
         ctx.addIssue({
           code: 'custom',
           message: `Invalid date string: "${val}"`,
@@ -27,18 +70,14 @@ const createDateSchema = (optional = true) => {
         return;
       }
 
-      const inputDate = new Date(val);
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-
-      if (inputDate > today) {
+      if (val > getTodayInSaoPaulo()) {
         ctx.addIssue({
           code: 'custom',
-          message: 'A given cannot be in the future',
+          message: 'A date cannot be in the future',
         });
       }
     })
-    .transform((val) => new Date(`${val}T00:00:00Z`));
+    .transform((val) => val);
 
   return optional ? schema.optional() : schema;
 };
@@ -66,7 +105,7 @@ export const createQuestionSessionSchema = z
       .optional(),
   })
   .superRefine((data, ctx) => {
-    if (data.correct > data.total) {
+    if (data.correct && data.total && data.correct > data.total) {
       ctx.addIssue({
         code: 'custom',
         path: ['correct'],
@@ -75,6 +114,6 @@ export const createQuestionSessionSchema = z
     }
   });
 
-export type CreateQuestionSessionSchema = z.infer<
+export type CreateQuestionSessionSchema = z.output<
   typeof createQuestionSessionSchema
 >;

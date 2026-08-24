@@ -1,6 +1,6 @@
 import type { QuestionSessionWithTopicAndSubjectDto } from '@/src/core/application/use-cases/question-session/list-user-question-session-statistics';
 import type { Mapper } from '@/src/core/domain/contracts/mappers';
-import { REVIEW_DAYS, REVIEW_THRESHOLDS } from '@/src/core/domain/entities';
+import { QuestionSession } from '@/src/core/domain/entities';
 import type { PrismaQuestionSessionWithTopicAndSubject } from '@/src/core/infrastructure/databases/prisma/types';
 
 export class PrismaQuestionSessionWithTopicAndSubjectDtoMapper implements Mapper<
@@ -10,30 +10,33 @@ export class PrismaQuestionSessionWithTopicAndSubjectDtoMapper implements Mapper
   public map(
     prismaQuestionSession: PrismaQuestionSessionWithTopicAndSubject,
   ): QuestionSessionWithTopicAndSubjectDto {
-    return {
+    const questionSession = QuestionSession.load({
       id: prismaQuestionSession.id,
       authorId: prismaQuestionSession.authorId,
       topicId: prismaQuestionSession.topicId,
-      date: prismaQuestionSession.date.toISOString(),
+      date: prismaQuestionSession.date.toISOString().split('T')[0],
       total: prismaQuestionSession.total,
       correct: prismaQuestionSession.correct,
       isReviewed: prismaQuestionSession.isReviewed,
-      incorrect: this.incorrectCount({
-        correct: prismaQuestionSession.correct,
-        total: prismaQuestionSession.total,
-      }),
-      performance: this.accuracy({
-        correct: prismaQuestionSession.correct,
-        total: prismaQuestionSession.total,
-      }),
-      nextReviewDate: this.nextReviewDate({
-        correct: prismaQuestionSession.correct,
-        total: prismaQuestionSession.total,
-        date: prismaQuestionSession.date,
-        isReviewed: prismaQuestionSession.isReviewed,
-      }),
-      createdAt: prismaQuestionSession.createdAt.toISOString(),
-      updatedAt: prismaQuestionSession.updatedAt.toISOString(),
+      createdAt: prismaQuestionSession.createdAt,
+      updatedAt: prismaQuestionSession.updatedAt,
+    });
+
+    return {
+      id: questionSession.id!,
+      authorId: questionSession.authorId,
+      topicId: questionSession.topicId,
+      date: questionSession.date,
+      total: questionSession.total,
+      correct: questionSession.correct,
+      isReviewed: questionSession.isReviewed,
+
+      incorrect: questionSession.incorrect,
+      performance: questionSession.performance,
+      nextReviewDate: questionSession.nextReviewDate,
+
+      createdAt: questionSession.createdAt.toISOString(),
+      updatedAt: questionSession.updatedAt.toISOString(),
       topic: this.mapTopic(prismaQuestionSession.topic),
     };
   }
@@ -44,7 +47,7 @@ export class PrismaQuestionSessionWithTopicAndSubjectDtoMapper implements Mapper
       title: topic.title,
       position: topic.position,
       subjectId: topic.subjectId,
-      createdAt: topic.createdAt,
+      createdAt: topic.createdAt.toISOString(),
       subject: this.mapSubject(topic.subject),
     };
   }
@@ -59,63 +62,5 @@ export class PrismaQuestionSessionWithTopicAndSubjectDtoMapper implements Mapper
       category: subject.category,
       createdAt: subject.createdAt.toISOString(),
     };
-  }
-
-  private incorrectCount({
-    correct,
-    total,
-  }: {
-    total: number;
-    correct: number;
-  }): number {
-    return total - correct;
-  }
-
-  private accuracy({
-    correct,
-    total,
-  }: {
-    total: number;
-    correct: number;
-  }): number {
-    if (total === 0) return 0;
-    return correct / total;
-  }
-
-  private nextReviewDate({
-    correct,
-    total,
-    isReviewed,
-    date,
-  }: {
-    total: number;
-    correct: number;
-    isReviewed: boolean;
-    date: Date;
-  }): string | null {
-    if (total === 0 || isReviewed) {
-      return null;
-    }
-
-    const daysToAdd = this.calculateDaysToAdd(
-      this.accuracy({ correct, total }),
-    );
-
-    const nextDate = new Date(date);
-    nextDate.setDate(nextDate.getDate() + daysToAdd);
-
-    return nextDate.toISOString();
-  }
-
-  private calculateDaysToAdd(performance: number): number {
-    if (performance >= REVIEW_THRESHOLDS.EXCELLENT) {
-      return REVIEW_DAYS.EXCELLENT;
-    }
-
-    if (performance >= REVIEW_THRESHOLDS.GOOD) {
-      return REVIEW_DAYS.GOOD;
-    }
-
-    return REVIEW_DAYS.DEFAULT;
   }
 }

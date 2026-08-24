@@ -11,7 +11,7 @@ export class QuestionSessionEntityMapper implements Mapper<
       id: input.id,
       authorId: input.authorId,
       topicId: input.topicId,
-      date: input.date,
+      date: input.date.toISOString().split('T')[0],
       total: input.total,
       correct: input.correct,
       isReviewed: input.isReviewed,

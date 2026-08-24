@@ -1,6 +1,6 @@
-import type { Mapper } from "@/src/core/domain/contracts/mappers";
-import type { EssayDto } from "@/src/core/application/common/dtos";
-import type { Essay as PrismaEssay } from "@/src/generated/prisma/client";
+import type { EssayDto } from '@/src/core/application/common/dtos';
+import type { Mapper } from '@/src/core/domain/contracts/mappers';
+import type { Essay as PrismaEssay } from '@/src/generated/prisma/client';
 
 export class PrismaEssayDtoMapper implements Mapper<PrismaEssay, EssayDto> {
   public map(essay: PrismaEssay): EssayDto {
@@ -14,7 +14,8 @@ export class PrismaEssayDtoMapper implements Mapper<PrismaEssay, EssayDto> {
         c3: essay.competency3,
         c4: essay.competency4,
         c5: essay.competency5,
-        total: essay.competency1 +
+        total:
+          essay.competency1 +
           essay.competency2 +
           essay.competency3 +
           essay.competency4 +
