@@ -1,9 +1,11 @@
 import Link from 'next/link';
 
+import { ArrowLeft } from 'lucide-react';
+
 import { Header } from '@/src/web/components';
 
-import { BackArrow, ReviewPracticeClient } from './_components';
-import { fetchSubjects } from './api';
+import { ReviewPracticeClient } from '../_components/review-practice-client';
+import { fetchSubjects } from '../api';
 
 type PageProps = {
   params: Promise<{ username: string }>;
@@ -23,7 +25,7 @@ export default async function ReviewPracticePage({ params }: PageProps) {
             href="/dashboard"
             aria-label="Voltar para Dashboard"
           >
-            <BackArrow />
+            <ArrowLeft className="h-6 w-6 transition-colors hover:text-(--accent)" />
           </Link>
           <h1 className="text-xl font-bold tracking-tight">
             Revisão e Prática de{' '}

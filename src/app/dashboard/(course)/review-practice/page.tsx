@@ -1,6 +1,7 @@
 import Link from 'next/link';
 
-import { BackArrow } from '@/src/app/dashboard/(course)/study-tracker/_components/icons';
+import { ArrowLeft } from 'lucide-react';
+
 import { Header } from '@/src/web/components';
 
 import { ReviewPracticeClient } from './_components/review-practice-client';
@@ -17,7 +18,7 @@ export default async function ReviewPracticePage() {
             href="/dashboard"
             aria-label="Voltar para Dashboard"
           >
-            <BackArrow />
+            <ArrowLeft className="h-6 w-6 transition-colors hover:text-(--accent)" />
           </Link>
           <h1 className="text-xl font-bold tracking-tight">
             Revisão e <span className="text-(--accent)">Prática</span>
