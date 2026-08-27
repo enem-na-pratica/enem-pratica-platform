@@ -11,23 +11,36 @@ export async function fetchSubjects(): Promise<Subject[]> {
   return listSubjects;
 }
 
-export async function fetchTopicsBySubject(
-  subjectSlug: string,
-): Promise<TopicProgress[]> {
+type FetchTopicsParams = {
+  subjectSlug: string;
+  targetUsername?: string;
+};
+
+export async function fetchTopicsBySubject({
+  subjectSlug,
+  targetUsername = 'me',
+}: FetchTopicsParams): Promise<TopicProgress[]> {
   const listSubjectProgress = await makeSubjectService().listSubjectProgress({
     subjectSlug,
-    username: 'me',
+    username: targetUsername,
   });
   return listSubjectProgress;
 }
 
-export async function updateTopicStatus(
-  topicId: string,
-  status: TopicStatus,
-): Promise<void> {
+type UpdateTopicStatusParams = {
+  topicId: string;
+  status: TopicStatus;
+  targetUsername?: string;
+};
+
+export async function updateTopicStatus({
+  topicId,
+  status,
+  targetUsername = 'me',
+}: UpdateTopicStatusParams): Promise<void> {
   await makeUserTopicProgressService().SetTopicStatus({
     status,
     topicId,
-    username: 'me',
+    username: targetUsername,
   });
 }
