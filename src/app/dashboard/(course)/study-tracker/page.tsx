@@ -1,8 +1,9 @@
 import Link from 'next/link';
 
+import { ArrowLeft } from 'lucide-react';
+
 import { Header } from '@/src/web/components';
 
-import { BackArrow } from './_components/icons';
 import { StudyTrackerClient } from './_components/study-tracker-client';
 import { fetchSubjects } from './api';
 
@@ -17,7 +18,7 @@ export default async function StudyTrackerPage() {
             href="/dashboard"
             aria-label="Voltar para Dashboard"
           >
-            <BackArrow />
+            <ArrowLeft className="h-6 w-6 transition-colors hover:text-(--accent)" />
           </Link>
           <h1 className="text-xl font-bold tracking-tight">
             Acompanhamento de <span className="text-(--accent)">Estudos</span>
