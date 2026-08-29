@@ -2,16 +2,22 @@
 
 import { revalidatePath } from 'next/cache';
 
-import { SetIsReviewedDto } from '@/src/core/application/use-cases/question-session/set-is-reviewed/set-is-reviewed.dto';
-import { makeQuestionSessionService } from '@/src/web/api';
-import { CreateQuestionSessionFormValues } from '@/src/web/validation';
+import {
+  type CreateQuestionSessionDto,
+  type SetIsReviewedDto,
+  makeQuestionSessionService,
+} from '@/src/web/api';
 
-export async function createQuestionSessionAction(
-  data: CreateQuestionSessionFormValues,
-) {
+export async function createQuestionSessionAction({
+  data,
+  targetUsername = 'me',
+}: {
+  data: CreateQuestionSessionDto;
+  targetUsername?: string;
+}) {
   await makeQuestionSessionService().create({
     dataQuestionSession: data,
-    username: 'me',
+    username: targetUsername,
   });
   revalidatePath('/dashboard/question-sessions');
 }

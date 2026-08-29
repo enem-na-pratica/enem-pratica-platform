@@ -1,11 +1,15 @@
-import { TopicProgress, makeSubjectService } from '@/src/web/api';
+import { type TopicProgress, makeSubjectService } from '@/src/web/api';
 
-export async function fetchTopicsBySubject(
-  subjectSlug: string,
-): Promise<TopicProgress[]> {
+export async function fetchTopicsBySubject({
+  subjectSlug,
+  targetUsername = 'me',
+}: {
+  subjectSlug: string;
+  targetUsername?: string;
+}): Promise<TopicProgress[]> {
   const listSubjectProgress = await makeSubjectService().listSubjectProgress({
     subjectSlug,
-    username: 'me',
+    username: targetUsername,
   });
   return listSubjectProgress;
 }
