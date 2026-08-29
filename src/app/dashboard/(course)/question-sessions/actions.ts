@@ -14,7 +14,7 @@ export async function createQuestionSessionAction({
 }: {
   data: CreateQuestionSessionDto;
   targetUsername?: string;
-}) {
+}): Promise<void> {
   await makeQuestionSessionService().create({
     dataQuestionSession: data,
     username: targetUsername,
@@ -22,7 +22,9 @@ export async function createQuestionSessionAction({
   revalidatePath('/dashboard/question-sessions');
 }
 
-export async function setIsReviewedAction(data: SetIsReviewedDto) {
+export async function setIsReviewedAction(
+  data: SetIsReviewedDto,
+): Promise<void> {
   await makeQuestionSessionService().setIsReviewed(data);
   revalidatePath('/dashboard/question-sessions');
 }
