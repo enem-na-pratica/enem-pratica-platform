@@ -1,6 +1,5 @@
 import Link from 'next/link';
 
-import { makeQuestionSessionService, makeSubjectService } from '@/src/web/api';
 import { Header } from '@/src/web/components';
 
 import {
@@ -9,11 +8,12 @@ import {
   StatsSection,
 } from './_components';
 import { BackArrow } from './_components/icons';
+import { fetchListSubjects, fetchUserQuestionSessionStats } from './api';
 
 export default async function QuestionSessionPage() {
   const [{ statistics, questionSessions }, subjects] = await Promise.all([
-    makeQuestionSessionService().listQuestionSessionsStatisticsForUser('me'),
-    makeSubjectService().listSubjects(),
+    fetchUserQuestionSessionStats(),
+    fetchListSubjects(),
   ]);
 
   return (

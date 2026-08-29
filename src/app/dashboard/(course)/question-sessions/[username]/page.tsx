@@ -1,15 +1,12 @@
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 
-import { makeQuestionSessionService, makeSubjectService } from '@/src/web/api';
 import { ApiError } from '@/src/web/api/http/api-error';
 import { Header } from '@/src/web/components';
 
-import {
-  QuestionSessionForm,
-  QuestionSessionListSection,
-  StatsSection,
-} from './_components';
+import { QuestionSessionForm } from '../_components';
+import { fetchListSubjects, fetchUserQuestionSessionStats } from '../api';
+import { QuestionSessionListSection, StatsSection } from './_components';
 import { BackArrow } from './_components/icons';
 
 type PageProps = {
@@ -21,10 +18,8 @@ export default async function QuestionSessionPage({ params }: PageProps) {
   let statistics, questionSessions, subjects;
   try {
     [{ statistics, questionSessions }, subjects] = await Promise.all([
-      makeQuestionSessionService().listQuestionSessionsStatisticsForUser(
-        resolvedParams.username,
-      ),
-      makeSubjectService().listSubjects(),
+      fetchUserQuestionSessionStats(resolvedParams.username),
+      fetchListSubjects(),
     ]);
   } catch (error) {
     if (error instanceof ApiError && error.status === 404) {
