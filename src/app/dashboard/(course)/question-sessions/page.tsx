@@ -1,19 +1,20 @@
 import Link from 'next/link';
 
-import { makeQuestionSessionService, makeSubjectService } from '@/src/web/api';
 import { Header } from '@/src/web/components';
 
+import { QuestionSessionListSection, StatsSection } from './_components';
 import {
-  QuestionSessionForm,
-  QuestionSessionListSection,
-  StatsSection,
-} from './_components';
+  QuestionSessionFormPanel,
+  QuestionSessionToggleProvider,
+  SessionToggleButton,
+} from './_components/_form';
 import { BackArrow } from './_components/icons';
+import { fetchListSubjects, fetchUserQuestionSessionStats } from './api';
 
 export default async function QuestionSessionPage() {
   const [{ statistics, questionSessions }, subjects] = await Promise.all([
-    makeQuestionSessionService().listQuestionSessionsStatisticsForUser('me'),
-    makeSubjectService().listSubjects(),
+    fetchUserQuestionSessionStats(),
+    fetchListSubjects(),
   ]);
 
   return (
@@ -33,21 +34,21 @@ export default async function QuestionSessionPage() {
       </Header>
 
       <main className="mx-auto w-full max-w-6xl space-y-8 px-4 py-8">
-        {/* --- Statistics section --- */}
         {questionSessions.length > 0 && (
           <StatsSection statistics={statistics} />
         )}
 
         <hr className="border-(--foreground)/10" />
 
-        <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-bold">Histórico</h2>
-        </div>
+        <QuestionSessionToggleProvider>
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-bold">Histórico</h2>
+            <SessionToggleButton />
+          </div>
 
-        {/* --- Form for registering new sessions --- */}
-        <QuestionSessionForm subjects={subjects} />
+          <QuestionSessionFormPanel subjects={subjects} />
+        </QuestionSessionToggleProvider>
 
-        {/* --- Session listing section --- */}
         <QuestionSessionListSection questionSessions={questionSessions} />
       </main>
     </div>

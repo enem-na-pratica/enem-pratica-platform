@@ -14,7 +14,7 @@ type QuestionSessionServiceDeps = {
   httpClient: HttpClient;
 };
 
-type CreateQuestionSessionDto = {
+export type CreateQuestionSessionDto = {
   topicId: string;
   date?: string;
   total: number;
@@ -22,7 +22,7 @@ type CreateQuestionSessionDto = {
   isReviewed?: boolean;
 };
 
-type SetIsReviewedDto = {
+export type SetIsReviewedDto = {
   questionSessionId: string;
   isReviewed: boolean;
 };

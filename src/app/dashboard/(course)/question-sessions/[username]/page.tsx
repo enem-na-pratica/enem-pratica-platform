@@ -1,15 +1,16 @@
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 
-import { makeQuestionSessionService, makeSubjectService } from '@/src/web/api';
 import { ApiError } from '@/src/web/api/http/api-error';
 import { Header } from '@/src/web/components';
 
 import {
-  QuestionSessionForm,
-  QuestionSessionListSection,
-  StatsSection,
-} from './_components';
+  QuestionSessionFormPanel,
+  QuestionSessionToggleProvider,
+  SessionToggleButton,
+} from '../_components/_form';
+import { fetchListSubjects, fetchUserQuestionSessionStats } from '../api';
+import { QuestionSessionListSection, StatsSection } from './_components';
 import { BackArrow } from './_components/icons';
 
 type PageProps = {
@@ -21,10 +22,8 @@ export default async function QuestionSessionPage({ params }: PageProps) {
   let statistics, questionSessions, subjects;
   try {
     [{ statistics, questionSessions }, subjects] = await Promise.all([
-      makeQuestionSessionService().listQuestionSessionsStatisticsForUser(
-        resolvedParams.username,
-      ),
-      makeSubjectService().listSubjects(),
+      fetchUserQuestionSessionStats(resolvedParams.username),
+      fetchListSubjects(),
     ]);
   } catch (error) {
     if (error instanceof ApiError && error.status === 404) {
@@ -61,15 +60,18 @@ export default async function QuestionSessionPage({ params }: PageProps) {
 
         <hr className="border-(--foreground)/10" />
 
-        <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-bold">Histórico</h2>
-        </div>
+        <QuestionSessionToggleProvider>
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-bold">Histórico</h2>
+            <SessionToggleButton />
+          </div>
 
-        {/* --- Form for registering new sessions --- */}
-        <QuestionSessionForm
-          subjects={subjects}
-          targetUsername={resolvedParams.username}
-        />
+          {/* --- Form for registering new sessions --- */}
+          <QuestionSessionFormPanel
+            subjects={subjects}
+            targetUsername={resolvedParams.username}
+          />
+        </QuestionSessionToggleProvider>
 
         {/* --- Session listing section --- */}
         <QuestionSessionListSection questionSessions={questionSessions} />
