@@ -32,11 +32,8 @@ export function StatsWeeklyProgressCard({
       </div>
       <div className="h-1.5 w-full overflow-hidden rounded-full bg-(--foreground)/10">
         <div
-          className="h-full rounded-full transition-all duration-1000 ease-out"
-          style={{
-            width: `${accuracyPercentage}%`,
-            backgroundColor: getAccuracyColor(accuracyPercentage),
-          }}
+          className={`h-full rounded-full transition-all duration-1000 ease-out ${getAccuracyColor(accuracyPercentage)}`}
+          style={{ width: `${accuracyPercentage}%` }}
         />
       </div>
     </div>
