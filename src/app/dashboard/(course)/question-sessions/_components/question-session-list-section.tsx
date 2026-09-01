@@ -1,5 +1,6 @@
+import type { QuestionSessionWithTopicAndSubject } from '@/src/web/api';
+
 import { QuestionSessionItem } from './question-session-item';
-import { QuestionSessionWithTopicAndSubject } from '@/src/web/api';
 
 export function QuestionSessionListSection({
   questionSessions,
