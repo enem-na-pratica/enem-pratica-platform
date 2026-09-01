@@ -1,4 +1,4 @@
-import { getAccuracyColor } from '../_utils';
+import { getAccuracyColor } from '../../_utils';
 
 const PERCENTAGE_MULTIPLIER = 100;
 
