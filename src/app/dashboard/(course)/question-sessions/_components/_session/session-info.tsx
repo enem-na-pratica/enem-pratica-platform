@@ -1,6 +1,6 @@
 import type { QuestionSessionWithTopicAndSubject } from '@/src/web/api';
 
-import { formatIsoToBrDate } from '../_utils';
+import { formatIsoToBrDate } from '../../_utils';
 
 type SessionInfoProps = {
   session: QuestionSessionWithTopicAndSubject;

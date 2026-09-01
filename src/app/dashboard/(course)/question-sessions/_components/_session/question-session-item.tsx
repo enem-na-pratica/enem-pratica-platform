@@ -2,7 +2,7 @@
 
 import type { QuestionSessionWithTopicAndSubject } from '@/src/web/api';
 
-import { useSessionReviewToggle } from '../_hooks/use-session-review-toggle';
+import { useSessionReviewToggle } from '../../_hooks/use-session-review-toggle';
 import { ReviewToggleButton } from './review-toggle-button';
 import { SessionCounts } from './session-counts';
 import { SessionInfo } from './session-info';
