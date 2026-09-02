@@ -1,19 +1,26 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 :root {
-  --background: #FFFFFF;
-  --foreground: #050A32;
-  --accent: #FFC300;
-  --card-background: #BFC3D4;
-  --success: #4CAF50;
-  --error: #FF5252;
+  --background: #ffffff;
+  --foreground: #050a32;
+  --accent: #ffc300;
+  --card-background: #bfc3d4;
+  --success: #4caf50;
+  --error: #ff5252;
+
+  /* Performance Colors */
+  --perf-insufficient: hsl(0, 84%, 60%);
+  --perf-regular: hsl(35, 90%, 55%);
+  --perf-decent: hsl(50, 90%, 50%);
+  --perf-very-good: hsl(100, 70%, 45%);
+  --perf-excellent: hsl(140, 70%, 40%);
 }
 
 .dark {
-  --background: #050A32;
-  --foreground: #FFFFFF;
-  --accent: #2AEEB9;
-  --card-background: #0B1347;
+  --background: #050a32;
+  --foreground: #ffffff;
+  --accent: #2aeeb9;
+  --card-background: #0b1347;
 }
 
 body {
@@ -25,16 +32,16 @@ body {
 }
 
 .container-center {
-  @apply flex flex-col items-center justify-center min-h-screen px-4;
+  @apply flex min-h-screen flex-col items-center justify-center px-4;
 }
 
 .card {
-  background-color: var(--card-background); 
-  @apply p-6 rounded-xl shadow-md w-full;
+  background-color: var(--card-background);
+  @apply w-full rounded-xl p-6 shadow-md;
 }
 
 .card-sm {
-  @apply max-w-sm mx-auto;
+  @apply mx-auto max-w-sm;
 }
 
 .card-interactive {
@@ -42,21 +49,28 @@ body {
 }
 
 .input {
-  border-color: var(--foreground); 
+  border-color: var(--foreground);
   background-color: var(--background);
-  @apply w-full p-2 rounded-md;
+  @apply w-full rounded-md p-2;
 }
 
 .button-primary {
   background-color: var(--accent);
-  color: var(--foreground); 
-  @apply font-semibold py-2 px-4 rounded-md transition hover:opacity-70 cursor-pointer;
+  color: var(--foreground);
+  @apply cursor-pointer rounded-md px-4 py-2 font-semibold transition hover:opacity-70;
 }
 
 @keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-4px); }
-  75% { transform: translateX(4px); }
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-4px);
+  }
+  75% {
+    transform: translateX(4px);
+  }
 }
 
 .animate-shake {

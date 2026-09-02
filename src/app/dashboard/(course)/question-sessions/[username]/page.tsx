@@ -1,17 +1,21 @@
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 
+import { ArrowLeft } from 'lucide-react';
+
 import { ApiError } from '@/src/web/api/http/api-error';
 import { Header } from '@/src/web/components';
 
+import { QuestionSessionListSection, StatsSection } from '../_components';
 import {
   QuestionSessionFormPanel,
   QuestionSessionToggleProvider,
   SessionToggleButton,
 } from '../_components/_form';
 import { fetchListSubjects, fetchUserQuestionSessionStats } from '../api';
-import { QuestionSessionListSection, StatsSection } from './_components';
-import { BackArrow } from './_components/icons';
+
+const FORBIDDEN = 403;
+const NOT_FOUND = 404;
 
 type PageProps = {
   params: Promise<{ username: string }>;
@@ -19,41 +23,15 @@ type PageProps = {
 
 export default async function QuestionSessionPage({ params }: PageProps) {
   const resolvedParams = await params;
-  let statistics, questionSessions, subjects;
-  try {
-    [{ statistics, questionSessions }, subjects] = await Promise.all([
-      fetchUserQuestionSessionStats(resolvedParams.username),
-      fetchListSubjects(),
-    ]);
-  } catch (error) {
-    if (error instanceof ApiError && error.status === 404) {
-      notFound();
-    }
-    if (error instanceof ApiError && error.status === 403) {
-      redirect('/access-denied');
-    }
-    throw error;
-  }
+  const { statistics, questionSessions, subjects } = await fetchPageData(
+    resolvedParams.username,
+  );
 
   return (
     <div className="min-h-screen bg-(--background) pb-20 text-(--foreground) transition-colors duration-500">
-      <Header>
-        <div className="flex items-center gap-4">
-          <Link
-            href="/dashboard"
-            aria-label="Voltar para Dashboard"
-          >
-            <BackArrow />
-          </Link>
-          <h1 className="text-xl font-bold tracking-tight">
-            Questões e Desempenho de{' '}
-            <span className="text-(--accent)">@{resolvedParams.username}</span>
-          </h1>
-        </div>
-      </Header>
+      <QuestionSessionHeader username={resolvedParams.username} />
 
       <main className="mx-auto w-full max-w-6xl space-y-8 px-4 py-8">
-        {/* --- Statistics section --- */}
         {questionSessions.length > 0 && (
           <StatsSection statistics={statistics} />
         )}
@@ -66,16 +44,53 @@ export default async function QuestionSessionPage({ params }: PageProps) {
             <SessionToggleButton />
           </div>
 
-          {/* --- Form for registering new sessions --- */}
           <QuestionSessionFormPanel
             subjects={subjects}
             targetUsername={resolvedParams.username}
           />
         </QuestionSessionToggleProvider>
 
-        {/* --- Session listing section --- */}
         <QuestionSessionListSection questionSessions={questionSessions} />
       </main>
     </div>
+  );
+}
+
+async function fetchPageData(username: string) {
+  try {
+    const [statsResult, subjects] = await Promise.all([
+      fetchUserQuestionSessionStats(username),
+      fetchListSubjects(),
+    ]);
+    return {
+      statistics: statsResult.statistics,
+      questionSessions: statsResult.questionSessions,
+      subjects,
+    };
+  } catch (error) {
+    if (error instanceof ApiError) {
+      if (error.status === NOT_FOUND) notFound();
+      if (error.status === FORBIDDEN) redirect('/access-denied');
+    }
+    throw error;
+  }
+}
+
+function QuestionSessionHeader({ username }: { username: string }) {
+  return (
+    <Header>
+      <div className="flex items-center gap-4">
+        <Link
+          href="/dashboard?tab=users"
+          aria-label="Voltar para Dashboard"
+        >
+          <ArrowLeft className="h-6 w-6 transition-colors hover:text-(--accent)" />
+        </Link>
+        <h1 className="text-xl font-bold tracking-tight">
+          Questões e Desempenho de{' '}
+          <span className="text-(--accent)">@{username}</span>
+        </h1>
+      </div>
+    </Header>
   );
 }

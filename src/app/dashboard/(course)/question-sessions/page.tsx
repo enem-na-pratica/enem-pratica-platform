@@ -1,5 +1,7 @@
 import Link from 'next/link';
 
+import { ArrowLeft } from 'lucide-react';
+
 import { Header } from '@/src/web/components';
 
 import { QuestionSessionListSection, StatsSection } from './_components';
@@ -8,7 +10,6 @@ import {
   QuestionSessionToggleProvider,
   SessionToggleButton,
 } from './_components/_form';
-import { BackArrow } from './_components/icons';
 import { fetchListSubjects, fetchUserQuestionSessionStats } from './api';
 
 export default async function QuestionSessionPage() {
@@ -25,7 +26,7 @@ export default async function QuestionSessionPage() {
             href="/dashboard"
             aria-label="Voltar para Dashboard"
           >
-            <BackArrow />
+            <ArrowLeft className="h-6 w-6 transition-colors hover:text-(--accent)" />
           </Link>
           <h1 className="text-xl font-bold tracking-tight">
             Questões e <span className="text-(--accent)">Desempenho</span>
