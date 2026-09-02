@@ -1,8 +1,4 @@
-import Link from 'next/link';
-
-import { ArrowLeft } from 'lucide-react';
-
-import { Header } from '@/src/web/components';
+import { BackButton, Header } from '@/src/web/components';
 
 import { QuestionSessionListSection, StatsSection } from './_components';
 import {
@@ -22,12 +18,7 @@ export default async function QuestionSessionPage() {
     <div className="min-h-screen bg-(--background) pb-20 text-(--foreground) transition-colors duration-500">
       <Header>
         <div className="flex items-center gap-4">
-          <Link
-            href="/dashboard"
-            aria-label="Voltar para Dashboard"
-          >
-            <ArrowLeft className="h-6 w-6 transition-colors hover:text-(--accent)" />
-          </Link>
+          <BackButton />
           <h1 className="text-xl font-bold tracking-tight">
             Questões e <span className="text-(--accent)">Desempenho</span>
           </h1>
@@ -46,7 +37,6 @@ export default async function QuestionSessionPage() {
             <h2 className="text-2xl font-bold">Histórico</h2>
             <SessionToggleButton />
           </div>
-
           <QuestionSessionFormPanel subjects={subjects} />
         </QuestionSessionToggleProvider>
 

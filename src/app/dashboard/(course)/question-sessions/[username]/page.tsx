@@ -1,10 +1,7 @@
-import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 
-import { ArrowLeft } from 'lucide-react';
-
 import { ApiError } from '@/src/web/api/http/api-error';
-import { Header } from '@/src/web/components';
+import { BackButton, Header } from '@/src/web/components';
 
 import { QuestionSessionListSection, StatsSection } from '../_components';
 import {
@@ -80,12 +77,7 @@ function QuestionSessionHeader({ username }: { username: string }) {
   return (
     <Header>
       <div className="flex items-center gap-4">
-        <Link
-          href="/dashboard?tab=users"
-          aria-label="Voltar para Dashboard"
-        >
-          <ArrowLeft className="h-6 w-6 transition-colors hover:text-(--accent)" />
-        </Link>
+        <BackButton />
         <h1 className="text-xl font-bold tracking-tight">
           Questões e Desempenho de{' '}
           <span className="text-(--accent)">@{username}</span>

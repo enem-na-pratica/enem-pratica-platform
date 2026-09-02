@@ -3,7 +3,7 @@ import { notFound, redirect } from 'next/navigation';
 
 import { makeMockExamService } from '@/src/web/api';
 import { ApiError } from '@/src/web/api/http/api-error';
-import { Header } from '@/src/web/components';
+import { BackButton, Header } from '@/src/web/components';
 
 import {
   MockExamForm,
@@ -47,12 +47,7 @@ export default async function MockExamsPage({
     <div className="min-h-screen bg-(--background) pb-20 text-(--foreground) transition-colors duration-500">
       <Header>
         <div className="flex items-center gap-4">
-          <Link
-            href="/dashboard"
-            aria-label="Voltar para Dashboard"
-          >
-            <BackArrow />
-          </Link>
+          <BackButton />
           <h1 className="text-xl font-bold tracking-tight">
             Simulados de{' '}
             <span className="text-(--accent)">@{resolvedParams.username}</span>

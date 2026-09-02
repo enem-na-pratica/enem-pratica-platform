@@ -3,7 +3,7 @@ import { notFound, redirect } from 'next/navigation';
 
 import { makeEssayService } from '@/src/web/api';
 import { ApiError } from '@/src/web/api/http/api-error';
-import { Header } from '@/src/web/components';
+import { BackButton, Header } from '@/src/web/components';
 
 import { EssayForm, EssayListSection, StatsSection } from './_components';
 
@@ -40,14 +40,10 @@ export default async function EssayPage({ params, searchParams }: PageProps) {
     <div className="min-h-screen bg-(--background) pb-20 text-(--foreground) transition-colors duration-500">
       <Header>
         <div className="flex items-center gap-4">
-          <Link
-            href="/dashboard"
-            aria-label="Voltar para Dashboard"
-          >
-            <BackArrow />
-          </Link>
+          <BackButton />
           <h1 className="text-xl font-bold tracking-tight">
-            Redações de <span className="text-(--accent)">@{resolvedParams.username}</span>
+            Redações de{' '}
+            <span className="text-(--accent)">@{resolvedParams.username}</span>
           </h1>
         </div>
       </Header>
