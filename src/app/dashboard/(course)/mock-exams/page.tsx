@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
 import { makeMockExamService } from '@/src/web/api';
-import { Header } from '@/src/web/components';
+import { BackButton, Header } from '@/src/web/components';
 
 import {
   MockExamForm,
@@ -24,12 +24,7 @@ export default async function MockExamsPage({
     <div className="min-h-screen bg-(--background) pb-20 text-(--foreground) transition-colors duration-500">
       <Header>
         <div className="flex items-center gap-4">
-          <Link
-            href="/dashboard"
-            aria-label="Voltar para Dashboard"
-          >
-            <BackArrow />
-          </Link>
+          <BackButton />
           <h1 className="text-xl font-bold tracking-tight">
             Meus <span className="text-(--accent)">Simulados</span>
           </h1>

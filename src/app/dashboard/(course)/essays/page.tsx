@@ -6,7 +6,7 @@ import {
   StatsSection,
 } from '@/src/app/dashboard/(course)/essays/_components';
 import { makeEssayService } from '@/src/web/api';
-import { Header } from '@/src/web/components';
+import { BackButton, Header } from '@/src/web/components';
 
 export default async function EssayPage({
   searchParams,
@@ -23,12 +23,7 @@ export default async function EssayPage({
     <div className="min-h-screen bg-(--background) pb-20 text-(--foreground) transition-colors duration-500">
       <Header>
         <div className="flex items-center gap-4">
-          <Link
-            href="/dashboard"
-            aria-label="Voltar para Dashboard"
-          >
-            <BackArrow />
-          </Link>
+          <BackButton />
           <h1 className="text-xl font-bold tracking-tight">
             Minhas <span className="text-(--accent)">Redações</span>
           </h1>

@@ -1,8 +1,4 @@
-import Link from 'next/link';
-
-import { ArrowLeft } from 'lucide-react';
-
-import { Header } from '@/src/web/components';
+import { BackButton, Header } from '@/src/web/components';
 
 import { StudyTrackerClient } from '../_components/study-tracker-client';
 import { fetchSubjects } from '../api';
@@ -21,12 +17,7 @@ export default async function StudyTrackerPage({ params }: PageProps) {
     <>
       <Header>
         <div className="flex items-center gap-4">
-          <Link
-            href="/dashboard"
-            aria-label="Voltar para Dashboard"
-          >
-            <ArrowLeft className="h-6 w-6 transition-colors hover:text-(--accent)" />
-          </Link>
+          <BackButton />
           <h1 className="text-xl font-bold tracking-tight">
             Acompanhamento de Estudos de{' '}
             <span className="text-(--accent)">@{resolvedParams.username}</span>
