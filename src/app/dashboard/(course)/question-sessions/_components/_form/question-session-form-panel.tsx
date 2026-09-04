@@ -40,8 +40,8 @@ export function QuestionSessionFormPanel({
       close();
       topicsHook.resetTopics();
       form.resetForm();
-    } catch (error) {
-      console.error(error);
+    } catch {
+      // console.error(error);
       notify({ message: 'Erro ao registrar sessão!', type: 'error' });
     }
   };
