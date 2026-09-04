@@ -1,36 +1,26 @@
-import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 
-import { makeMockExamService } from '@/src/web/api';
 import { ApiError } from '@/src/web/api/http/api-error';
 import { BackButton, Header } from '@/src/web/components';
 
 import {
-  MockExamForm,
-  MockExamListSection,
-  MockStatsSection,
-} from './_components';
+  MockExamFormPanel,
+  MockExamToggleButton,
+  MockExamToggleProvider,
+} from '../_components/_form';
+import { fetchUserMockExamsStats } from '../api';
+import { MockExamListSection, MockStatsSection } from './_components';
 
-type PageProps = {
+type MockExamsPageProps = {
   params: Promise<{ username: string }>;
-  searchParams: Promise<{ showForm?: string }>;
 };
 
-export default async function MockExamsPage({
-  params,
-  searchParams,
-}: PageProps) {
-  const [resolvedParams, resolvedSearchParams] = await Promise.all([
-    params,
-    searchParams,
-  ]);
-  const isFormOpen = resolvedSearchParams.showForm === 'true';
+export default async function MockExamsPage({ params }: MockExamsPageProps) {
+  const resolvedParams = await params;
 
   let mockExams, statistics;
   try {
-    const result = await makeMockExamService().listMockExamsStatisticsForUser(
-      resolvedParams.username,
-    );
+    const result = await fetchUserMockExamsStats(resolvedParams.username);
     mockExams = result.mockExams;
     statistics = result.statistics;
   } catch (error) {
@@ -61,21 +51,13 @@ export default async function MockExamsPage({
 
         <hr className="border-(--foreground)/10" />
 
-        <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-bold">Histórico</h2>
-          <Link
-            href={isFormOpen ? '?' : '?showForm=true'}
-            className="button-primary flex items-center gap-2 shadow-(--accent)/20 shadow-lg"
-          >
-            <span>{isFormOpen ? 'Cancelar' : 'Novo Simulado'}</span>
-            {!isFormOpen && <span>+</span>}
-          </Link>
-        </div>
-
-        {/* --- Form for registering new Mock Exams --- */}
-        {isFormOpen && (
-          <MockExamForm targetUsername={resolvedParams.username} />
-        )}
+        <MockExamToggleProvider>
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-bold">Histórico</h2>
+            <MockExamToggleButton />
+          </div>
+          <MockExamFormPanel username={resolvedParams.username} />
+        </MockExamToggleProvider>
 
         {/* --- List Section --- */}
         <MockExamListSection mockExams={mockExams} />
