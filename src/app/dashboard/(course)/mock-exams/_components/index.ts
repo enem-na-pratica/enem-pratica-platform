@@ -1,3 +1,2 @@
-export * from './mock-exams-list';
-export * from './mock-exam-item';
-export * from './stats-section';
+export { MockExamListSection } from './mock-exam-list-section';
+export { MockStatsSection } from './_stats/stats-section';
