@@ -3,6 +3,7 @@ import type { FieldErrors, UseFormRegister } from 'react-hook-form';
 import type { KnowledgeAreaLabelKey } from '@/src/web/api';
 import type { CreateMockExamFormValues } from '@/src/web/validation';
 
+import { COLUMN_TOOLTIPS } from '../constants';
 import type {
   AreaCalculatedValues,
   AreaInputValues,
@@ -57,24 +58,6 @@ export function AreaPerformanceTable({
     </div>
   );
 }
-
-const COLUMN_TOOLTIPS = {
-  correctCount: 'Quantidade de questões respondidas corretamente.',
-  wrongAnswers: 'Quantidade total de questões respondidas incorretamente.',
-  performanceRate:
-    'Percentual de acertos sobre o total de questões respondidas.',
-  certaintyCount: 'Acertos em questões que você marcou como tendo certeza.',
-  confidenceRate:
-    'Percentual de acertos entre as questões respondidas com certeza.',
-  doubtHits: 'Acertos em questões que você respondeu com dúvida.',
-  doubtErrors: 'Erros em questões que você respondeu com dúvida.',
-  criticalErrors:
-    'Erros em questões respondidas com confiança, sem indicação de dúvida.',
-  distractionErrors: 'Erros causados por distração ou falta de atenção.',
-  interpretationErrors:
-    'Erros causados por interpretação incorreta da questão.',
-  knowledgeGapsErrors: 'Erros causados por falta de conhecimento do conteúdo.',
-} as const;
 
 const TABLE_COLUMNS = [
   {
