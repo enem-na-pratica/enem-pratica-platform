@@ -1,9 +1,6 @@
-import {
-  EssayListSection,
-  StatsSection,
-} from '@/src/app/dashboard/(course)/essays/_components';
 import { BackButton, Header } from '@/src/web/components';
 
+import { EssayListSection, StatsSection } from './_components';
 import {
   EssayFormPanel,
   EssayToggleButton,
