@@ -1,3 +1,8 @@
+const EXCELLENT_MAX_ERRORS = 3;
+const VERY_GOOD_MAX_ERRORS = 8;
+const DECENT_MAX_ERRORS = 15;
+const REGULAR_MAX_ERRORS = 25;
+
 type PerformanceColor =
   | '--perf-insufficient'
   | '--perf-regular'
@@ -5,16 +10,13 @@ type PerformanceColor =
   | '--perf-very-good'
   | '--perf-excellent';
 
-const ERROR_THRESHOLDS = [
-  { max: 3, color: 'text-[var(--perf-excellent)]' }, // Excellent
-  { max: 8, color: 'text-[var(--perf-very-good)]' }, // Very Good
-  { max: 15, color: 'text-[var(--perf-decent)]' }, // Attention
-  { max: 25, color: 'text-[var(--perf-regular)]' }, // Concerning
-  { max: Infinity, color: 'text-[var(--perf-insufficient)]' }, // Critical (collapse zone)
-] as const;
-
 export function getErrorSeverityColor(
   value: number,
 ): `text-[var(${PerformanceColor})]` {
-  return ERROR_THRESHOLDS.find((t) => value <= t.max)!.color;
+  if (value <= EXCELLENT_MAX_ERRORS) return 'text-[var(--perf-excellent)]';
+  if (value <= VERY_GOOD_MAX_ERRORS) return 'text-[var(--perf-very-good)]';
+  if (value <= DECENT_MAX_ERRORS) return 'text-[var(--perf-decent)]';
+  if (value <= REGULAR_MAX_ERRORS) return 'text-[var(--perf-regular)]';
+
+  return 'text-[var(--perf-insufficient)]';
 }
