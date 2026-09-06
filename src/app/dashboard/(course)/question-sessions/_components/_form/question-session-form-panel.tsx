@@ -18,7 +18,7 @@ export function QuestionSessionFormPanel({
   subjects,
   targetUsername,
 }: QuestionSessionFormPanelProps) {
-  const { isOpen, close } = useQuestionSessionToggle();
+  const { isOpen } = useQuestionSessionToggle();
   const { notify } = useNotify();
 
   const form = useQuestionSessionForm();
@@ -37,7 +37,7 @@ export function QuestionSessionFormPanel({
         type: 'success',
         duration: 3000,
       });
-      close();
+      // close();
       topicsHook.resetTopics();
       form.resetForm();
     } catch {

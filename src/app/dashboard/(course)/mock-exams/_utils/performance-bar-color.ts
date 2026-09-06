@@ -1,3 +1,8 @@
+const INSUFFICIENT_MAX = 60;
+const REGULAR_MAX = 75;
+const DECENT_MAX = 85;
+const VERY_GOOD_MAX = 90;
+
 type PerformanceColor =
   | '--perf-insufficient'
   | '--perf-regular'
@@ -5,14 +10,11 @@ type PerformanceColor =
   | '--perf-very-good'
   | '--perf-excellent';
 
-const RATE_THRESHOLDS = [
-  { max: 60, color: '--perf-insufficient' },
-  { max: 75, color: '--perf-regular' },
-  { max: 85, color: '--perf-decent' },
-  { max: 90, color: '--perf-very-good' },
-  { max: Infinity, color: '--perf-excellent' },
-] as const;
-
 export function getPerformanceBarColor(rate: number): PerformanceColor {
-  return RATE_THRESHOLDS.find((t) => rate <= t.max)!.color;
+  if (rate <= INSUFFICIENT_MAX) return '--perf-insufficient';
+  if (rate <= REGULAR_MAX) return '--perf-regular';
+  if (rate <= DECENT_MAX) return '--perf-decent';
+  if (rate <= VERY_GOOD_MAX) return '--perf-very-good';
+
+  return '--perf-excellent';
 }
