@@ -1,29 +1,26 @@
-import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 
-import { makeEssayService } from '@/src/web/api';
 import { ApiError } from '@/src/web/api/http/api-error';
 import { BackButton, Header } from '@/src/web/components';
 
-import { EssayForm, EssayListSection, StatsSection } from './_components';
+import {
+  EssayFormPanel,
+  EssayToggleButton,
+  EssayToggleProvider,
+} from '../_components/_form';
+import { fetchUserEssaysStats } from '../api';
+import { EssayListSection, StatsSection } from './_components';
 
 type PageProps = {
   params: Promise<{ username: string }>;
-  searchParams: Promise<{ showForm?: string }>;
 };
 
-export default async function EssayPage({ params, searchParams }: PageProps) {
-  const [resolvedParams, resolvedSearchParams] = await Promise.all([
-    params,
-    searchParams,
-  ]);
-  const isFormOpen = resolvedSearchParams.showForm === 'true';
+export default async function EssayPage({ params }: PageProps) {
+  const resolvedParams = await params;
 
   let essays, statistics;
   try {
-    const result = await makeEssayService().listEssaysStatisticsForUser(
-      resolvedParams.username,
-    );
+    const result = await fetchUserEssaysStats(resolvedParams.username);
     essays = result.essays;
     statistics = result.statistics;
   } catch (error) {
@@ -54,43 +51,18 @@ export default async function EssayPage({ params, searchParams }: PageProps) {
 
         <hr className="border-(--foreground)/10" />
 
-        <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-bold">Histórico</h2>
-          <Link
-            href={isFormOpen ? '?' : '?showForm=true'}
-            className="button-primary flex items-center gap-2 shadow-(--accent)/20 shadow-lg"
-          >
-            <span>{isFormOpen ? 'Cancelar' : 'Nova Redação'}</span>
-            {!isFormOpen && <span>+</span>}
-          </Link>
-        </div>
+        <EssayToggleProvider>
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-bold">Histórico</h2>
+            <EssayToggleButton />
+          </div>
 
-        {/* --- Form for registering new essays. --- */}
-        {isFormOpen && <EssayForm targetUsername={resolvedParams.username} />}
+          <EssayFormPanel targetUsername={resolvedParams.username} />
+        </EssayToggleProvider>
 
         {/* --- Essay listing section --- */}
         <EssayListSection essays={essays} />
       </main>
     </div>
-  );
-}
-
-// Back arrow icon
-function BackArrow() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-      strokeWidth={2.5}
-      stroke="currentColor"
-      className="h-6 w-6 transition-colors hover:text-(--accent)"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
-      />
-    </svg>
   );
 }
