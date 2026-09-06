@@ -26,8 +26,8 @@ export function EssayFormPanel({ targetUsername }: EssayFormPanelProps) {
         type: 'success',
         duration: 3000,
       });
-      form.resetForm();
       close();
+      form.resetForm();
     } catch {
       // console.error(error);
       notify({ message: 'Erro ao salvar redação!', type: 'error' });

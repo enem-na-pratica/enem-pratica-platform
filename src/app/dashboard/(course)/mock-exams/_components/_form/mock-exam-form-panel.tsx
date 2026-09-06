@@ -12,7 +12,7 @@ type MockExamFormPanelProps = {
 };
 
 export function MockExamFormPanel({ username }: MockExamFormPanelProps) {
-  const { isOpen } = useMockExamToggle();
+  const { isOpen, close } = useMockExamToggle();
   const form = useMockExamForm();
   const { notify } = useNotify();
 
@@ -26,6 +26,7 @@ export function MockExamFormPanel({ username }: MockExamFormPanelProps) {
         type: 'success',
         duration: 3000,
       });
+      close();
       form.resetForm();
     } catch {
       notify({ message: 'Erro ao registrar simulado!', type: 'error' });
