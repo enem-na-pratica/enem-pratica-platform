@@ -49,8 +49,7 @@ export default async function MockExamsPage({ params }: MockExamsPageProps) {
 
 async function fetchPageData(username: string) {
   try {
-    const { mockExams, statistics } = await fetchUserMockExamsStats(username);
-    return { statistics, mockExams };
+    return await fetchUserMockExamsStats(username);
   } catch (error) {
     if (error instanceof ApiError) {
       if (error.status === NOT_FOUND) notFound();
