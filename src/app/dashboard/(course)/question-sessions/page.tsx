@@ -1,31 +1,24 @@
-import Link from 'next/link';
+import { BackButton, Header } from '@/src/web/components';
 
-import { makeQuestionSessionService, makeSubjectService } from '@/src/web/api';
-import { Header } from '@/src/web/components';
-
+import { QuestionSessionListSection, StatsSection } from './_components';
 import {
-  QuestionSessionForm,
-  QuestionSessionListSection,
-  StatsSection,
-} from './_components';
-import { BackArrow } from './_components/icons';
+  QuestionSessionFormPanel,
+  QuestionSessionToggleProvider,
+  SessionToggleButton,
+} from './_components/_form';
+import { fetchListSubjects, fetchUserQuestionSessionStats } from './api';
 
 export default async function QuestionSessionPage() {
   const [{ statistics, questionSessions }, subjects] = await Promise.all([
-    makeQuestionSessionService().listQuestionSessionsStatisticsForUser('me'),
-    makeSubjectService().listSubjects(),
+    fetchUserQuestionSessionStats(),
+    fetchListSubjects(),
   ]);
 
   return (
     <div className="min-h-screen bg-(--background) pb-20 text-(--foreground) transition-colors duration-500">
       <Header>
         <div className="flex items-center gap-4">
-          <Link
-            href="/dashboard"
-            aria-label="Voltar para Dashboard"
-          >
-            <BackArrow />
-          </Link>
+          <BackButton />
           <h1 className="text-xl font-bold tracking-tight">
             Questões e <span className="text-(--accent)">Desempenho</span>
           </h1>
@@ -33,21 +26,20 @@ export default async function QuestionSessionPage() {
       </Header>
 
       <main className="mx-auto w-full max-w-6xl space-y-8 px-4 py-8">
-        {/* --- Statistics section --- */}
         {questionSessions.length > 0 && (
           <StatsSection statistics={statistics} />
         )}
 
         <hr className="border-(--foreground)/10" />
 
-        <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-bold">Histórico</h2>
-        </div>
+        <QuestionSessionToggleProvider>
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-bold">Histórico</h2>
+            <SessionToggleButton />
+          </div>
+          <QuestionSessionFormPanel subjects={subjects} />
+        </QuestionSessionToggleProvider>
 
-        {/* --- Form for registering new sessions --- */}
-        <QuestionSessionForm subjects={subjects} />
-
-        {/* --- Session listing section --- */}
         <QuestionSessionListSection questionSessions={questionSessions} />
       </main>
     </div>

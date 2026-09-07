@@ -1,8 +1,5 @@
-import Link from 'next/link';
+import { BackButton, Header } from '@/src/web/components';
 
-import { Header } from '@/src/web/components';
-
-import { BackArrow } from './_components/icons';
 import { StudyTrackerClient } from './_components/study-tracker-client';
 import { fetchSubjects } from './api';
 
@@ -13,12 +10,7 @@ export default async function StudyTrackerPage() {
     <>
       <Header>
         <div className="flex items-center gap-4">
-          <Link
-            href="/dashboard"
-            aria-label="Voltar para Dashboard"
-          >
-            <BackArrow />
-          </Link>
+          <BackButton />
           <h1 className="text-xl font-bold tracking-tight">
             Acompanhamento de <span className="text-(--accent)">Estudos</span>
           </h1>

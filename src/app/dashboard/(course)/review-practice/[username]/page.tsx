@@ -1,9 +1,7 @@
-import Link from 'next/link';
+import { BackButton, Header } from '@/src/web/components';
 
-import { Header } from '@/src/web/components';
-
-import { BackArrow, ReviewPracticeClient } from './_components';
-import { fetchSubjects } from './api';
+import { ReviewPracticeClient } from '../_components/review-practice-client';
+import { fetchSubjects } from '../api';
 
 type PageProps = {
   params: Promise<{ username: string }>;
@@ -19,12 +17,7 @@ export default async function ReviewPracticePage({ params }: PageProps) {
     <>
       <Header>
         <div className="flex items-center gap-4">
-          <Link
-            href="/dashboard"
-            aria-label="Voltar para Dashboard"
-          >
-            <BackArrow />
-          </Link>
+          <BackButton />
           <h1 className="text-xl font-bold tracking-tight">
             Revisão e Prática de{' '}
             <span className="text-(--accent)">@{resolvedParams.username}</span>
