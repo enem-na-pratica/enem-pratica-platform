@@ -193,6 +193,32 @@ describe('GetAuthorEssaysStatsController (integration)', () => {
       expect(body.totalCount).toBe(1);
       expect(body.globalAverage).toBe(500);
     });
+
+    it("should allow an ADMIN to view a STUDENT's essay stats by username", async () => {
+      const admin = await createUser({
+        name: 'Admin Teste',
+        username: USERNAMES.admin,
+        role: ROLES.ADMIN,
+      });
+      const student = await createUser({
+        name: 'Aluno Teste',
+        username: USERNAMES.student,
+        role: ROLES.STUDENT,
+      });
+
+      await createEssay(student.id, [180, 160, 140, 120, 100]); // sum 700
+
+      const controller = makeSut();
+      const response = await controller.handle(
+        makeRequest(USERNAMES.student, makeRequester(admin)),
+      );
+
+      expect(response.statusCode).toBe(200);
+
+      const body = response.body as EssayStatsDto;
+      expect(body.totalCount).toBe(1);
+      expect(body.globalAverage).toBe(700);
+    });
   });
 
   describe('GET /api/essays/users/:username/stats — error cases', () => {});
