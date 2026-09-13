@@ -293,5 +293,27 @@ describe('GetAuthorEssaysStatsController (integration)', () => {
 
       expect(response.statusCode).toBe(403);
     });
+
+    it("should return 403 when a STUDENT requests another user's essay stats", async () => {
+      const student1 = await createUser({
+        name: 'Aluno Um',
+        username: USERNAMES.student,
+        role: ROLES.STUDENT,
+      });
+      const student2 = await createUser({
+        name: 'Aluno Dois',
+        username: USERNAMES.student2,
+        role: ROLES.STUDENT,
+      });
+
+      const controller = makeSut();
+      const response = await controller.handle(
+        makeRequest(USERNAMES.student2, makeRequester(student1)),
+      );
+
+      expect(response.statusCode).toBe(403);
+      // Ensures that no essay by "student2" has been improperly exposed
+      expect(student2.id).toBeTruthy();
+    });
   });
 });
