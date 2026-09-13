@@ -315,5 +315,25 @@ describe('GetAuthorEssaysStatsController (integration)', () => {
       // Ensures that no essay by "student2" has been improperly exposed
       expect(student2.id).toBeTruthy();
     });
+
+    it('should return 403 when a TEACHER requests stats of another TEACHER (equal role)', async () => {
+      const teacher1 = await createUser({
+        name: 'Professor Um',
+        username: USERNAMES.teacher,
+        role: ROLES.TEACHER,
+      });
+      const teacher2 = await createUser({
+        name: 'Professor Dois',
+        username: USERNAMES.teacher2,
+        role: ROLES.TEACHER,
+      });
+
+      const controller = makeSut();
+      const response = await controller.handle(
+        makeRequest(USERNAMES.teacher2, makeRequester(teacher1)),
+      );
+
+      expect(response.statusCode).toBe(403);
+    });
   });
 });
