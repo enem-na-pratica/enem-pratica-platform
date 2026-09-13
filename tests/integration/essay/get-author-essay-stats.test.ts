@@ -116,4 +116,34 @@ afterAll(async () => {
   await prisma.$disconnect();
 });
 
-describe('GetAuthorEssaysStatsController (integration)', () => {});
+describe('GetAuthorEssaysStatsController (integration)', () => {
+  describe('GET /api/essays/users/:username/stats — success cases', () => {
+    it('should return 200 with zeroed stats when the requester ("me") has no essays', async () => {
+      const student = await createUser({
+        name: 'Aluno Teste',
+        username: USERNAMES.student,
+        role: ROLES.STUDENT,
+      });
+
+      const controller = makeSut();
+      const response = await controller.handle(
+        makeRequest('me', makeRequester(student)),
+      );
+
+      expect(response.statusCode).toBe(200);
+
+      const body = response.body as EssayStatsDto;
+      expect(body.totalCount).toBe(0);
+      expect(body.globalAverage).toBe(0);
+      expect(body.averagesPerCompetency).toEqual({
+        c1: 0,
+        c2: 0,
+        c3: 0,
+        c4: 0,
+        c5: 0,
+      });
+    });
+  });
+
+  describe('GET /api/essays/users/:username/stats — error cases', () => {});
+});
