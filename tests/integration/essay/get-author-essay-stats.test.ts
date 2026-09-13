@@ -355,5 +355,20 @@ describe('GetAuthorEssaysStatsController (integration)', () => {
 
       expect(response.statusCode).toBe(403);
     });
+
+    it('should return 404 when the target username does not exist', async () => {
+      const admin = await createUser({
+        name: 'Admin Teste',
+        username: USERNAMES.admin,
+        role: ROLES.ADMIN,
+      });
+
+      const controller = makeSut();
+      const response = await controller.handle(
+        makeRequest('usuario.inexistente.essaystats', makeRequester(admin)),
+      );
+
+      expect(response.statusCode).toBe(404);
+    });
   });
 });
