@@ -17,8 +17,3 @@ export type EssayStats = {
   globalAverage: number;
   averagesPerCompetency: Competencies;
 };
-
-export type UserEssaysOverview = {
-  statistics: EssayStats;
-  essays: Essay[];
-};

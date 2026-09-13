@@ -19,8 +19,3 @@ export type EssayStatsDto = {
   globalAverage: number;
   averagesPerCompetency: Grades;
 };
-
-export type UserEssaysOverviewDto = {
-  statistics: EssayStatsDto;
-  essays: EssayDto[];
-};

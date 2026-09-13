@@ -6,12 +6,12 @@ import {
   EssayToggleButton,
   EssayToggleProvider,
 } from './_components/_form';
-import { fetchUserEssaysList, fetchUserEssaysStats } from './api';
+import { fetchAuthorEssaysStats, fetchListAuthorEssays } from './api';
 
 export default async function EssayPage() {
-  const [{ essays }, stats] = await Promise.all([
-    fetchUserEssaysList(),
-    fetchUserEssaysStats(),
+  const [essays, stats] = await Promise.all([
+    fetchListAuthorEssays(),
+    fetchAuthorEssaysStats(),
   ]);
 
   return (

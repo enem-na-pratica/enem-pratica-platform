@@ -1,9 +1,9 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 
-import type { UserEssaysOverviewDto } from '@/src/core/application/use-cases/essay';
+import type { EssayDto } from '@/src/core/application/common/dtos';
 import { ROLES, type Role } from '@/src/core/domain/auth';
 import { prisma } from '@/src/core/infrastructure/databases/prisma/prisma';
-import { makeListUserEssaysStatistics } from '@/src/core/main/factories/essay/make-list-user-essays-statistics.factory';
+import { makeListAuthorEssays } from '@/src/core/main/factories/essay/make-list-author-essays.factory';
 import type { AuthenticatedRequest } from '@/src/core/presentation/protocols';
 
 type Requester = { id: string; username: string; role: Role };
@@ -24,7 +24,7 @@ const ALL_TEST_USERNAMES = [
 ];
 
 function makeSut() {
-  return makeListUserEssaysStatistics();
+  return makeListAuthorEssays();
 }
 
 async function createUser(data: {
@@ -114,7 +114,7 @@ afterAll(async () => {
   await prisma.$disconnect();
 });
 
-describe('ListUserEssaysStatisticsController (integration)', () => {
+describe('ListAuthorEssaysController (integration)', () => {
   describe('GET /api/essays/users/:username — success cases', () => {
     it("should return the requester's own empty statistics when using 'me' and there are no essays", async () => {
       const student = await createUser({
@@ -127,13 +127,8 @@ describe('ListUserEssaysStatisticsController (integration)', () => {
       const response = await controller.handle(makeRequest('me', student));
 
       expect(response.statusCode).toBe(200);
-      const body = response.body as UserEssaysOverviewDto;
-      expect(body.essays).toHaveLength(0);
-      expect(body.statistics).toEqual({
-        totalCount: 0,
-        globalAverage: 0,
-        averagesPerCompetency: { c1: 0, c2: 0, c3: 0, c4: 0, c5: 0 },
-      });
+      const body = response.body as EssayDto[];
+      expect(body).toHaveLength(0);
     });
 
     it("should return the requester's own essays when using 'me'", async () => {
@@ -148,13 +143,12 @@ describe('ListUserEssaysStatisticsController (integration)', () => {
       const response = await controller.handle(makeRequest('me', student));
 
       expect(response.statusCode).toBe(200);
-      const body = response.body as UserEssaysOverviewDto;
-      expect(body.essays).toHaveLength(1);
-      expect(body.essays[0]).toMatchObject({
+      const body = response.body as EssayDto[];
+      expect(body).toHaveLength(1);
+      expect(body[0]).toMatchObject({
         authorId: student.id,
         theme: 'Redação 1',
       });
-      expect(body.statistics.totalCount).toBe(1);
     });
 
     it('should allow a user to view their own essays by passing their own username directly', async () => {
@@ -171,8 +165,11 @@ describe('ListUserEssaysStatisticsController (integration)', () => {
       );
 
       expect(response.statusCode).toBe(200);
-      const body = response.body as UserEssaysOverviewDto;
-      expect(body.statistics.totalCount).toBe(1);
+      const body = response.body as EssayDto[];
+      expect(body).toHaveLength(1);
+      expect(body[0]).toMatchObject({
+        authorId: student.id,
+      });
     });
 
     it('should return the correct shape for each essay in the list', async () => {
@@ -194,8 +191,8 @@ describe('ListUserEssaysStatisticsController (integration)', () => {
       const response = await controller.handle(makeRequest('me', student));
 
       expect(response.statusCode).toBe(200);
-      const body = response.body as UserEssaysOverviewDto;
-      const essay = body.essays[0];
+      const body = response.body as EssayDto[];
+      const essay = body[0];
       expect(essay).toHaveProperty('id');
       expect(essay).toHaveProperty('authorId', student.id);
       expect(essay).toHaveProperty('theme', 'Redação Teste');
@@ -207,47 +204,6 @@ describe('ListUserEssaysStatisticsController (integration)', () => {
         c4: 160,
         c5: 140,
         total: 600,
-      });
-    });
-
-    it('should calculate globalAverage and averagesPerCompetency correctly across multiple essays', async () => {
-      const student = await createUser({
-        name: 'Aluno Teste',
-        username: TEST_STUDENT_USERNAME,
-        role: ROLES.STUDENT,
-      });
-      // total = 600
-      await createEssay(student.id, {
-        c1: 120,
-        c2: 120,
-        c3: 120,
-        c4: 120,
-        c5: 120,
-      });
-      // total = 1000
-      await createEssay(student.id, {
-        c1: 200,
-        c2: 200,
-        c3: 200,
-        c4: 200,
-        c5: 200,
-      });
-      const controller = makeSut();
-
-      const response = await controller.handle(makeRequest('me', student));
-
-      expect(response.statusCode).toBe(200);
-      const body = response.body as UserEssaysOverviewDto;
-      expect(body.statistics.totalCount).toBe(2);
-      // global average = (600 + 1000) / 2 = 800
-      expect(body.statistics.globalAverage).toBe(800);
-      // per-competency average = (120 + 200) / 2 = 160 for every competency
-      expect(body.statistics.averagesPerCompetency).toEqual({
-        c1: 160,
-        c2: 160,
-        c3: 160,
-        c4: 160,
-        c5: 160,
       });
     });
 
@@ -270,10 +226,10 @@ describe('ListUserEssaysStatisticsController (integration)', () => {
       const response = await controller.handle(makeRequest('me', student));
 
       expect(response.statusCode).toBe(200);
-      const body = response.body as UserEssaysOverviewDto;
-      expect(body.essays).toHaveLength(2);
-      expect(body.essays[0].id).toBe(newer.id);
-      expect(body.essays[1].id).toBe(older.id);
+      const essays = response.body as EssayDto[];
+      expect(essays).toHaveLength(2);
+      expect(essays[0].id).toBe(newer.id);
+      expect(essays[1].id).toBe(older.id);
     });
 
     it("should allow an ADMIN to view any user's essays by username", async () => {
@@ -295,9 +251,8 @@ describe('ListUserEssaysStatisticsController (integration)', () => {
       );
 
       expect(response.statusCode).toBe(200);
-      const body = response.body as UserEssaysOverviewDto;
-      expect(body.statistics.totalCount).toBe(1);
-      expect(body.essays[0].authorId).toBe(student.id);
+      const essays = response.body as EssayDto[];
+      expect(essays[0].authorId).toBe(student.id);
     });
 
     it('should allow a TEACHER to view the essays of a student assigned to them', async () => {
@@ -320,8 +275,8 @@ describe('ListUserEssaysStatisticsController (integration)', () => {
       );
 
       expect(response.statusCode).toBe(200);
-      const body = response.body as UserEssaysOverviewDto;
-      expect(body.statistics.totalCount).toBe(1);
+      const essays = response.body as EssayDto[];
+      expect(essays).toHaveLength(1);
     });
 
     it("should allow an ADMIN to view a TEACHER's essays", async () => {
@@ -343,8 +298,8 @@ describe('ListUserEssaysStatisticsController (integration)', () => {
       );
 
       expect(response.statusCode).toBe(200);
-      const body = response.body as UserEssaysOverviewDto;
-      expect(body.statistics.totalCount).toBe(1);
+      const essays = response.body as EssayDto[];
+      expect(essays).toHaveLength(1);
     });
   });
 
