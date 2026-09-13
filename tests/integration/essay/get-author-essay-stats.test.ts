@@ -370,5 +370,20 @@ describe('GetAuthorEssaysStatsController (integration)', () => {
 
       expect(response.statusCode).toBe(404);
     });
+
+    it('should return 400 when the username parameter has an invalid format', async () => {
+      const admin = await createUser({
+        name: 'Admin Teste',
+        username: USERNAMES.admin,
+        role: ROLES.ADMIN,
+      });
+
+      const controller = makeSut();
+      const response = await controller.handle(
+        makeRequest('!!invalido!!', makeRequester(admin)),
+      );
+
+      expect(response.statusCode).toBe(400);
+    });
   });
 });
