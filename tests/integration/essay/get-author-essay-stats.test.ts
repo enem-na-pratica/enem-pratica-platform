@@ -335,5 +335,25 @@ describe('GetAuthorEssaysStatsController (integration)', () => {
 
       expect(response.statusCode).toBe(403);
     });
+
+    it('should return 403 when a TEACHER requests stats of an ADMIN (higher role)', async () => {
+      const teacher = await createUser({
+        name: 'Professor Teste',
+        username: USERNAMES.teacher,
+        role: ROLES.TEACHER,
+      });
+      const admin = await createUser({
+        name: 'Admin Teste',
+        username: USERNAMES.admin,
+        role: ROLES.ADMIN,
+      });
+
+      const controller = makeSut();
+      const response = await controller.handle(
+        makeRequest(USERNAMES.admin, makeRequester(teacher)),
+      );
+
+      expect(response.statusCode).toBe(403);
+    });
   });
 });
