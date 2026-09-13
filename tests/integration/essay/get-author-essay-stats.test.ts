@@ -143,6 +143,35 @@ describe('GetAuthorEssaysStatsController (integration)', () => {
         c5: 0,
       });
     });
+
+    it('should correctly compute totals and per-competency averages for the requester\'s own essays ("me")', async () => {
+      const student = await createUser({
+        name: 'Aluno Teste',
+        username: USERNAMES.student,
+        role: ROLES.STUDENT,
+      });
+
+      await createEssay(student.id, [120, 100, 80, 140, 160]); // sum 600
+      await createEssay(student.id, [160, 140, 120, 100, 80]); // sum 600
+
+      const controller = makeSut();
+      const response = await controller.handle(
+        makeRequest('me', makeRequester(student)),
+      );
+
+      expect(response.statusCode).toBe(200);
+
+      const body = response.body as EssayStatsDto;
+      expect(body.totalCount).toBe(2);
+      expect(body.averagesPerCompetency).toEqual({
+        c1: 140,
+        c2: 120,
+        c3: 100,
+        c4: 120,
+        c5: 120,
+      });
+      expect(body.globalAverage).toBe(600);
+    });
   });
 
   describe('GET /api/essays/users/:username/stats — error cases', () => {});
