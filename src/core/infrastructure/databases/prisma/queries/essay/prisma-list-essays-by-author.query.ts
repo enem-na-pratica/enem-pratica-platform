@@ -1,21 +1,21 @@
 import type { EssayDto } from '@/src/core/application/common/dtos';
-import type { ListEssaysByAuthorQuery } from '@/src/core/application/use-cases/essay';
+import type { ListAuthorEssaysQuery } from '@/src/core/application/use-cases/essay';
 import type { Mapper } from '@/src/core/domain/contracts/mappers';
 import type {
   PrismaClient,
   Essay as PrismaEssay,
 } from '@/src/generated/prisma/client';
 
-type PrismaListEssaysByAuthorQueryDeps = {
+type PrismaListAuthorEssaysQueryDeps = {
   prisma: PrismaClient;
   mapper: Mapper<PrismaEssay, EssayDto>;
 };
 
-export class PrismaListEssaysByAuthorQuery implements ListEssaysByAuthorQuery {
+export class PrismaListAuthorEssaysQuery implements ListAuthorEssaysQuery {
   private readonly prisma: PrismaClient;
   private readonly mapper: Mapper<PrismaEssay, EssayDto>;
 
-  constructor({ prisma, mapper }: PrismaListEssaysByAuthorQueryDeps) {
+  constructor({ prisma, mapper }: PrismaListAuthorEssaysQueryDeps) {
     this.prisma = prisma;
     this.mapper = mapper;
   }
@@ -30,6 +30,6 @@ export class PrismaListEssaysByAuthorQuery implements ListEssaysByAuthorQuery {
       },
     });
 
-    return essays.map(this.mapper.map);
+    return essays.map((essay) => this.mapper.map(essay));
   }
 }
