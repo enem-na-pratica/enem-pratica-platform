@@ -273,5 +273,25 @@ describe('GetAuthorEssaysStatsController (integration)', () => {
     });
   });
 
-  describe('GET /api/essays/users/:username/stats — error cases', () => {});
+  describe('GET /api/essays/users/:username/stats — error cases', () => {
+    it('should return 403 when a TEACHER requests stats of a STUDENT not assigned to them', async () => {
+      const teacher = await createUser({
+        name: 'Professor Teste',
+        username: USERNAMES.teacher,
+        role: ROLES.TEACHER,
+      });
+      const student = await createUser({
+        name: 'Aluno Teste',
+        username: USERNAMES.student,
+        role: ROLES.STUDENT,
+      });
+
+      const controller = makeSut();
+      const response = await controller.handle(
+        makeRequest(USERNAMES.student, makeRequester(teacher)),
+      );
+
+      expect(response.statusCode).toBe(403);
+    });
+  });
 });
