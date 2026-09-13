@@ -6,10 +6,13 @@ import {
   EssayToggleButton,
   EssayToggleProvider,
 } from './_components/_form';
-import { fetchUserEssaysStats } from './api';
+import { fetchUserEssaysList, fetchUserEssaysStats } from './api';
 
 export default async function EssayPage() {
-  const { essays, statistics } = await fetchUserEssaysStats();
+  const [{ essays }, stats] = await Promise.all([
+    fetchUserEssaysList(),
+    fetchUserEssaysStats(),
+  ]);
 
   return (
     <div className="min-h-screen bg-(--background) pb-20 text-(--foreground) transition-colors duration-500">
@@ -23,7 +26,7 @@ export default async function EssayPage() {
       </Header>
 
       <main className="mx-auto w-full max-w-6xl space-y-8 px-4 py-8">
-        {essays.length > 0 && <StatsSection statistics={statistics} />}
+        {essays.length > 0 && <StatsSection statistics={stats} />}
 
         <hr className="border-(--foreground)/10" />
 

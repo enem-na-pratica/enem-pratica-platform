@@ -12,13 +12,13 @@ export type Essay = {
   createdAt: Date;
 };
 
-export type EssayStatistics = {
+export type EssayStats = {
   totalCount: number;
   globalAverage: number;
   averagesPerCompetency: Competencies;
 };
 
 export type UserEssaysOverview = {
-  statistics: EssayStatistics;
+  statistics: EssayStats;
   essays: Essay[];
 };

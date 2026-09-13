@@ -9,7 +9,7 @@ import {
   EssayToggleButton,
   EssayToggleProvider,
 } from '../_components/_form';
-import { fetchUserEssaysStats } from '../api';
+import { fetchUserEssaysList, fetchUserEssaysStats } from '../api';
 
 const FORBIDDEN = 403;
 const NOT_FOUND = 404;
@@ -21,14 +21,14 @@ type PageProps = {
 export default async function EssayPage({ params }: PageProps) {
   const resolvedParams = await params;
 
-  const { essays, statistics } = await fetchPageData(resolvedParams.username);
+  const { essays, stats } = await fetchPageData(resolvedParams.username);
 
   return (
     <div className="min-h-screen bg-(--background) pb-20 text-(--foreground) transition-colors duration-500">
       <EssayHeader username={resolvedParams.username} />
 
       <main className="mx-auto w-full max-w-6xl space-y-8 px-4 py-8">
-        {essays.length > 0 && <StatsSection statistics={statistics} />}
+        {essays.length > 0 && <StatsSection statistics={stats} />}
 
         <hr className="border-(--foreground)/10" />
 
@@ -49,7 +49,11 @@ export default async function EssayPage({ params }: PageProps) {
 
 async function fetchPageData(username: string) {
   try {
-    return await fetchUserEssaysStats(username);
+    const [{ essays }, stats] = await Promise.all([
+      fetchUserEssaysList(username),
+      fetchUserEssaysStats(username),
+    ]);
+    return { essays, stats };
   } catch (error) {
     if (error instanceof ApiError) {
       if (error.status === NOT_FOUND) notFound();
