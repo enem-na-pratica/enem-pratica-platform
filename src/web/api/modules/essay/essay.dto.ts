@@ -14,13 +14,13 @@ export type EssayDto = {
   createdAt: string;
 };
 
-type EssayStatistics = {
+export type EssayStatsDto = {
   totalCount: number;
   globalAverage: number;
   averagesPerCompetency: Grades;
 };
 
 export type UserEssaysOverviewDto = {
-  statistics: EssayStatistics;
+  statistics: EssayStatsDto;
   essays: EssayDto[];
 };
