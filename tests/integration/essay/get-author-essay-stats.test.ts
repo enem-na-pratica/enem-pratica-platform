@@ -172,6 +172,27 @@ describe('GetAuthorEssaysStatsController (integration)', () => {
       });
       expect(body.globalAverage).toBe(600);
     });
+
+    it("should resolve to the requester's own stats when the username param equals their own username", async () => {
+      const student = await createUser({
+        name: 'Aluno Teste',
+        username: USERNAMES.student,
+        role: ROLES.STUDENT,
+      });
+
+      await createEssay(student.id, [100, 100, 100, 100, 100]);
+
+      const controller = makeSut();
+      const response = await controller.handle(
+        makeRequest(USERNAMES.student, makeRequester(student)),
+      );
+
+      expect(response.statusCode).toBe(200);
+
+      const body = response.body as EssayStatsDto;
+      expect(body.totalCount).toBe(1);
+      expect(body.globalAverage).toBe(500);
+    });
   });
 
   describe('GET /api/essays/users/:username/stats — error cases', () => {});
