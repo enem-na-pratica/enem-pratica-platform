@@ -1,9 +1,5 @@
-import type {
-  EssayDto,
-  EssayStatsDto,
-  UserEssaysOverviewDto,
-} from './essay.dto';
-import type { Essay, EssayStats, UserEssaysOverview } from './essay.model';
+import type { EssayDto, EssayStatsDto } from './essay.dto';
+import type { Essay, EssayStats } from './essay.model';
 
 export const EssayMapper = {
   toModel(dto: EssayDto): Essay {
@@ -21,13 +17,6 @@ export const EssayMapper = {
       totalCount: dto.totalCount,
       globalAverage: dto.globalAverage,
       averagesPerCompetency: { ...dto.averagesPerCompetency },
-    };
-  },
-
-  toOverviewModel(dto: UserEssaysOverviewDto): UserEssaysOverview {
-    return {
-      statistics: EssayMapper.toStats(dto.statistics),
-      essays: dto.essays.map((essayDto) => EssayMapper.toModel(essayDto)),
     };
   },
 };
