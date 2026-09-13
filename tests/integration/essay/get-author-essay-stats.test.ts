@@ -245,6 +245,32 @@ describe('GetAuthorEssaysStatsController (integration)', () => {
       expect(body.totalCount).toBe(1);
       expect(body.globalAverage).toBe(1000);
     });
+
+    it('should return the response body with the expected shape', async () => {
+      const student = await createUser({
+        name: 'Aluno Teste',
+        username: USERNAMES.student,
+        role: ROLES.STUDENT,
+      });
+      await createEssay(student.id, [100, 100, 100, 100, 100]);
+
+      const controller = makeSut();
+      const response = await controller.handle(
+        makeRequest('me', makeRequester(student)),
+      );
+
+      expect(response.statusCode).toBe(200);
+
+      const body = response.body as EssayStatsDto;
+      expect(body).toHaveProperty('totalCount');
+      expect(body).toHaveProperty('globalAverage');
+      expect(body).toHaveProperty('averagesPerCompetency');
+      expect(body.averagesPerCompetency).toHaveProperty('c1');
+      expect(body.averagesPerCompetency).toHaveProperty('c2');
+      expect(body.averagesPerCompetency).toHaveProperty('c3');
+      expect(body.averagesPerCompetency).toHaveProperty('c4');
+      expect(body.averagesPerCompetency).toHaveProperty('c5');
+    });
   });
 
   describe('GET /api/essays/users/:username/stats — error cases', () => {});
