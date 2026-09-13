@@ -1,17 +1,13 @@
-import {
-  type EssayStats,
-  type UserEssaysOverview,
-  makeEssayService,
-} from '@/src/web/api';
+import { type Essay, type EssayStats, makeEssayService } from '@/src/web/api';
 
-export async function fetchUserEssaysList(
+export async function fetchListAuthorEssays(
   username: string = 'me',
-): Promise<UserEssaysOverview> {
-  return makeEssayService().listEssaysStatisticsForUser(username);
+): Promise<Essay[]> {
+  return makeEssayService().listAuthorEssays(username);
 }
 
-export async function fetchUserEssaysStats(
+export async function fetchAuthorEssaysStats(
   username: string = 'me',
 ): Promise<EssayStats> {
-  return makeEssayService().getEssaysByAuthor(username);
+  return makeEssayService().getAuthorEssaysStats(username);
 }

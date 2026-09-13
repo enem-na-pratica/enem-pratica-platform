@@ -9,7 +9,7 @@ import {
   EssayToggleButton,
   EssayToggleProvider,
 } from '../_components/_form';
-import { fetchUserEssaysList, fetchUserEssaysStats } from '../api';
+import { fetchAuthorEssaysStats, fetchListAuthorEssays } from '../api';
 
 const FORBIDDEN = 403;
 const NOT_FOUND = 404;
@@ -49,9 +49,9 @@ export default async function EssayPage({ params }: PageProps) {
 
 async function fetchPageData(username: string) {
   try {
-    const [{ essays }, stats] = await Promise.all([
-      fetchUserEssaysList(username),
-      fetchUserEssaysStats(username),
+    const [essays, stats] = await Promise.all([
+      fetchListAuthorEssays(username),
+      fetchAuthorEssaysStats(username),
     ]);
     return { essays, stats };
   } catch (error) {
