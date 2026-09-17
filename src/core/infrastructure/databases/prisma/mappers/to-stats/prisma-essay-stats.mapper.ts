@@ -1,6 +1,6 @@
 import type { EssayStatsWithoutGlobal } from '@/src/core/application/use-cases/essay';
 import type { Mapper } from '@/src/core/domain/contracts/mappers';
-import type { EssayAggregateResult } from '@/src/core/infrastructure/databases/prisma/selects';
+import type { EssayAggregateResult } from '@/src/core/infrastructure/databases/prisma/contracts/aggregates';
 
 export class PrismaEssayStatsMapper implements Mapper<
   EssayAggregateResult,
