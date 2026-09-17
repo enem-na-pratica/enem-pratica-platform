@@ -6,7 +6,7 @@ import type { Mapper } from '@/src/core/domain/contracts/mappers';
 import {
   type PrismaQuestionSessionWithTopicAndSubject,
   prismaQuestionSessionWithTopicAndSubjectInclude,
-} from '@/src/core/infrastructure/databases/prisma/types';
+} from '@/src/core/infrastructure/databases/prisma/contracts/includes';
 import type { PrismaClient } from '@/src/generated/prisma/client';
 
 type PrismaListQuestionSessionsByAuthorQueryDeps = {

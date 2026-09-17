@@ -1,6 +1,6 @@
 import type { TopicProgressDto } from '@/src/core/application/use-cases/subject';
 import type { Mapper } from '@/src/core/domain/contracts/mappers';
-import type { PrismaTopicWithProgress } from '@/src/core/infrastructure/databases/prisma/types';
+import type { PrismaTopicWithProgress } from '@/src/core/infrastructure/databases/prisma/contracts/includes';
 
 export class PrismaTopicProgressDtoMapper implements Mapper<
   PrismaTopicWithProgress,

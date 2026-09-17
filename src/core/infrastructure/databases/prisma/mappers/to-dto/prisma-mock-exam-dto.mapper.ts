@@ -8,7 +8,7 @@ import {
   type KnowledgeArea,
   type KnowledgeAreaLabelKey,
 } from '@/src/core/domain/entities';
-import type { PrismaMockExamFull } from '@/src/core/infrastructure/databases/prisma/types';
+import type { PrismaMockExamFull } from '@/src/core/infrastructure/databases/prisma/contracts/includes';
 
 const REVERSE_KNOWLEDGE_AREA_MAP: Record<KnowledgeArea, KnowledgeAreaLabelKey> =
   {
