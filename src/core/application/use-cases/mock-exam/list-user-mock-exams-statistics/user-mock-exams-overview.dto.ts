@@ -1,7 +1,7 @@
 import type { MockExamDto } from '@/src/core/application/common/dtos';
 import type { KnowledgeAreaLabelKey } from '@/src/core/domain/entities';
 
-export type AreaSummaryDto = {
+type AreaSummaryDto = {
   averagePerformanceRate: number;
   averageCorrectAnswers: number;
   totalCriticalErrors: number;
