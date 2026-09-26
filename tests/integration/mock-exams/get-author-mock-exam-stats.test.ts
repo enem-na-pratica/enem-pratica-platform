@@ -289,6 +289,36 @@ describe('GetAuthorMockExamStatsController (integration)', () => {
       expect(body.errorPrevalence.interpretationAverage).toBe(19); // (3+6+11+18)/2
       expect(body.errorPrevalence.knowledgeGapAverage).toBe(22.5); // (2+7+16+20)/2
     });
+
+    it('should allow a TEACHER to access the stats of a STUDENT explicitly assigned to them', async () => {
+      const teacher = await createUser({
+        name: 'Professor Teste',
+        username: TEST_TEACHER_USERNAME,
+        role: ROLES.TEACHER,
+      });
+      const student = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      await linkStudentToTeacher(student.id, teacher.id);
+
+      await createMockExam(
+        student.id,
+        'Simulado do Aluno',
+        PERFECT_PERFORMANCES,
+      );
+
+      const controller = makeSut();
+      const response = await controller.handle(
+        makeRequest(TEST_STUDENT_USERNAME, teacher),
+      );
+
+      expect(response.statusCode).toBe(200);
+      const body = response.body as MockExamStatsDto;
+      expect(body.totalMockExams).toBe(1);
+      expect(body.globalAveragePerformance).toBe(1);
+    });
   });
 
   describe('GET /api/mock-exams/users/:username/stats — error cases', () => {
