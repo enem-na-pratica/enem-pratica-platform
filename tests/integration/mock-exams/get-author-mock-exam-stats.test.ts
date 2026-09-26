@@ -126,3 +126,17 @@ const PERFECT_PERFORMANCES: Record<AreaKey, AreaPerformanceInput> = {
     interpretationErrors: 0,
   },
 };
+
+beforeAll(async () => {
+  await prisma.$connect();
+});
+
+afterEach(async () => {
+  await prisma.user.deleteMany({
+    where: { username: { in: ALL_TEST_USERNAMES } },
+  });
+});
+
+afterAll(async () => {
+  await prisma.$disconnect();
+});
