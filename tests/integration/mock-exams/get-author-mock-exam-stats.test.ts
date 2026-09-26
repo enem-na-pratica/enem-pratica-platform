@@ -143,7 +143,37 @@ afterAll(async () => {
 
 describe('GetAuthorMockExamStatsController (integration)', () => {
   describe('GET /api/mock-exams/users/:username/stats — success cases', () => {
-    // Tests for success scenarios will go here
+    it('should return zeroed statistics when the author has no mock exams', async () => {
+      const student = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+
+      const controller = makeSut();
+      const response = await controller.handle(makeRequest('me', student));
+
+      expect(response.statusCode).toBe(200);
+
+      const body = response.body as MockExamStatsDto;
+      expect(body.totalMockExams).toBe(0);
+      expect(body.globalAveragePerformance).toBe(0);
+      expect(body.errorPrevalence).toEqual({
+        distractionAverage: 0,
+        interpretationAverage: 0,
+        knowledgeGapAverage: 0,
+      });
+
+      (
+        ['languages', 'humanities', 'naturalSciences', 'mathematics'] as const
+      ).forEach((area) => {
+        expect(body.performancePerArea[area]).toEqual({
+          averagePerformanceRate: 0,
+          averageCorrectAnswers: 0,
+          totalCriticalErrors: 0,
+        });
+      });
+    });
   });
 
   describe('GET /api/mock-exams/users/:username/stats — error cases', () => {
