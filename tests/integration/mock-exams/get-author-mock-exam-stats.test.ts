@@ -35,3 +35,20 @@ const ALL_TEST_USERNAMES = [
 function makeSut() {
   return makeGetAuthorMockExamStats();
 }
+
+async function createUser(data: {
+  name: string;
+  username: string;
+  role: Role;
+}): Promise<TestUser> {
+  const user = await prisma.user.create({
+    data: {
+      name: data.name,
+      username: data.username,
+      passwordHash: 'fake-hash-for-tests',
+      role: data.role,
+    },
+  });
+
+  return { id: user.id, username: user.username, role: user.role as Role };
+}
