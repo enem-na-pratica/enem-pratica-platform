@@ -140,3 +140,13 @@ afterEach(async () => {
 afterAll(async () => {
   await prisma.$disconnect();
 });
+
+describe('GetAuthorMockExamStatsController (integration)', () => {
+  describe('GET /api/mock-exams/users/:username/stats — success cases', () => {
+    // Tests for success scenarios will go here
+  });
+
+  describe('GET /api/mock-exams/users/:username/stats — error cases', () => {
+    // Tests for error scenarios will go here
+  });
+});
