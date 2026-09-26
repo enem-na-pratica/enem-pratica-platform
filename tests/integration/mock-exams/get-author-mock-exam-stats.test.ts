@@ -341,6 +341,23 @@ describe('GetAuthorMockExamStatsController (integration)', () => {
       const body = response.body as MockExamStatsDto;
       expect(body.totalMockExams).toBe(0);
     });
+
+    it('should allow a requester to access their own stats by passing their own username directly (not "me")', async () => {
+      const teacher = await createUser({
+        name: 'Professor Teste',
+        username: TEST_TEACHER_USERNAME,
+        role: ROLES.TEACHER,
+      });
+
+      const controller = makeSut();
+      const response = await controller.handle(
+        makeRequest(TEST_TEACHER_USERNAME, teacher),
+      );
+
+      expect(response.statusCode).toBe(200);
+      const body = response.body as MockExamStatsDto;
+      expect(body.totalMockExams).toBe(0);
+    });
   });
 
   describe('GET /api/mock-exams/users/:username/stats — error cases', () => {
