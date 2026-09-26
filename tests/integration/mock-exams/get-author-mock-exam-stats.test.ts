@@ -174,6 +174,121 @@ describe('GetAuthorMockExamStatsController (integration)', () => {
         });
       });
     });
+
+    it('should correctly aggregate statistics across multiple mock exams', async () => {
+      const student = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+
+      await createMockExam(student.id, 'Simulado 1', {
+        LANGUAGES: {
+          correctCount: 45,
+          certaintyCount: 45,
+          doubtErrors: 0,
+          distractionErrors: 0,
+          interpretationErrors: 0,
+        },
+        HUMANITIES: {
+          correctCount: 30,
+          certaintyCount: 25,
+          doubtErrors: 3,
+          distractionErrors: 5,
+          interpretationErrors: 4,
+        },
+        NATURAL_SCIENCES: {
+          correctCount: 20,
+          certaintyCount: 15,
+          doubtErrors: 5,
+          distractionErrors: 10,
+          interpretationErrors: 5,
+        },
+        MATHEMATICS: {
+          correctCount: 10,
+          certaintyCount: 8,
+          doubtErrors: 10,
+          distractionErrors: 15,
+          interpretationErrors: 10,
+        },
+      });
+
+      await createMockExam(student.id, 'Simulado 2', {
+        LANGUAGES: {
+          correctCount: 35,
+          certaintyCount: 30,
+          doubtErrors: 2,
+          distractionErrors: 5,
+          interpretationErrors: 3,
+        },
+        HUMANITIES: {
+          correctCount: 40,
+          certaintyCount: 35,
+          doubtErrors: 1,
+          distractionErrors: 2,
+          interpretationErrors: 2,
+        },
+        NATURAL_SCIENCES: {
+          correctCount: 25,
+          certaintyCount: 20,
+          doubtErrors: 4,
+          distractionErrors: 8,
+          interpretationErrors: 6,
+        },
+        MATHEMATICS: {
+          correctCount: 15,
+          certaintyCount: 10,
+          doubtErrors: 8,
+          distractionErrors: 12,
+          interpretationErrors: 8,
+        },
+      });
+
+      const controller = makeSut();
+      const response = await controller.handle(makeRequest('me', student));
+
+      expect(response.statusCode).toBe(200);
+
+      const body = response.body as MockExamStatsDto;
+
+      expect(body.totalMockExams).toBe(2);
+      // (80/45 + 70/45 + 45/45 + 25/45) / (2 * 4) ≈ 0.61111
+      expect(body.globalAveragePerformance).toBeCloseTo(0.61111, 4);
+
+      expect(
+        body.performancePerArea.languages.averagePerformanceRate,
+      ).toBeCloseTo(0.88889, 4); // (45+35)/45/2
+      expect(body.performancePerArea.languages.averageCorrectAnswers).toBe(40); // (45+35)/2
+      expect(body.performancePerArea.languages.totalCriticalErrors).toBe(8); // (90-80) - (0+2)
+
+      expect(
+        body.performancePerArea.humanities.averagePerformanceRate,
+      ).toBeCloseTo(0.77778, 4); // (30+40)/45/2
+      expect(body.performancePerArea.humanities.averageCorrectAnswers).toBe(35); // (30+40)/2
+      expect(body.performancePerArea.humanities.totalCriticalErrors).toBe(16); // (90-70) - (3+1)
+
+      expect(
+        body.performancePerArea.naturalSciences.averagePerformanceRate,
+      ).toBeCloseTo(0.5, 4); // (20+25)/45/2
+      expect(
+        body.performancePerArea.naturalSciences.averageCorrectAnswers,
+      ).toBe(22.5); // (20+25)/2
+      expect(body.performancePerArea.naturalSciences.totalCriticalErrors).toBe(
+        36,
+      ); // (90-45) - (5+4)
+
+      expect(
+        body.performancePerArea.mathematics.averagePerformanceRate,
+      ).toBeCloseTo(0.27778, 4); // (10+15)/45/2
+      expect(body.performancePerArea.mathematics.averageCorrectAnswers).toBe(
+        12.5,
+      ); // (10+15)/2
+      expect(body.performancePerArea.mathematics.totalCriticalErrors).toBe(47); // (90-25) - (10+8)
+
+      expect(body.errorPrevalence.distractionAverage).toBe(28.5); // (5+7+18+27)/2
+      expect(body.errorPrevalence.interpretationAverage).toBe(19); // (3+6+11+18)/2
+      expect(body.errorPrevalence.knowledgeGapAverage).toBe(22.5); // (2+7+16+20)/2
+    });
   });
 
   describe('GET /api/mock-exams/users/:username/stats — error cases', () => {
