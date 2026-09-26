@@ -84,3 +84,45 @@ async function createMockExam(
 
   return mockExam.id;
 }
+
+function makeRequest(
+  username: string,
+  requester: TestUser,
+): AuthenticatedRequest<void, { username: string }> {
+  return {
+    body: undefined,
+    params: { username },
+    requester,
+  };
+}
+
+const PERFECT_PERFORMANCES: Record<AreaKey, AreaPerformanceInput> = {
+  LANGUAGES: {
+    correctCount: 45,
+    certaintyCount: 45,
+    doubtErrors: 0,
+    distractionErrors: 0,
+    interpretationErrors: 0,
+  },
+  HUMANITIES: {
+    correctCount: 45,
+    certaintyCount: 45,
+    doubtErrors: 0,
+    distractionErrors: 0,
+    interpretationErrors: 0,
+  },
+  NATURAL_SCIENCES: {
+    correctCount: 45,
+    certaintyCount: 45,
+    doubtErrors: 0,
+    distractionErrors: 0,
+    interpretationErrors: 0,
+  },
+  MATHEMATICS: {
+    correctCount: 45,
+    certaintyCount: 45,
+    doubtErrors: 0,
+    distractionErrors: 0,
+    interpretationErrors: 0,
+  },
+};
