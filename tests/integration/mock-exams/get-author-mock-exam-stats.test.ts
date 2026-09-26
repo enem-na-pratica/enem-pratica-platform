@@ -52,3 +52,35 @@ async function createUser(data: {
 
   return { id: user.id, username: user.username, role: user.role as Role };
 }
+
+async function linkStudentToTeacher(
+  studentId: string,
+  teacherId: string,
+): Promise<void> {
+  await prisma.studentTeacher.create({
+    data: { studentId, teacherId },
+  });
+}
+
+async function createMockExam(
+  authorId: string,
+  title: string,
+  performances: Record<AreaKey, AreaPerformanceInput>,
+): Promise<string> {
+  const mockExam = await prisma.mockExam.create({
+    data: {
+      title,
+      authorId,
+      performances: {
+        create: (Object.keys(performances) as AreaKey[]).map((area) => ({
+          // Type cast required in case the Prisma-generated enum is not
+          // structurally compatible with a string literal union.
+          area: area as AreaKey & string,
+          ...performances[area],
+        })),
+      },
+    },
+  });
+
+  return mockExam.id;
+}
