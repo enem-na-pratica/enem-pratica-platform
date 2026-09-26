@@ -319,6 +319,28 @@ describe('GetAuthorMockExamStatsController (integration)', () => {
       expect(body.totalMockExams).toBe(1);
       expect(body.globalAveragePerformance).toBe(1);
     });
+
+    it('should allow an ADMIN to access statistics of any subordinate user, even without an explicit link', async () => {
+      const admin = await createUser({
+        name: 'Admin Teste',
+        username: TEST_ADMIN_USERNAME,
+        role: ROLES.ADMIN,
+      });
+      await createUser({
+        name: 'Professor Teste',
+        username: TEST_TEACHER_USERNAME,
+        role: ROLES.TEACHER,
+      });
+
+      const controller = makeSut();
+      const response = await controller.handle(
+        makeRequest(TEST_TEACHER_USERNAME, admin),
+      );
+
+      expect(response.statusCode).toBe(200);
+      const body = response.body as MockExamStatsDto;
+      expect(body.totalMockExams).toBe(0);
+    });
   });
 
   describe('GET /api/mock-exams/users/:username/stats — error cases', () => {
