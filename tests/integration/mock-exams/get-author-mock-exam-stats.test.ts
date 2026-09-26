@@ -17,3 +17,21 @@ type AreaPerformanceInput = {
 type AreaKey = 'LANGUAGES' | 'HUMANITIES' | 'NATURAL_SCIENCES' | 'MATHEMATICS';
 
 type TestUser = { id: string; username: string; role: Role };
+
+const TEST_STUDENT_USERNAME = 'aluno.statsmockexam.teste';
+const TEST_STUDENT2_USERNAME = 'aluno2.statsmockexam.teste';
+const TEST_TEACHER_USERNAME = 'professor.statsmockexam.teste';
+const TEST_TEACHER2_USERNAME = 'professor2.statsmockexam.teste';
+const TEST_ADMIN_USERNAME = 'admin.statsmockexam.teste';
+
+const ALL_TEST_USERNAMES = [
+  TEST_STUDENT_USERNAME,
+  TEST_STUDENT2_USERNAME,
+  TEST_TEACHER_USERNAME,
+  TEST_TEACHER2_USERNAME,
+  TEST_ADMIN_USERNAME,
+];
+
+function makeSut() {
+  return makeGetAuthorMockExamStats();
+}
