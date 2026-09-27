@@ -441,5 +441,20 @@ describe('GetAuthorMockExamStatsController (integration)', () => {
 
       expect(response.statusCode).toBe(403);
     });
+
+    it('should return 400 when the provided username has an invalid format', async () => {
+      const student = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+
+      const controller = makeSut();
+      const response = await controller.handle(
+        makeRequest('-invalido', student),
+      );
+
+      expect(response.statusCode).toBe(400);
+    });
   });
 });
