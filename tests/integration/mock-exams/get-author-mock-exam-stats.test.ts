@@ -421,5 +421,25 @@ describe('GetAuthorMockExamStatsController (integration)', () => {
 
       expect(response.statusCode).toBe(403);
     });
+
+    it('should return 403 when a TEACHER tries to access another TEACHER statistics (equal role level)', async () => {
+      const teacher = await createUser({
+        name: 'Professor Teste',
+        username: TEST_TEACHER_USERNAME,
+        role: ROLES.TEACHER,
+      });
+      await createUser({
+        name: 'Professor Dois Teste',
+        username: TEST_TEACHER2_USERNAME,
+        role: ROLES.TEACHER,
+      });
+
+      const controller = makeSut();
+      const response = await controller.handle(
+        makeRequest(TEST_TEACHER2_USERNAME, teacher),
+      );
+
+      expect(response.statusCode).toBe(403);
+    });
   });
 });
