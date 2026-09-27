@@ -361,6 +361,25 @@ describe('GetAuthorMockExamStatsController (integration)', () => {
   });
 
   describe('GET /api/mock-exams/users/:username/stats — error cases', () => {
-    // Tests for error scenarios will go here
+    it('should return 403 when a TEACHER tries to access a STUDENT that is not assigned to them', async () => {
+      const teacher = await createUser({
+        name: 'Professor Teste',
+        username: TEST_TEACHER_USERNAME,
+        role: ROLES.TEACHER,
+      });
+      await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      // No StudentTeacher link is created intentionally.
+
+      const controller = makeSut();
+      const response = await controller.handle(
+        makeRequest(TEST_STUDENT_USERNAME, teacher),
+      );
+
+      expect(response.statusCode).toBe(403);
+    });
   });
 });
