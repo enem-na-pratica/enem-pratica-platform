@@ -9,7 +9,7 @@ import {
   MockExamToggleButton,
   MockExamToggleProvider,
 } from '../_components/_form';
-import { fetchAuthorMockExamsStats, fetchUserMockExamsStats } from '../api';
+import { fetchListMockExamByAuthor, fetchMockExamStatsByAuthor } from '../api';
 
 const FORBIDDEN = 403;
 const NOT_FOUND = 404;
@@ -27,7 +27,7 @@ export default async function MockExamsPage({ params }: MockExamsPageProps) {
     <div className="min-h-screen bg-(--background) pb-20 text-(--foreground) transition-colors duration-500">
       <MockExamHeader username={resolvedParams.username} />
       <main className="mx-auto w-full max-w-6xl space-y-8 px-4 py-8">
-        {mockExams.length > 0 && <MockStatsSection stats={stats} />}
+        {stats.totalMockExams > 0 && <MockStatsSection stats={stats} />}
 
         <hr className="border-(--foreground)/10" />
 
@@ -47,9 +47,9 @@ export default async function MockExamsPage({ params }: MockExamsPageProps) {
 
 async function fetchPageData(username: string) {
   try {
-    const [{ mockExams }, stats] = await Promise.all([
-      fetchUserMockExamsStats(username),
-      fetchAuthorMockExamsStats(username),
+    const [mockExams, stats] = await Promise.all([
+      fetchListMockExamByAuthor(username),
+      fetchMockExamStatsByAuthor(username),
     ]);
     return { mockExams, stats };
   } catch (error) {
