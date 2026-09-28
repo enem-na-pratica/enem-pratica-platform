@@ -6,7 +6,7 @@ import type { Mapper } from '@/src/core/domain/contracts/mappers';
 import {
   type EssayAggregateResult,
   essayAggregateArgs,
-} from '@/src/core/infrastructure/databases/prisma/selects';
+} from '@/src/core/infrastructure/databases/prisma/contracts/aggregates';
 import type { PrismaClient } from '@/src/generated/prisma/client';
 
 type PrismaGetAuthorEssaysStatsQueryDeps = {

@@ -1,27 +1,33 @@
-import type { MockExamDto } from '@/src/core/application/common/dtos';
+import type { KnowledgeArea } from '@/src/core/domain/entities';
 import type { KnowledgeAreaLabelKey } from '@/src/core/domain/entities';
 
-type AreaSummaryDto = {
+export type AreaAggregateRaw = {
+  area: KnowledgeArea;
+  count: number;
+  sumCorrectCount: number;
+  sumDoubtErrors: number;
+  sumDistractionErrors: number;
+  sumInterpretationErrors: number;
+};
+
+export type MockExamsRawAggregate = {
+  totalMockExams: number;
+  areaAggregates: AreaAggregateRaw[];
+};
+
+export type AreaSummaryDto = {
   averagePerformanceRate: number;
   averageCorrectAnswers: number;
   totalCriticalErrors: number;
 };
 
-export type MockExamStatisticsDto = {
+export type MockExamStatsDto = {
   totalMockExams: number;
-
   globalAveragePerformance: number;
-
   performancePerArea: Record<KnowledgeAreaLabelKey, AreaSummaryDto>;
-
   errorPrevalence: {
     distractionAverage: number;
     interpretationAverage: number;
     knowledgeGapAverage: number;
   };
-};
-
-export type UserMockExamsOverviewDto = {
-  statistics: MockExamStatisticsDto;
-  mockExams: MockExamDto[];
 };

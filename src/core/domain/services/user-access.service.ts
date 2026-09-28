@@ -24,8 +24,25 @@ type UserAccessServiceDeps = {
 };
 
 /**
- * Service responsible for resolving target users and validating
- * access rules based on role hierarchy and explicit relationships.
+ * Resolves "who is the target user of this request" and enforces
+ * authorization rules based on the requester's role.
+ *
+ * This is the entry point for any use case where a requester (the
+ * authenticated user) wants to act on behalf of themselves or another user
+ * identified by a username, UUID, or omitted entirely (meaning "myself").
+ *
+ * Two resolution strategies are exposed, differing in how strict they are:
+ *
+ * - {@link resolveTargetId} — role hierarchy only. Use for actions where
+ *   any sufficiently privileged role may act on any subordinate user
+ *   (e.g. read-only lookups, admin operations).
+ * - {@link resolveManagedTargetId} — role hierarchy *plus* explicit
+ *   relationships. Use for actions where a teacher must additionally be
+ *   linked to the specific student they're acting on.
+ *
+ * When in doubt about which one to use, prefer {@link resolveManagedTargetId}:
+ * it's the stricter option and the safer default for anything that mutates
+ * a student's data.
  */
 export class UserAccessService {
   private readonly userRepository: UserRepository;
@@ -40,21 +57,43 @@ export class UserAccessService {
   }
 
   /**
-   * Resolves the target user ID by validating only role hierarchy.
+   * Resolves the target user's ID, checking only role hierarchy.
    *
-   * Useful for read-only or administrative operations where
-   * higher roles are allowed to access any subordinate user.
+   * @param params.requester - The authenticated user making the request.
+   * @param params.targetIdentifier - The user being acted upon, as a
+   *   username or UUID. Omit it (or pass the requester's own username/id)
+   *   to target the requester themselves — no permission check is done
+   *   in that case.
+   *
+   * @returns The resolved target user's ID.
+   *
+   * @throws {UserNotFoundError} If `targetIdentifier` is a username that
+   *   doesn't match any user.
+   * @throws {ForbiddenError} If the requester's role is not strictly
+   *   higher than the target user's role.
    */
   async resolveTargetId(params: ResolveTargetParams): Promise<string> {
     return this.resolveTargetUser(params);
   }
 
   /**
-   * Resolves the target user ID by validating both role hierarchy
-   * and explicit management relationships.
+   * Resolves the target user's ID, checking role hierarchy *and*,
+   * when the requester is a teacher acting on someone else, that the
+   * target student is explicitly assigned to that teacher.
    *
-   * If the requester is a Teacher, they are only allowed to act
-   * on students explicitly assigned to them.
+   * @param params.requester - The authenticated user making the request.
+   * @param params.targetIdentifier - The user being acted upon, as a
+   *   username or UUID. Omit it (or pass the requester's own username/id)
+   *   to target the requester themselves — no permission check is done
+   *   in that case.
+   *
+   * @returns The resolved target user's ID.
+   *
+   * @throws {UserNotFoundError} If `targetIdentifier` is a username that
+   *   doesn't match any user.
+   * @throws {ForbiddenError} If the requester's role is not strictly
+   *   higher than the target user's role, or if the requester is a
+   *   teacher not assigned to the target student.
    */
   async resolveManagedTargetId(params: ResolveTargetParams): Promise<string> {
     const authorId = await this.resolveTargetUser(params);

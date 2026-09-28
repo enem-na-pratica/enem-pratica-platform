@@ -1,7 +1,7 @@
 import type { MockExamDto } from '@/src/core/application/common/dtos';
 import type { ListMockExamsByAuthorQuery } from '@/src/core/application/use-cases/mock-exam';
 import type { Mapper } from '@/src/core/domain/contracts/mappers';
-import type { PrismaMockExamFull } from '@/src/core/infrastructure/databases/prisma/types';
+import type { PrismaMockExamFull } from '@/src/core/infrastructure/databases/prisma/contracts/includes';
 import type { PrismaClient } from '@/src/generated/prisma/client';
 
 type PrismaListMockExamsByAuthorQueryDeps = {

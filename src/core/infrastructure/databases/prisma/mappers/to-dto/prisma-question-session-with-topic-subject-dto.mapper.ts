@@ -1,7 +1,7 @@
 import type { QuestionSessionWithTopicAndSubjectDto } from '@/src/core/application/use-cases/question-session/list-user-question-session-statistics';
 import type { Mapper } from '@/src/core/domain/contracts/mappers';
 import { QuestionSession } from '@/src/core/domain/entities';
-import type { PrismaQuestionSessionWithTopicAndSubject } from '@/src/core/infrastructure/databases/prisma/types';
+import type { PrismaQuestionSessionWithTopicAndSubject } from '@/src/core/infrastructure/databases/prisma/contracts/includes';
 
 export class PrismaQuestionSessionWithTopicAndSubjectDtoMapper implements Mapper<
   PrismaQuestionSessionWithTopicAndSubject,
