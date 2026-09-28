@@ -1,5 +1,11 @@
 import type { KnowledgeArea } from '@/src/web/config';
 
+export type KnowledgeAreaLabelKey =
+  | 'languages'
+  | 'humanities'
+  | 'naturalSciences'
+  | 'mathematics';
+
 export type AreaPerformance = {
   id: string;
   area: KnowledgeArea;
@@ -25,12 +31,6 @@ export type AreaPerformance = {
   };
 };
 
-export type KnowledgeAreaLabelKey =
-  | 'languages'
-  | 'humanities'
-  | 'naturalSciences'
-  | 'mathematics';
-
 export type MockExam = {
   id: string;
   authorId: string;
@@ -54,9 +54,4 @@ export type MockExamStats = {
     interpretationAverage: number;
     knowledgeGapAverage: number;
   };
-};
-
-export type UserMockExamsOverview = {
-  statistics: MockExamStats;
-  mockExams: MockExam[];
 };

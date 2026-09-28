@@ -4,14 +4,12 @@ import type {
   AreaPerformanceDto,
   MockExamDto,
   MockExamStatsDto,
-  UserMockExamsOverviewDto,
 } from './mock-exam.dto';
 import type {
   AreaPerformance,
   KnowledgeAreaLabelKey,
   MockExam,
   MockExamStats,
-  UserMockExamsOverview,
 } from './mock-exam.model';
 
 export const MockExamMapper = {
@@ -34,14 +32,6 @@ export const MockExamMapper = {
     return {
       ...areaDto,
       area: areaDto.area.toUpperCase() as KnowledgeArea,
-    };
-  },
-
-  toOverviewModel(dto: UserMockExamsOverviewDto): UserMockExamsOverview {
-    return {
-      ...dto,
-      statistics: this.toStats(dto.statistics),
-      mockExams: dto.mockExams.map((exam) => this.toModel(exam)),
     };
   },
 
