@@ -45,13 +45,10 @@ type AreaSummary = {
   totalCriticalErrors: number;
 };
 
-export type MockExamStatistics = {
+export type MockExamStats = {
   totalMockExams: number;
-
   globalAveragePerformance: number;
-
   performancePerArea: Record<KnowledgeAreaLabelKey, AreaSummary>;
-
   errorPrevalence: {
     distractionAverage: number;
     interpretationAverage: number;
@@ -60,6 +57,6 @@ export type MockExamStatistics = {
 };
 
 export type UserMockExamsOverview = {
-  statistics: MockExamStatistics;
+  statistics: MockExamStats;
   mockExams: MockExam[];
 };

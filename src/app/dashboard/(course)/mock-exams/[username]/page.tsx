@@ -9,7 +9,7 @@ import {
   MockExamToggleButton,
   MockExamToggleProvider,
 } from '../_components/_form';
-import { fetchUserMockExamsStats } from '../api';
+import { fetchAuthorMockExamsStats, fetchUserMockExamsStats } from '../api';
 
 const FORBIDDEN = 403;
 const NOT_FOUND = 404;
@@ -21,15 +21,13 @@ type MockExamsPageProps = {
 export default async function MockExamsPage({ params }: MockExamsPageProps) {
   const resolvedParams = await params;
 
-  const { mockExams, statistics } = await fetchPageData(
-    resolvedParams.username,
-  );
+  const { mockExams, stats } = await fetchPageData(resolvedParams.username);
 
   return (
     <div className="min-h-screen bg-(--background) pb-20 text-(--foreground) transition-colors duration-500">
       <MockExamHeader username={resolvedParams.username} />
       <main className="mx-auto w-full max-w-6xl space-y-8 px-4 py-8">
-        {mockExams.length > 0 && <MockStatsSection stats={statistics} />}
+        {mockExams.length > 0 && <MockStatsSection stats={stats} />}
 
         <hr className="border-(--foreground)/10" />
 
@@ -49,7 +47,11 @@ export default async function MockExamsPage({ params }: MockExamsPageProps) {
 
 async function fetchPageData(username: string) {
   try {
-    return await fetchUserMockExamsStats(username);
+    const [{ mockExams }, stats] = await Promise.all([
+      fetchUserMockExamsStats(username),
+      fetchAuthorMockExamsStats(username),
+    ]);
+    return { mockExams, stats };
   } catch (error) {
     if (error instanceof ApiError) {
       if (error.status === NOT_FOUND) notFound();

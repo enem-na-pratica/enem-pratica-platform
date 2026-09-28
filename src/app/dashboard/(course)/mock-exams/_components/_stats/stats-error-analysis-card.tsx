@@ -1,9 +1,9 @@
-import type { MockExamStatistics } from '@/src/web/api';
+import type { MockExamStats } from '@/src/web/api';
 
 import { getErrorSeverityColor } from '../../_utils';
 
 type StatsErrorAnalysisCardProps = {
-  errorPrevalence: MockExamStatistics['errorPrevalence'];
+  errorPrevalence: MockExamStats['errorPrevalence'];
 };
 
 export function StatsErrorAnalysisCard({

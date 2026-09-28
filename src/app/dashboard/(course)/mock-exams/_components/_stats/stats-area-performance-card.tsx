@@ -1,4 +1,4 @@
-import type { KnowledgeAreaLabelKey, MockExamStatistics } from '@/src/web/api';
+import type { KnowledgeAreaLabelKey, MockExamStats } from '@/src/web/api';
 
 import { getPerformanceBarColor } from '../../_utils';
 
@@ -12,7 +12,7 @@ const AREA_LABELS: Record<KnowledgeAreaLabelKey, string> = {
 const PERCENTAGE_MULTIPLIER = 100;
 
 type StatsAreaPerformanceCardProps = {
-  performancePerArea: MockExamStatistics['performancePerArea'];
+  performancePerArea: MockExamStats['performancePerArea'];
 };
 
 export function StatsAreaPerformanceCard({
@@ -43,7 +43,7 @@ function PerformanceAreaRow({
   data,
 }: {
   areaKey: KnowledgeAreaLabelKey;
-  data: MockExamStatistics['performancePerArea'][KnowledgeAreaLabelKey];
+  data: MockExamStats['performancePerArea'][KnowledgeAreaLabelKey];
 }) {
   const rate = data.averagePerformanceRate * PERCENTAGE_MULTIPLIER;
   const { bgBarColor, textBarColor } = getPerformanceTheme(rate);
