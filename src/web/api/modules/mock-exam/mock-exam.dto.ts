@@ -43,13 +43,10 @@ type AreaSummaryDto = {
   totalCriticalErrors: number;
 };
 
-type MockExamStatisticsDto = {
+export type MockExamStatsDto = {
   totalMockExams: number;
-
   globalAveragePerformance: number;
-
   performancePerArea: Record<KnowledgeAreaLabelKey, AreaSummaryDto>;
-
   errorPrevalence: {
     distractionAverage: number;
     interpretationAverage: number;
@@ -58,6 +55,6 @@ type MockExamStatisticsDto = {
 };
 
 export type UserMockExamsOverviewDto = {
-  statistics: MockExamStatisticsDto;
+  statistics: MockExamStatsDto;
   mockExams: MockExamDto[];
 };
