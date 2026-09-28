@@ -1,3 +1,9 @@
+type KnowledgeAreaLabelKey =
+  | 'languages'
+  | 'humanities'
+  | 'naturalSciences'
+  | 'mathematics';
+
 export type AreaPerformanceDto = {
   id: string;
   area: string;
@@ -23,12 +29,6 @@ export type AreaPerformanceDto = {
   };
 };
 
-type KnowledgeAreaLabelKey =
-  | 'languages'
-  | 'humanities'
-  | 'naturalSciences'
-  | 'mathematics';
-
 export type MockExamDto = {
   id: string;
   authorId: string;
@@ -52,9 +52,4 @@ export type MockExamStatsDto = {
     interpretationAverage: number;
     knowledgeGapAverage: number;
   };
-};
-
-export type UserMockExamsOverviewDto = {
-  statistics: MockExamStatsDto;
-  mockExams: MockExamDto[];
 };

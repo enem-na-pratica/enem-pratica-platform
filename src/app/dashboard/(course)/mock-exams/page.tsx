@@ -6,12 +6,12 @@ import {
   MockExamToggleButton,
   MockExamToggleProvider,
 } from './_components/_form';
-import { fetchAuthorMockExamsStats, fetchUserMockExamsStats } from './api';
+import { fetchListMockExamByAuthor, fetchMockExamStatsByAuthor } from './api';
 
 export default async function MockExamsPage() {
-  const [{ mockExams }, stats] = await Promise.all([
-    fetchUserMockExamsStats(),
-    fetchAuthorMockExamsStats(),
+  const [mockExams, stats] = await Promise.all([
+    fetchListMockExamByAuthor(),
+    fetchMockExamStatsByAuthor(),
   ]);
 
   return (
@@ -26,7 +26,7 @@ export default async function MockExamsPage() {
       </Header>
 
       <main className="mx-auto w-full max-w-6xl space-y-8 px-4 py-8">
-        {mockExams.length > 0 && <MockStatsSection stats={stats} />}
+        {stats.totalMockExams > 0 && <MockStatsSection stats={stats} />}
 
         <hr className="border-(--foreground)/10" />
 

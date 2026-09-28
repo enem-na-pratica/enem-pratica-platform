@@ -1,9 +1,9 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 
-import type { UserMockExamsOverviewDto } from '@/src/core/application/use-cases/mock-exam';
+import { MockExamDto } from '@/src/core/application/common/dtos';
 import { ROLES, type Role } from '@/src/core/domain/auth';
 import { prisma } from '@/src/core/infrastructure/databases/prisma/prisma';
-import { makeListUserMockExamsStatistics } from '@/src/core/main/factories/mock-exam/make-list-user-mock-exams-statistics.factory';
+import { makeListMockExamsByAuthor } from '@/src/core/main/factories/mock-exam/make-list-mock-exams-by-author.factory';
 import type { AuthenticatedRequest } from '@/src/core/presentation/protocols';
 
 const TEST_STUDENT_USERNAME = 'student.examstats.teste';
@@ -52,7 +52,7 @@ const PRISMA_AREAS = [
 ] as const;
 
 function makeSut() {
-  return makeListUserMockExamsStatistics();
+  return makeListMockExamsByAuthor();
 }
 
 async function createUser(data: {
@@ -141,7 +141,7 @@ afterAll(async () => {
 
 describe('ListUserMockExamsStatisticsController (integration)', () => {
   describe('GET /api/mock-exams/users/:username — success cases', () => {
-    it('should return 200 with zero statistics and an empty mockExams array when the user has no mock exams', async () => {
+    it('should return 200 with empty mockExams array when the user has no mock exams', async () => {
       const studentId = await createUser({
         name: 'Aluno Teste',
         username: TEST_STUDENT_USERNAME,
@@ -162,23 +162,11 @@ describe('ListUserMockExamsStatisticsController (integration)', () => {
 
       expect(response.statusCode).toBe(200);
 
-      const body = response.body as UserMockExamsOverviewDto;
-      expect(body.mockExams).toEqual([]);
-      expect(body.statistics.totalMockExams).toBe(0);
-      expect(body.statistics.globalAveragePerformance).toBe(0);
-      expect(body.statistics.errorPrevalence).toEqual({
-        distractionAverage: 0,
-        interpretationAverage: 0,
-        knowledgeGapAverage: 0,
-      });
-      expect(body.statistics.performancePerArea.languages).toEqual({
-        averagePerformanceRate: 0,
-        averageCorrectAnswers: 0,
-        totalCriticalErrors: 0,
-      });
+      const body = response.body as MockExamDto[];
+      expect(body).toEqual([]);
     });
 
-    it('should return the correctly mapped mockExams and statistics for a single mock exam', async () => {
+    it('should return the correctly mapped mockExams for a single mock exam', async () => {
       const studentId = await createUser({
         name: 'Aluno Teste',
         username: TEST_STUDENT_USERNAME,
@@ -204,10 +192,10 @@ describe('ListUserMockExamsStatisticsController (integration)', () => {
 
       expect(response.statusCode).toBe(200);
 
-      const body = response.body as UserMockExamsOverviewDto;
-      expect(body.mockExams).toHaveLength(1);
+      const body = response.body as MockExamDto[];
+      expect(body).toHaveLength(1);
 
-      const [exam] = body.mockExams;
+      const [exam] = body;
       expect(exam.authorId).toBe(studentId);
       expect(exam.title).toBe('Simulado 1');
       expect(typeof exam.createdAt).toBe('string');
@@ -230,79 +218,6 @@ describe('ListUserMockExamsStatisticsController (integration)', () => {
         distractionErrors: 5,
         interpretationErrors: 4,
         knowledgeGapsErrors: 6,
-      });
-
-      expect(body.statistics.totalMockExams).toBe(1);
-      expect(body.statistics.globalAveragePerformance).toBeCloseTo(30 / 45, 10);
-      expect(body.statistics.performancePerArea.mathematics).toEqual({
-        averagePerformanceRate: 30 / 45,
-        averageCorrectAnswers: 30,
-        totalCriticalErrors: 12,
-      });
-      expect(body.statistics.errorPrevalence).toEqual({
-        distractionAverage: 4 * 5,
-        interpretationAverage: 4 * 4,
-        knowledgeGapAverage: 4 * 6,
-      });
-    });
-
-    it('should correctly aggregate statistics across multiple mock exams', async () => {
-      const studentId = await createUser({
-        name: 'Aluno Teste',
-        username: TEST_STUDENT_USERNAME,
-        role: ROLES.STUDENT,
-      });
-      await createMockExam({
-        authorId: studentId,
-        title: 'Simulado Mediano',
-        profile: MEDIUM_PROFILE,
-      });
-      await createMockExam({
-        authorId: studentId,
-        title: 'Simulado Perfeito',
-        profile: PERFECT_PROFILE,
-      });
-
-      const controller = makeSut();
-      const response = await controller.handle(
-        makeRequest({
-          username: 'me',
-          requester: {
-            id: studentId,
-            username: TEST_STUDENT_USERNAME,
-            role: ROLES.STUDENT,
-          },
-        }),
-      );
-
-      expect(response.statusCode).toBe(200);
-
-      const body = response.body as UserMockExamsOverviewDto;
-
-      expect(body.mockExams).toHaveLength(2);
-
-      const { statistics } = body;
-
-      expect(statistics.totalMockExams).toBe(2);
-
-      expect(statistics.globalAveragePerformance).toBeCloseTo(5 / 6, 10);
-
-      expect(
-        statistics.performancePerArea.humanities.averagePerformanceRate,
-      ).toBeCloseTo(5 / 6, 10);
-
-      expect(
-        statistics.performancePerArea.humanities.averageCorrectAnswers,
-      ).toBe(37.5);
-
-      expect(statistics.performancePerArea.humanities.totalCriticalErrors).toBe(
-        12,
-      );
-
-      expect(statistics.errorPrevalence).toEqual({
-        distractionAverage: (4 * 5 + 4 * 0) / 2,
-        interpretationAverage: (4 * 4 + 4 * 0) / 2,
-        knowledgeGapAverage: (4 * 6 + 4 * 0) / 2,
       });
     });
 
@@ -343,14 +258,15 @@ describe('ListUserMockExamsStatisticsController (integration)', () => {
 
       expect(response.statusCode).toBe(200);
 
-      const body = response.body as UserMockExamsOverviewDto;
-      expect(body.mockExams.map((e) => e.title)).toEqual([
+      const body = response.body as MockExamDto[];
+      expect(body).toHaveLength(2);
+      expect(body.map((e) => e.title)).toEqual([
         'Simulado Recente',
         'Simulado Antigo',
       ]);
     });
 
-    it('should allow an ADMIN to view any STUDENT statistics by username', async () => {
+    it('should allow an ADMIN to view any STUDENT mock exams by username', async () => {
       const adminId = await createUser({
         name: 'Admin Teste',
         username: TEST_ADMIN_USERNAME,
@@ -381,13 +297,12 @@ describe('ListUserMockExamsStatisticsController (integration)', () => {
 
       expect(response.statusCode).toBe(200);
 
-      const body = response.body as UserMockExamsOverviewDto;
-      expect(body.mockExams).toHaveLength(1);
-      expect(body.mockExams[0].authorId).toBe(studentId);
-      expect(body.statistics.globalAveragePerformance).toBeCloseTo(1, 10);
+      const body = response.body as MockExamDto[];
+      expect(body).toHaveLength(1);
+      expect(body[0].authorId).toBe(studentId);
     });
 
-    it('should allow a TEACHER to view statistics of a STUDENT explicitly assigned to them', async () => {
+    it('should allow a TEACHER to view mock exams of a STUDENT explicitly assigned to them', async () => {
       const teacherId = await createUser({
         name: 'Professor Teste',
         username: TEST_TEACHER_USERNAME,
@@ -419,9 +334,9 @@ describe('ListUserMockExamsStatisticsController (integration)', () => {
 
       expect(response.statusCode).toBe(200);
 
-      const body = response.body as UserMockExamsOverviewDto;
-      expect(body.mockExams).toHaveLength(1);
-      expect(body.statistics.totalMockExams).toBe(1);
+      const body = response.body as MockExamDto[];
+      expect(body).toHaveLength(1);
+      expect(body[0].authorId).toBe(studentId);
     });
   });
 

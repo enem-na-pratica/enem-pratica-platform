@@ -27,7 +27,7 @@ export class PrismaMockExamDtoMapper implements Mapper<
       (acc, performance) => {
         const dtoKey = REVERSE_KNOWLEDGE_AREA_MAP[performance.area];
         if (dtoKey) {
-          acc[dtoKey] = this.calculateStatistics(performance);
+          acc[dtoKey] = this.calculatePerformance(performance);
         }
         return acc;
       },
@@ -43,7 +43,7 @@ export class PrismaMockExamDtoMapper implements Mapper<
     };
   }
 
-  private calculateStatistics(
+  private calculatePerformance(
     performance: PrismaMockExamFull['performances'][number],
   ): AreaPerformanceDto {
     const areaPerformance = AreaPerformance.load({ ...performance });

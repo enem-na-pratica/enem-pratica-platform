@@ -1,17 +1,17 @@
 import {
+  type MockExam,
   type MockExamStats,
-  type UserMockExamsOverview,
   makeMockExamService,
 } from '@/src/web/api';
 
-export async function fetchUserMockExamsStats(
+export async function fetchListMockExamByAuthor(
   username: string = 'me',
-): Promise<UserMockExamsOverview> {
-  return makeMockExamService().listMockExamsStatisticsForUser(username);
+): Promise<MockExam[]> {
+  return makeMockExamService().listMockExamsByAuthor(username);
 }
 
-export async function fetchAuthorMockExamsStats(
+export async function fetchMockExamStatsByAuthor(
   username: string = 'me',
 ): Promise<MockExamStats> {
-  return makeMockExamService().getAuthorMockExamsStats(username);
+  return makeMockExamService().getMockExamStatsByAuthor(username);
 }
