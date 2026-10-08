@@ -167,6 +167,38 @@ describe('GetQuestionSessionStatsByAuthorController (integration)', () => {
       expect(stats.weeklyProgress.totalQuestions).toBe(20);
       expect(stats.weeklyProgress.accuracy).toBeCloseTo(0.6, 5);
     });
+
+    it('should count every session made on the same day, whether at the same or different times', async () => {
+      const student = await createUser(USERNAMES.student, ROLES.STUDENT);
+      const morning = daysAgo(1);
+      const evening = new Date(morning.getTime() + 3 * 60 * 60 * 1000);
+
+      await createSession({
+        authorId: student.id,
+        date: morning,
+        total: 10,
+        correct: 5,
+      });
+      await createSession({
+        authorId: student.id,
+        date: morning,
+        total: 10,
+        correct: 5,
+      });
+      await createSession({
+        authorId: student.id,
+        date: evening,
+        total: 10,
+        correct: 5,
+      });
+
+      const response = await makeSut().handle(makeRequest(student, 'me'));
+      const stats = asStats(response.body);
+
+      expect(stats.totalSessions).toBe(3);
+      expect(stats.totalQuestions).toBe(30);
+      expect(stats.studyStreak).toBe(1);
+    });
   });
   describe('GET /api/question-sessions/users/:username/stats — error cases', () => {});
 });
