@@ -307,6 +307,24 @@ describe('GetQuestionSessionStatsByAuthorController (integration)', () => {
       expect(stats.totalQuestions).toBe(12);
       expect(stats.totalCorrect).toBe(9);
     });
+
+    it('should return 200 when an admin requests a student without any assignment', async () => {
+      const admin = await createUser(USERNAMES.admin, ROLES.ADMIN);
+      const student = await createUser(USERNAMES.student, ROLES.STUDENT);
+      await createSession({
+        authorId: student.id,
+        date: daysAgo(0),
+        total: 8,
+        correct: 6,
+      });
+
+      const response = await makeSut().handle(
+        makeRequest(admin, USERNAMES.student),
+      );
+
+      expect(response.statusCode).toBe(200);
+      expect(asStats(response.body).totalQuestions).toBe(8);
+    });
   });
   describe('GET /api/question-sessions/users/:username/stats — error cases', () => {});
 });
