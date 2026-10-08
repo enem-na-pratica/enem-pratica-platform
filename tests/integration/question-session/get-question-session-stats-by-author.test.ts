@@ -199,6 +199,34 @@ describe('GetQuestionSessionStatsByAuthorController (integration)', () => {
       expect(stats.totalQuestions).toBe(30);
       expect(stats.studyStreak).toBe(1);
     });
+
+    it('should compute the study streak from consecutive days, stopping at the first gap', async () => {
+      const student = await createUser(USERNAMES.student, ROLES.STUDENT);
+
+      // today, yesterday, (gap), 3 days ago
+      await createSession({
+        authorId: student.id,
+        date: daysAgo(0),
+        total: 5,
+        correct: 3,
+      });
+      await createSession({
+        authorId: student.id,
+        date: daysAgo(1),
+        total: 5,
+        correct: 3,
+      });
+      await createSession({
+        authorId: student.id,
+        date: daysAgo(3),
+        total: 5,
+        correct: 3,
+      });
+
+      const response = await makeSut().handle(makeRequest(student, 'me'));
+
+      expect(asStats(response.body).studyStreak).toBe(2);
+    });
   });
   describe('GET /api/question-sessions/users/:username/stats — error cases', () => {});
 });
