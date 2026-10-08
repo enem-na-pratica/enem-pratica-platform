@@ -227,6 +227,39 @@ describe('GetQuestionSessionStatsByAuthorController (integration)', () => {
 
       expect(asStats(response.body).studyStreak).toBe(2);
     });
+
+    it('should count only overdue unreviewed sessions as pending reviews', async () => {
+      const student = await createUser(USERNAMES.student, ROLES.STUDENT);
+
+      // reviewed + old: must not count
+      await createSession({
+        authorId: student.id,
+        date: daysAgo(60),
+        total: 10,
+        correct: 5,
+        isReviewed: true,
+      });
+      // unreviewed + fresh: review not due yet
+      await createSession({
+        authorId: student.id,
+        date: new Date(),
+        total: 10,
+        correct: 5,
+        isReviewed: false,
+      });
+      // unreviewed + old: review overdue
+      await createSession({
+        authorId: student.id,
+        date: daysAgo(365),
+        total: 10,
+        correct: 5,
+        isReviewed: false,
+      });
+
+      const response = await makeSut().handle(makeRequest(student, 'me'));
+
+      expect(asStats(response.body).pendingReviewsCount).toBe(1);
+    });
   });
   describe('GET /api/question-sessions/users/:username/stats — error cases', () => {});
 });
