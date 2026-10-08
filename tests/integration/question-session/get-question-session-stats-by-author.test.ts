@@ -336,5 +336,15 @@ describe('GetQuestionSessionStatsByAuthorController (integration)', () => {
 
       expect(response.statusCode).toBe(400);
     });
+
+    it('should return 404 when the target user does not exist', async () => {
+      const admin = await createUser(USERNAMES.admin, ROLES.ADMIN);
+
+      const response = await makeSut().handle(
+        makeRequest(admin, 'nao.existe.qsstats'),
+      );
+
+      expect(response.statusCode).toBe(404);
+    });
   });
 });
