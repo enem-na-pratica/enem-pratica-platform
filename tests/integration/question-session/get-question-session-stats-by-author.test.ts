@@ -108,6 +108,23 @@ afterAll(async () => {
 });
 
 describe('GetQuestionSessionStatsByAuthorController (integration)', () => {
-  describe('GET /api/question-sessions/users/:username/stats — success cases', () => {});
+  describe('GET /api/question-sessions/users/:username/stats — success cases', () => {
+    it('should return 200 with all-zero statistics when the user has no sessions', async () => {
+      const student = await createUser(USERNAMES.student, ROLES.STUDENT);
+
+      const response = await makeSut().handle(makeRequest(student, 'me'));
+
+      expect(response.statusCode).toBe(200);
+      expect(asStats(response.body)).toEqual({
+        totalSessions: 0,
+        totalQuestions: 0,
+        totalCorrect: 0,
+        overallAccuracy: 0,
+        weeklyProgress: { totalQuestions: 0, accuracy: 0 },
+        studyStreak: 0,
+        pendingReviewsCount: 0,
+      });
+    });
+  });
   describe('GET /api/question-sessions/users/:username/stats — error cases', () => {});
 });
