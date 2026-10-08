@@ -106,3 +106,8 @@ afterAll(async () => {
   await prisma.subject.deleteMany({ where: { slug: TEST_SUBJECT_SLUG } });
   await prisma.$disconnect();
 });
+
+describe('GetQuestionSessionStatsByAuthorController (integration)', () => {
+  describe('GET /api/question-sessions/users/:username/stats — success cases', () => {});
+  describe('GET /api/question-sessions/users/:username/stats — error cases', () => {});
+});
