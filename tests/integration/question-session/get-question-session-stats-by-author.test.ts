@@ -23,3 +23,58 @@ const USERNAMES = {
 } as const;
 
 const ALL_TEST_USERNAMES = Object.values(USERNAMES);
+
+function makeSut() {
+  return makeGetQuestionSessionStatsByAuthor();
+}
+
+async function createUser(username: string, role: Role): Promise<Requester> {
+  const user = await prisma.user.create({
+    data: {
+      name: 'Usuario Teste',
+      username,
+      passwordHash: cachedPasswordHash,
+      role,
+    },
+  });
+
+  return { id: user.id, username: user.username, role: user.role as Role };
+}
+
+async function linkStudentToTeacher(studentId: string, teacherId: string) {
+  await prisma.studentTeacher.create({ data: { studentId, teacherId } });
+}
+
+function daysAgo(days: number): Date {
+  const base = new Date();
+  base.setUTCHours(12, 0, 0, 0);
+  return new Date(base.getTime() - days * DAY_MS);
+}
+
+async function createSession(params: {
+  authorId: string;
+  date: Date;
+  total: number;
+  correct: number;
+  isReviewed?: boolean;
+}) {
+  const { isReviewed = true, ...rest } = params;
+  return prisma.questionSession.create({
+    data: { topicId, isReviewed, ...rest },
+  });
+}
+
+function makeRequest(
+  requester: Requester,
+  username?: string,
+): AuthenticatedRequest<void, { username: string }> {
+  return {
+    body: undefined,
+    params: username === undefined ? undefined : { username },
+    requester,
+  };
+}
+
+function asStats(body: unknown) {
+  return body as QuestionSessionStatsDto;
+}
