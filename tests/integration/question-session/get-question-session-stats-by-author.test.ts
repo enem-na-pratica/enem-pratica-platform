@@ -346,5 +346,22 @@ describe('GetQuestionSessionStatsByAuthorController (integration)', () => {
 
       expect(response.statusCode).toBe(404);
     });
+
+    it('should return 403 when a student requests another user with the same role', async () => {
+      const student = await createUser(USERNAMES.student, ROLES.STUDENT);
+      const other = await createUser(USERNAMES.student2, ROLES.STUDENT);
+      await createSession({
+        authorId: other.id,
+        date: daysAgo(0),
+        total: 10,
+        correct: 5,
+      });
+
+      const response = await makeSut().handle(
+        makeRequest(student, USERNAMES.student2),
+      );
+
+      expect(response.statusCode).toBe(403);
+    });
   });
 });
