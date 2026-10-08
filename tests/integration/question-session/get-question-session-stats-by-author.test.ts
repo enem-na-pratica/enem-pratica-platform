@@ -280,6 +280,33 @@ describe('GetQuestionSessionStatsByAuthorController (integration)', () => {
       expect(asStats(viaMe.body).totalQuestions).toBe(10);
       expect(viaUsername.body).toEqual(viaMe.body);
     });
+
+    it("should return 200 with the student's own data when a teacher requests an assigned student", async () => {
+      const teacher = await createUser(USERNAMES.teacher, ROLES.TEACHER);
+      const student = await createUser(USERNAMES.student, ROLES.STUDENT);
+      await linkStudentToTeacher(student.id, teacher.id);
+      await createSession({
+        authorId: student.id,
+        date: daysAgo(0),
+        total: 12,
+        correct: 9,
+      });
+      await createSession({
+        authorId: teacher.id,
+        date: daysAgo(0),
+        total: 99,
+        correct: 99,
+      });
+
+      const response = await makeSut().handle(
+        makeRequest(teacher, USERNAMES.student),
+      );
+      const stats = asStats(response.body);
+
+      expect(response.statusCode).toBe(200);
+      expect(stats.totalQuestions).toBe(12);
+      expect(stats.totalCorrect).toBe(9);
+    });
   });
   describe('GET /api/question-sessions/users/:username/stats — error cases', () => {});
 });
