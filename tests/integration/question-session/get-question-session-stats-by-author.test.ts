@@ -363,5 +363,16 @@ describe('GetQuestionSessionStatsByAuthorController (integration)', () => {
 
       expect(response.statusCode).toBe(403);
     });
+
+    it('should return 403 when a teacher requests a student who is not assigned to them', async () => {
+      const teacher = await createUser(USERNAMES.teacher, ROLES.TEACHER);
+      await createUser(USERNAMES.student, ROLES.STUDENT);
+
+      const response = await makeSut().handle(
+        makeRequest(teacher, USERNAMES.student),
+      );
+
+      expect(response.statusCode).toBe(403);
+    });
   });
 });
