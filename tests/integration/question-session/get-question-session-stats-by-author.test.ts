@@ -326,5 +326,15 @@ describe('GetQuestionSessionStatsByAuthorController (integration)', () => {
       expect(asStats(response.body).totalQuestions).toBe(8);
     });
   });
-  describe('GET /api/question-sessions/users/:username/stats — error cases', () => {});
+  describe('GET /api/question-sessions/users/:username/stats — error cases', () => {
+    it('should return 400 when the username is invalid', async () => {
+      const student = await createUser(USERNAMES.student, ROLES.STUDENT);
+
+      const response = await makeSut().handle(
+        makeRequest(student, '-invalido'),
+      );
+
+      expect(response.statusCode).toBe(400);
+    });
+  });
 });
