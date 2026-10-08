@@ -125,6 +125,48 @@ describe('GetQuestionSessionStatsByAuthorController (integration)', () => {
         pendingReviewsCount: 0,
       });
     });
+
+    it('should compute totals, accuracy and weekly progress from persisted sessions, ignoring other users', async () => {
+      const student = await createUser(USERNAMES.student, ROLES.STUDENT);
+      const other = await createUser(USERNAMES.student2, ROLES.STUDENT);
+
+      await createSession({
+        authorId: student.id,
+        date: daysAgo(0),
+        total: 10,
+        correct: 8,
+      });
+      await createSession({
+        authorId: student.id,
+        date: daysAgo(3),
+        total: 10,
+        correct: 4,
+      });
+      await createSession({
+        authorId: student.id,
+        date: daysAgo(10),
+        total: 20,
+        correct: 20,
+      });
+      await createSession({
+        authorId: other.id,
+        date: daysAgo(0),
+        total: 100,
+        correct: 100,
+      });
+
+      const response = await makeSut().handle(makeRequest(student, 'me'));
+      const stats = asStats(response.body);
+
+      expect(response.statusCode).toBe(200);
+      expect(stats.totalSessions).toBe(3);
+      expect(stats.totalQuestions).toBe(40);
+      expect(stats.totalCorrect).toBe(32);
+      expect(stats.overallAccuracy).toBeCloseTo(0.8, 5);
+      // Only today's and 3-days-ago sessions fall inside the 7-day window
+      expect(stats.weeklyProgress.totalQuestions).toBe(20);
+      expect(stats.weeklyProgress.accuracy).toBeCloseTo(0.6, 5);
+    });
   });
   describe('GET /api/question-sessions/users/:username/stats — error cases', () => {});
 });
