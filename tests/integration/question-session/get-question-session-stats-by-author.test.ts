@@ -78,3 +78,31 @@ function makeRequest(
 function asStats(body: unknown) {
   return body as QuestionSessionStatsDto;
 }
+
+beforeAll(async () => {
+  await prisma.$connect();
+
+  cachedPasswordHash = await makeBcryptAdapter().hash(TEST_PASSWORD);
+
+  await prisma.subject.deleteMany({ where: { slug: TEST_SUBJECT_SLUG } });
+  const subject = await prisma.subject.create({
+    data: {
+      name: 'Assunto Stats Integration',
+      slug: TEST_SUBJECT_SLUG,
+      topics: { create: { title: 'Topico Stats Integration', position: 1 } },
+    },
+    include: { topics: true },
+  });
+  topicId = subject.topics[0].id;
+});
+
+afterEach(async () => {
+  await prisma.user.deleteMany({
+    where: { username: { in: ALL_TEST_USERNAMES } },
+  });
+});
+
+afterAll(async () => {
+  await prisma.subject.deleteMany({ where: { slug: TEST_SUBJECT_SLUG } });
+  await prisma.$disconnect();
+});
