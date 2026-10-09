@@ -1,10 +1,12 @@
 import {
   QuestionSessionDto,
+  QuestionSessionStatsDto,
   QuestionSessionWithTopicAndSubjectDto,
   UserQuestionSessionsOverviewDto,
 } from './question-session.dto';
 import {
   QuestionSession,
+  QuestionSessionStats,
   QuestionSessionWithTopicAndSubject,
   UserQuestionSessionsOverview,
 } from './question-session.model';
@@ -44,6 +46,15 @@ export const QuestionSessionMapper = {
       questionSessions: dto.questionSessions.map((s) =>
         this.mapQuestionSessionDtoToModel(s),
       ),
+    };
+  },
+
+  toStats(dto: QuestionSessionStatsDto): QuestionSessionStats {
+    return {
+      ...dto,
+      weeklyProgress: {
+        ...dto.weeklyProgress,
+      },
     };
   },
 };

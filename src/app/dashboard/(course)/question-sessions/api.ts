@@ -1,4 +1,5 @@
 import {
+  type QuestionSessionStats,
   type Subject,
   type TopicProgress,
   type UserQuestionSessionsOverview,
@@ -16,6 +17,12 @@ export async function fetchUserQuestionSessionStats(
   return makeQuestionSessionService().listQuestionSessionsStatisticsForUser(
     username,
   );
+}
+
+export async function fetchQuestionSessionStatsByAuthor(
+  username: string = 'me',
+): Promise<QuestionSessionStats> {
+  return makeQuestionSessionService().getQuestionSessionStatsByAuthor(username);
 }
 
 export async function fetchTopicsBySubject({

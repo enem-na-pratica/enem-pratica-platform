@@ -1,4 +1,4 @@
-import type { QuestionSessionStatistics } from '@/src/web/api';
+import type { QuestionSessionStats } from '@/src/web/api';
 
 import { StatsAccuracyHeroCard } from './stats-accuracy-hero-card';
 import { StatsPendingReviewsCard } from './stats-pending-reviews-card';
@@ -9,7 +9,7 @@ import { StatsWeeklyProgressCard } from './stats-weekly-progress-card';
 export function StatsSection({
   statistics,
 }: {
-  statistics: QuestionSessionStatistics;
+  statistics: QuestionSessionStats;
 }) {
   return (
     <section className="animate-in fade-in slide-in-from-bottom-4 grid grid-cols-1 gap-4 duration-500 md:grid-cols-2 lg:grid-cols-4">

@@ -2,11 +2,13 @@ import { HttpClient } from '@/src/web/api/shared';
 
 import {
   QuestionSessionDto,
+  QuestionSessionStatsDto,
   UserQuestionSessionsOverviewDto,
 } from './question-session.dto';
 import { QuestionSessionMapper } from './question-session.mapper';
 import {
   QuestionSession,
+  QuestionSessionStats,
   UserQuestionSessionsOverview,
 } from './question-session.model';
 
@@ -59,6 +61,17 @@ export class QuestionSessionService {
     });
 
     return QuestionSessionMapper.toModel(data);
+  }
+
+  async getQuestionSessionStatsByAuthor(
+    username: string,
+  ): Promise<QuestionSessionStats> {
+    const stats = await this.httpClient.get<QuestionSessionStatsDto>({
+      endpoint: '/question-sessions/users/:username/stats',
+      options: { params: { username } },
+    });
+
+    return QuestionSessionMapper.toStats(stats);
   }
 
   async listQuestionSessionsStatisticsForUser(

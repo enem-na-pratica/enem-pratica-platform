@@ -23,7 +23,7 @@ export type QuestionSessionWithTopicAndSubject = DeepPrettify<
   }
 >;
 
-export type QuestionSessionStatistics = {
+export type QuestionSessionStats = {
   totalSessions: number;
   totalQuestions: number;
   totalCorrect: number;
@@ -37,6 +37,6 @@ export type QuestionSessionStatistics = {
 };
 
 export type UserQuestionSessionsOverview = {
-  statistics: QuestionSessionStatistics;
+  statistics: QuestionSessionStats;
   questionSessions: QuestionSessionWithTopicAndSubject[];
 };
