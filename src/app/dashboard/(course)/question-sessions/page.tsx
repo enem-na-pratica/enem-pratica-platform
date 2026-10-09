@@ -6,12 +6,17 @@ import {
   QuestionSessionToggleProvider,
   SessionToggleButton,
 } from './_components/_form';
-import { fetchListSubjects, fetchUserQuestionSessionStats } from './api';
+import {
+  fetchListSubjects,
+  fetchQuestionSessionStatsByAuthor,
+  fetchUserQuestionSessionStats,
+} from './api';
 
 export default async function QuestionSessionPage() {
-  const [{ statistics, questionSessions }, subjects] = await Promise.all([
+  const [{ questionSessions }, subjects, stats] = await Promise.all([
     fetchUserQuestionSessionStats(),
     fetchListSubjects(),
+    fetchQuestionSessionStatsByAuthor(),
   ]);
 
   return (
@@ -26,9 +31,7 @@ export default async function QuestionSessionPage() {
       </Header>
 
       <main className="mx-auto w-full max-w-6xl space-y-8 px-4 py-8">
-        {questionSessions.length > 0 && (
-          <StatsSection statistics={statistics} />
-        )}
+        {questionSessions.length > 0 && <StatsSection statistics={stats} />}
 
         <hr className="border-(--foreground)/10" />
 
