@@ -37,7 +37,7 @@ export type QuestionSessionWithTopicAndSubjectDto = DeepPrettify<
   }
 >;
 
-export type QuestionSessionStatisticsDto = {
+export type QuestionSessionStatsDto = {
   totalSessions: number;
   totalQuestions: number;
   totalCorrect: number;
@@ -51,6 +51,6 @@ export type QuestionSessionStatisticsDto = {
 };
 
 export type UserQuestionSessionsOverviewDto = {
-  statistics: QuestionSessionStatisticsDto;
+  statistics: QuestionSessionStatsDto;
   questionSessions: QuestionSessionWithTopicAndSubjectDto[];
 };
