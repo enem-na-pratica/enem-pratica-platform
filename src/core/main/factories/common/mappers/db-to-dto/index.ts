@@ -5,3 +5,4 @@ export * from './make-prisma-topic-progress-dto-mapper.factory';
 export * from './make-prisma-question-session-with-topic-subject-dto-mapper.factory';
 export * from './essay';
 export * from './mock-exam';
+export * from './question-session';
