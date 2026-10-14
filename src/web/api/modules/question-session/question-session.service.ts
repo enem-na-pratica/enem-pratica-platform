@@ -2,14 +2,14 @@ import { HttpClient } from '@/src/web/api/shared';
 
 import {
   QuestionSessionDto,
+  QuestionSessionExtendedDto,
   QuestionSessionStatsDto,
-  UserQuestionSessionsOverviewDto,
 } from './question-session.dto';
 import { QuestionSessionMapper } from './question-session.mapper';
 import {
   QuestionSession,
+  QuestionSessionExtended,
   QuestionSessionStats,
-  UserQuestionSessionsOverview,
 } from './question-session.model';
 
 type QuestionSessionServiceDeps = {
@@ -74,14 +74,18 @@ export class QuestionSessionService {
     return QuestionSessionMapper.toStats(stats);
   }
 
-  async listQuestionSessionsStatisticsForUser(
+  async listQuestionSessionsByAuthor(
     username: string,
-  ): Promise<UserQuestionSessionsOverview> {
-    const data = await this.httpClient.get<UserQuestionSessionsOverviewDto>({
+  ): Promise<QuestionSessionExtended[]> {
+    const questionSessions = await this.httpClient.get<
+      QuestionSessionExtendedDto[]
+    >({
       endpoint: '/question-sessions/users/:username',
       options: { params: { username } },
     });
 
-    return QuestionSessionMapper.toOverviewModel(data);
+    return questionSessions.map((questionSession) =>
+      QuestionSessionMapper.toExtendedModel(questionSession),
+    );
   }
 }
