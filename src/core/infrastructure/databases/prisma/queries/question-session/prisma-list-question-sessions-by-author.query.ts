@@ -1,27 +1,24 @@
 import type {
   ListQuestionSessionsByAuthorQuery,
-  QuestionSessionWithTopicAndSubjectDto,
-} from '@/src/core/application/use-cases/question-session/list-user-question-session-statistics';
+  QuestionSessionExtendedDto,
+} from '@/src/core/application/use-cases/question-session';
 import type { Mapper } from '@/src/core/domain/contracts/mappers';
 import {
-  type PrismaQuestionSessionWithTopicAndSubject,
-  prismaQuestionSessionWithTopicAndSubjectInclude,
+  type PrismaQuestionSessionExtended,
+  prismaQuestionSessionExtended,
 } from '@/src/core/infrastructure/databases/prisma/contracts/includes';
 import type { PrismaClient } from '@/src/generated/prisma/client';
 
 type PrismaListQuestionSessionsByAuthorQueryDeps = {
   prisma: PrismaClient;
-  mapper: Mapper<
-    PrismaQuestionSessionWithTopicAndSubject,
-    QuestionSessionWithTopicAndSubjectDto
-  >;
+  mapper: Mapper<PrismaQuestionSessionExtended, QuestionSessionExtendedDto>;
 };
 
 export class PrismaListQuestionSessionsByAuthorQuery implements ListQuestionSessionsByAuthorQuery {
   private readonly prisma: PrismaClient;
   private readonly mapper: Mapper<
-    PrismaQuestionSessionWithTopicAndSubject,
-    QuestionSessionWithTopicAndSubjectDto
+    PrismaQuestionSessionExtended,
+    QuestionSessionExtendedDto
   >;
 
   constructor({ prisma, mapper }: PrismaListQuestionSessionsByAuthorQueryDeps) {
@@ -29,12 +26,10 @@ export class PrismaListQuestionSessionsByAuthorQuery implements ListQuestionSess
     this.mapper = mapper;
   }
 
-  async execute(
-    authorId: string,
-  ): Promise<QuestionSessionWithTopicAndSubjectDto[]> {
+  async execute(authorId: string): Promise<QuestionSessionExtendedDto[]> {
     const questionSessions = await this.prisma.questionSession.findMany({
       where: { authorId },
-      include: prismaQuestionSessionWithTopicAndSubjectInclude,
+      include: prismaQuestionSessionExtended,
       orderBy: [{ date: 'desc' }, { createdAt: 'desc' }],
     });
 
