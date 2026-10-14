@@ -1,15 +1,15 @@
-import type { QuestionSessionWithTopicAndSubjectDto } from '@/src/core/application/use-cases/question-session/list-user-question-session-statistics';
+import type { QuestionSessionExtendedDto } from '@/src/core/application/use-cases/question-session';
 import type { Mapper } from '@/src/core/domain/contracts/mappers';
 import { QuestionSession } from '@/src/core/domain/entities';
-import type { PrismaQuestionSessionWithTopicAndSubject } from '@/src/core/infrastructure/databases/prisma/contracts/includes';
+import type { PrismaQuestionSessionExtended } from '@/src/core/infrastructure/databases/prisma/contracts/includes';
 
-export class PrismaQuestionSessionWithTopicAndSubjectDtoMapper implements Mapper<
-  PrismaQuestionSessionWithTopicAndSubject,
-  QuestionSessionWithTopicAndSubjectDto
+export class PrismaQuestionSessionExtendedDtoMapper implements Mapper<
+  PrismaQuestionSessionExtended,
+  QuestionSessionExtendedDto
 > {
   public map(
-    prismaQuestionSession: PrismaQuestionSessionWithTopicAndSubject,
-  ): QuestionSessionWithTopicAndSubjectDto {
+    prismaQuestionSession: PrismaQuestionSessionExtended,
+  ): QuestionSessionExtendedDto {
     const questionSession = QuestionSession.load({
       id: prismaQuestionSession.id,
       authorId: prismaQuestionSession.authorId,
@@ -41,7 +41,7 @@ export class PrismaQuestionSessionWithTopicAndSubjectDtoMapper implements Mapper
     };
   }
 
-  private mapTopic(topic: PrismaQuestionSessionWithTopicAndSubject['topic']) {
+  private mapTopic(topic: PrismaQuestionSessionExtended['topic']) {
     return {
       id: topic.id,
       title: topic.title,
@@ -53,7 +53,7 @@ export class PrismaQuestionSessionWithTopicAndSubjectDtoMapper implements Mapper
   }
 
   private mapSubject(
-    subject: PrismaQuestionSessionWithTopicAndSubject['topic']['subject'],
+    subject: PrismaQuestionSessionExtended['topic']['subject'],
   ) {
     return {
       id: subject.id,
