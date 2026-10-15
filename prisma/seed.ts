@@ -292,6 +292,8 @@ async function main() {
     KnowledgeArea.MATHEMATICS,
   ];
 
+  const QUESTIONS_PER_AREA = 45;
+
   for (let i = 0; i < allUsers.length; i++) {
     const user = allUsers[i];
     const mockExam = await prisma.mockExam.create({
@@ -301,16 +303,31 @@ async function main() {
       },
     });
 
-    for (const area of areas) {
+    for (const [areaIndex, area] of areas.entries()) {
+      const seed = i + areaIndex;
+
+      // between 25 and 40 correct answers, while always leaving 5 to 20 incorrect answers
+      const correctCount = 25 + (seed % 16);
+      const totalErrors = QUESTIONS_PER_AREA - correctCount;
+
+      // distributes the errors without ever exceeding the total
+      const doubtErrors = Math.floor(totalErrors * 0.5);
+      const distractionErrors = Math.floor(totalErrors * 0.3);
+      const interpretationErrors =
+        totalErrors - doubtErrors - distractionErrors;
+
+      // certainty is never greater than the number of correct answers
+      const certaintyCount = Math.min(correctCount, 20 + (seed % 10));
+
       await prisma.areaPerformance.create({
         data: {
           mockExamId: mockExam.id,
           area,
-          correctCount: 30 + (i % 16),
-          certaintyCount: 20 + (i % 10),
-          doubtErrors: 4 + (i % 4),
-          distractionErrors: 2 + (i % 3),
-          interpretationErrors: 1 + (i % 2),
+          correctCount,
+          certaintyCount,
+          doubtErrors,
+          distractionErrors,
+          interpretationErrors,
         },
       });
     }
