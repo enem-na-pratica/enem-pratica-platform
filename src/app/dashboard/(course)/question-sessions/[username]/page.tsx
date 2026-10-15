@@ -10,9 +10,9 @@ import {
   SessionToggleButton,
 } from '../_components/_form';
 import {
+  fetchListQuestionSessionsByAuthor,
   fetchListSubjects,
   fetchQuestionSessionStatsByAuthor,
-  fetchUserQuestionSessionStats,
 } from '../api';
 
 const FORBIDDEN = 403;
@@ -57,14 +57,14 @@ export default async function QuestionSessionPage({ params }: PageProps) {
 
 async function fetchPageData(username: string) {
   try {
-    const [statsResult, subjects, stats] = await Promise.all([
-      fetchUserQuestionSessionStats(username),
+    const [questionSessions, subjects, stats] = await Promise.all([
+      fetchListQuestionSessionsByAuthor(username),
       fetchListSubjects(),
       fetchQuestionSessionStatsByAuthor(username),
     ]);
     return {
       stats,
-      questionSessions: statsResult.questionSessions,
+      questionSessions: questionSessions,
       subjects,
     };
   } catch (error) {

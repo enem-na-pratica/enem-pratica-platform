@@ -29,7 +29,7 @@ export type QuestionSessionDto = {
   updatedAt: string;
 };
 
-export type QuestionSessionWithTopicAndSubjectDto = DeepPrettify<
+export type QuestionSessionExtendedDto = DeepPrettify<
   QuestionSessionDto & {
     topic: TopicDto & {
       subject: SubjectDto;
@@ -48,9 +48,4 @@ export type QuestionSessionStatsDto = {
   };
   studyStreak: number;
   pendingReviewsCount: number;
-};
-
-export type UserQuestionSessionsOverviewDto = {
-  statistics: QuestionSessionStatsDto;
-  questionSessions: QuestionSessionWithTopicAndSubjectDto[];
 };

@@ -1,11 +1,11 @@
-import type { QuestionSessionWithTopicAndSubject } from '@/src/web/api';
+import type { QuestionSessionExtended } from '@/src/web/api';
 
 import { QuestionSessionItem } from './_session/question-session-item';
 
 export function QuestionSessionListSection({
   questionSessions,
 }: {
-  questionSessions: QuestionSessionWithTopicAndSubject[];
+  questionSessions: QuestionSessionExtended[];
 }) {
   return (
     <section className="grid grid-cols-1 gap-4">

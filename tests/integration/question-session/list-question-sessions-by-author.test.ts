@@ -1,9 +1,9 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 
-import type { UserQuestionSessionsOverviewDto } from '@/src/core/application/use-cases/question-session/list-user-question-session-statistics';
+import type { QuestionSessionExtendedDto } from '@/src/core/application/use-cases/question-session';
 import { ROLES, type Role } from '@/src/core/domain/auth';
 import { prisma } from '@/src/core/infrastructure/databases/prisma/prisma';
-import { makeListUserQuestionSessionsStatistics } from '@/src/core/main/factories/question-session/make-list-user-question-sessions-statistics.factory';
+import { makeListQuestionSessionsByAuthor } from '@/src/core/main/factories/question-session';
 import type { AuthenticatedRequest } from '@/src/core/presentation/protocols';
 
 const DUMMY_PASSWORD_HASH = 'irrelevant-hash-for-this-suite';
@@ -24,22 +24,16 @@ const ALL_TEST_USERNAMES = [
   ADMIN_USERNAME,
 ];
 
-const DAY_MS = 24 * 60 * 60 * 1000;
-
 type TestUser = { id: string; username: string; role: Role };
 
 function makeSut() {
-  return makeListUserQuestionSessionsStatistics();
+  return makeListQuestionSessionsByAuthor();
 }
 
 function startOfToday(): Date {
   const now = new Date();
   now.setHours(0, 0, 0, 0);
   return now;
-}
-
-function daysBefore(reference: Date, days: number): Date {
-  return new Date(reference.getTime() - days * DAY_MS);
 }
 
 async function createUser(data: {
@@ -163,9 +157,9 @@ afterAll(async () => {
   await prisma.$disconnect();
 });
 
-describe('ListUserQuestionSessionsStatisticsController (integration)', () => {
+describe('ListQuestionSessionsByAuthorController (integration)', () => {
   describe('GET /api/question-sessions/users/:username — success cases', () => {
-    it('should return statistics for the requester when username is "me" or matches the requester username', async () => {
+    it('should return question sessions for the requester when username is "me" or matches the requester username', async () => {
       const student = await createUser({
         username: STUDENT_USERNAME,
         role: ROLES.STUDENT,
@@ -188,9 +182,8 @@ describe('ListUserQuestionSessionsStatisticsController (integration)', () => {
 
       expect(resMe.statusCode).toBe(200);
       expect(resUsername.statusCode).toBe(200);
-      expect(
-        (resMe.body as UserQuestionSessionsOverviewDto).questionSessions,
-      ).toHaveLength(1);
+      expect(resMe.body).toHaveLength(1);
+      expect(resUsername.body).toHaveLength(1);
     });
 
     it('should allow authorized users (ADMIN and assigned TEACHER) to view student statistics', async () => {
@@ -228,7 +221,7 @@ describe('ListUserQuestionSessionsStatisticsController (integration)', () => {
       expect(teacherRes.statusCode).toBe(200);
     });
 
-    it('should return zeroed statistics and empty sessions list when user has no sessions', async () => {
+    it('should return empty sessions list when user has no sessions', async () => {
       const student = await createUser({
         username: STUDENT_USERNAME,
         role: ROLES.STUDENT,
@@ -240,152 +233,7 @@ describe('ListUserQuestionSessionsStatisticsController (integration)', () => {
       );
 
       expect(response.statusCode).toBe(200);
-      const body = response.body as UserQuestionSessionsOverviewDto;
-      expect(body.questionSessions).toHaveLength(0);
-      expect(body.statistics).toEqual({
-        totalSessions: 0,
-        totalQuestions: 0,
-        totalCorrect: 0,
-        overallAccuracy: 0,
-        weeklyProgress: { totalQuestions: 0, accuracy: 0 },
-        studyStreak: 0,
-        pendingReviewsCount: 0,
-      });
-    });
-
-    it('should aggregate total statistics correctly for the target user', async () => {
-      const student = await createUser({
-        username: STUDENT_USERNAME,
-        role: ROLES.STUDENT,
-      });
-      const otherStudent = await createUser({
-        username: STUDENT2_USERNAME,
-        role: ROLES.STUDENT,
-      });
-      const today = startOfToday();
-
-      await createQuestionSession({
-        authorId: student.id,
-        topicId,
-        total: 10,
-        correct: 8,
-        date: today,
-      });
-      await createQuestionSession({
-        authorId: student.id,
-        topicId,
-        total: 5,
-        correct: 3,
-        date: today,
-      });
-      await createQuestionSession({
-        authorId: otherStudent.id,
-        topicId,
-        total: 10,
-        correct: 10,
-      });
-
-      const controller = makeSut();
-      const response = await controller.handle(
-        makeRequest({ requester: student, username: 'me' }),
-      );
-
-      expect(response.statusCode).toBe(200);
-      const body = response.body as UserQuestionSessionsOverviewDto;
-
-      expect(body.statistics.totalSessions).toBe(2);
-      expect(body.statistics.totalQuestions).toBe(15);
-      expect(body.statistics.totalCorrect).toBe(11);
-      expect(body.statistics.overallAccuracy).toBeCloseTo(11 / 15, 10);
-    });
-
-    it('should calculate weekly progress and study streak based on session dates', async () => {
-      const student = await createUser({
-        username: STUDENT_USERNAME,
-        role: ROLES.STUDENT,
-      });
-      const today = startOfToday();
-
-      // Sessions in consecutive days (today and yesterday) -> streak 2
-      await createQuestionSession({
-        authorId: student.id,
-        topicId,
-        total: 10,
-        correct: 5,
-        date: today,
-      });
-      await createQuestionSession({
-        authorId: student.id,
-        topicId,
-        total: 10,
-        correct: 5,
-        date: daysBefore(today, 1),
-      });
-      // Session outside the 7-day window (10 days ago)
-      await createQuestionSession({
-        authorId: student.id,
-        topicId,
-        total: 20,
-        correct: 20,
-        date: daysBefore(today, 10),
-      });
-
-      const controller = makeSut();
-      const response = await controller.handle(
-        makeRequest({ requester: student, username: 'me' }),
-      );
-
-      expect(response.statusCode).toBe(200);
-      const body = response.body as UserQuestionSessionsOverviewDto;
-
-      expect(body.statistics.studyStreak).toBe(2);
-      expect(body.statistics.weeklyProgress.totalQuestions).toBe(20);
-      expect(body.statistics.weeklyProgress.accuracy).toBeCloseTo(10 / 20, 10);
-    });
-
-    it('should count pending reviews correctly', async () => {
-      const student = await createUser({
-        username: STUDENT_USERNAME,
-        role: ROLES.STUDENT,
-      });
-      const today = startOfToday();
-
-      // Overdue service (poor performance 10 days ago)
-      await createQuestionSession({
-        authorId: student.id,
-        topicId,
-        total: 10,
-        correct: 5,
-        isReviewed: false,
-        date: daysBefore(today, 10),
-      });
-      // Not overdue (from today)
-      await createQuestionSession({
-        authorId: student.id,
-        topicId,
-        total: 10,
-        correct: 5,
-        isReviewed: false,
-        date: today,
-      });
-      // Already reviewed
-      await createQuestionSession({
-        authorId: student.id,
-        topicId,
-        total: 10,
-        correct: 5,
-        isReviewed: true,
-        date: daysBefore(today, 10),
-      });
-
-      const controller = makeSut();
-      const response = await controller.handle(
-        makeRequest({ requester: student, username: 'me' }),
-      );
-
-      expect(response.statusCode).toBe(200);
-      const body = response.body as UserQuestionSessionsOverviewDto;
-      expect(body.statistics.pendingReviewsCount).toBe(1);
+      expect(response.body).toHaveLength(0);
     });
 
     it('should order sessions by pending review date ascending first, then reviewed sessions by updatedAt descending', async () => {
@@ -436,8 +284,8 @@ describe('ListUserQuestionSessionsStatisticsController (integration)', () => {
       );
 
       expect(response.statusCode).toBe(200);
-      const body = response.body as UserQuestionSessionsOverviewDto;
-      const orderedIds = body.questionSessions.map((s) => s.id);
+      const body = response.body as QuestionSessionExtendedDto[];
+      const orderedIds = body.map((s) => s.id);
 
       expect(orderedIds).toEqual([
         sessionNearReview.id,
@@ -481,7 +329,7 @@ describe('ListUserQuestionSessionsStatisticsController (integration)', () => {
       expect(response.statusCode).toBe(404);
     });
 
-    it('should return 403 when a STUDENT tries to view another user statistics', async () => {
+    it('should return 403 when a STUDENT tries to view another user question sessions', async () => {
       const student1 = await createUser({
         username: STUDENT_USERNAME,
         role: ROLES.STUDENT,
@@ -496,7 +344,7 @@ describe('ListUserQuestionSessionsStatisticsController (integration)', () => {
       expect(response.statusCode).toBe(403);
     });
 
-    it('should return 403 when a TEACHER tries to view an unassigned STUDENT statistics', async () => {
+    it('should return 403 when a TEACHER tries to view an unassigned STUDENT question sessions', async () => {
       const teacher = await createUser({
         username: TEACHER_USERNAME,
         role: ROLES.TEACHER,
@@ -511,7 +359,7 @@ describe('ListUserQuestionSessionsStatisticsController (integration)', () => {
       expect(response.statusCode).toBe(403);
     });
 
-    it('should return 403 when a TEACHER tries to view another TEACHER statistics', async () => {
+    it('should return 403 when a TEACHER tries to view another TEACHER question sessions', async () => {
       const teacher = await createUser({
         username: TEACHER_USERNAME,
         role: ROLES.TEACHER,

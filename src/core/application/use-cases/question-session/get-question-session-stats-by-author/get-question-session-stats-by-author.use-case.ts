@@ -1,9 +1,11 @@
 import type { UseCase } from '@/src/core/application/common/interfaces';
-import type { QuestionSessionStatisticsDto } from '@/src/core/application/use-cases/question-session/list-user-question-session-statistics';
 import type { Requester, UserAccessService } from '@/src/core/domain/services';
 
 import type { GetQuestionSessionRawAggregateQuery } from './get-question-session-raw-aggregate.query';
-import { QuestionSessionDailyAggregate } from './question-session-stats.dto';
+import {
+  QuestionSessionDailyAggregate,
+  QuestionSessionStatsDto,
+} from './question-session-stats.dto';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const SEVEN_DAYS_MS = 7 * DAY_MS;
@@ -20,7 +22,7 @@ export type GetQuestionSessionStatsByAuthorInput = {
 
 export class GetQuestionSessionStatsByAuthorUseCase implements UseCase<
   GetQuestionSessionStatsByAuthorInput,
-  QuestionSessionStatisticsDto
+  QuestionSessionStatsDto
 > {
   private readonly userAccessService: UserAccessService;
   private readonly getQuestionSessionRawAggregateQuery: GetQuestionSessionRawAggregateQuery;
@@ -37,7 +39,7 @@ export class GetQuestionSessionStatsByAuthorUseCase implements UseCase<
   async execute({
     requester,
     authorUsername,
-  }: GetQuestionSessionStatsByAuthorInput): Promise<QuestionSessionStatisticsDto> {
+  }: GetQuestionSessionStatsByAuthorInput): Promise<QuestionSessionStatsDto> {
     const authorId = await this.userAccessService.resolveManagedTargetId({
       requester,
       targetIdentifier: authorUsername,
@@ -52,7 +54,7 @@ export class GetQuestionSessionStatsByAuthorUseCase implements UseCase<
   private calculateStatistics(
     days: QuestionSessionDailyAggregate[],
     unreviewedNextReviewDates: string[],
-  ): QuestionSessionStatisticsDto {
+  ): QuestionSessionStatsDto {
     if (days.length === 0) {
       return this.createEmptyStatistics();
     }
@@ -168,7 +170,7 @@ export class GetQuestionSessionStatsByAuthorUseCase implements UseCase<
     return streak;
   }
 
-  private createEmptyStatistics(): QuestionSessionStatisticsDto {
+  private createEmptyStatistics(): QuestionSessionStatsDto {
     return {
       totalSessions: 0,
       totalQuestions: 0,

@@ -1,9 +1,9 @@
-import type { QuestionSessionWithTopicAndSubject } from '@/src/web/api';
+import type { QuestionSessionExtended } from '@/src/web/api';
 
 import { formatIsoToBrDate } from '../../_utils';
 
 type SessionInfoProps = {
-  session: QuestionSessionWithTopicAndSubject;
+  session: QuestionSessionExtended;
 };
 
 export function SessionInfo({ session }: SessionInfoProps) {

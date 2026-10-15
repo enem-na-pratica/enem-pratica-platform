@@ -7,14 +7,14 @@ import {
   SessionToggleButton,
 } from './_components/_form';
 import {
+  fetchListQuestionSessionsByAuthor,
   fetchListSubjects,
   fetchQuestionSessionStatsByAuthor,
-  fetchUserQuestionSessionStats,
 } from './api';
 
 export default async function QuestionSessionPage() {
-  const [{ questionSessions }, subjects, stats] = await Promise.all([
-    fetchUserQuestionSessionStats(),
+  const [questionSessions, subjects, stats] = await Promise.all([
+    fetchListQuestionSessionsByAuthor(),
     fetchListSubjects(),
     fetchQuestionSessionStatsByAuthor(),
   ]);

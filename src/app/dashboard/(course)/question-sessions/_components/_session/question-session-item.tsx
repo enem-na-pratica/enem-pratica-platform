@@ -1,6 +1,6 @@
 'use client';
 
-import type { QuestionSessionWithTopicAndSubject } from '@/src/web/api';
+import type { QuestionSessionExtended } from '@/src/web/api';
 
 import { useSessionReviewToggle } from '../../_hooks/use-session-review-toggle';
 import { ReviewToggleButton } from './review-toggle-button';
@@ -11,7 +11,7 @@ import { SessionPerformance } from './session-performance';
 export function QuestionSessionItem({
   session,
 }: {
-  session: QuestionSessionWithTopicAndSubject;
+  session: QuestionSessionExtended;
 }) {
   const { isReviewed, isUpdating, handleToggleReview } = useSessionReviewToggle(
     {
