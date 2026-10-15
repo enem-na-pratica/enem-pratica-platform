@@ -1,12 +1,12 @@
 import {
   QuestionSessionDto,
-  QuestionSessionWithTopicAndSubjectDto,
-  UserQuestionSessionsOverviewDto,
+  QuestionSessionExtendedDto,
+  QuestionSessionStatsDto,
 } from './question-session.dto';
 import {
   QuestionSession,
-  QuestionSessionWithTopicAndSubject,
-  UserQuestionSessionsOverview,
+  QuestionSessionExtended,
+  QuestionSessionStats,
 } from './question-session.model';
 
 export const QuestionSessionMapper = {
@@ -20,9 +20,9 @@ export const QuestionSessionMapper = {
     };
   },
 
-  mapQuestionSessionDtoToModel(
-    dto: QuestionSessionWithTopicAndSubjectDto,
-  ): QuestionSessionWithTopicAndSubject {
+  toExtendedModel(
+    dto: QuestionSessionExtendedDto,
+  ): QuestionSessionExtended {
     return {
       ...QuestionSessionMapper.toModel(dto),
       topic: {
@@ -36,14 +36,12 @@ export const QuestionSessionMapper = {
     };
   },
 
-  toOverviewModel(
-    dto: UserQuestionSessionsOverviewDto,
-  ): UserQuestionSessionsOverview {
+  toStats(dto: QuestionSessionStatsDto): QuestionSessionStats {
     return {
       ...dto,
-      questionSessions: dto.questionSessions.map((s) =>
-        this.mapQuestionSessionDtoToModel(s),
-      ),
+      weeklyProgress: {
+        ...dto.weeklyProgress,
+      },
     };
   },
 };

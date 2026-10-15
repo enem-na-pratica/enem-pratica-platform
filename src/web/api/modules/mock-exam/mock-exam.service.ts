@@ -1,11 +1,11 @@
 import type { HttpClient } from '@/src/web/api/shared';
 
-import type { MockExamDto, UserMockExamsOverviewDto } from './mock-exam.dto';
+import type { MockExamDto, MockExamStatsDto } from './mock-exam.dto';
 import { MockExamMapper } from './mock-exam.mapper';
 import type {
   KnowledgeAreaLabelKey,
   MockExam,
-  UserMockExamsOverview,
+  MockExamStats,
 } from './mock-exam.model';
 
 type MockExamServiceDeps = {
@@ -48,14 +48,21 @@ export class MockExamService {
     return MockExamMapper.toModel(data);
   }
 
-  async listMockExamsStatisticsForUser(
-    username: string,
-  ): Promise<UserMockExamsOverview> {
-    const data = await this.httpClient.get<UserMockExamsOverviewDto>({
+  async getMockExamStatsByAuthor(username: string): Promise<MockExamStats> {
+    const stats = await this.httpClient.get<MockExamStatsDto>({
+      endpoint: '/mock-exams/users/:username/stats',
+      options: { params: { username } },
+    });
+
+    return MockExamMapper.toStats(stats);
+  }
+
+  async listMockExamsByAuthor(username: string): Promise<MockExam[]> {
+    const mockExams = await this.httpClient.get<MockExamDto[]>({
       endpoint: '/mock-exams/users/:username',
       options: { params: { username } },
     });
 
-    return MockExamMapper.toOverviewModel(data);
+    return mockExams.map((essay) => MockExamMapper.toModel(essay));
   }
 }

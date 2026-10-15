@@ -1,9 +1,9 @@
-import type { EssayStatistics } from '@/src/web/api';
+import type { EssayStats } from '@/src/web/api';
 
 import { StatsAverageHeroCard } from './stats-average-hero-card';
 import { StatsCompetencyCard } from './stats-competency-card';
 
-export function StatsSection({ statistics }: { statistics: EssayStatistics }) {
+export function StatsSection({ statistics }: { statistics: EssayStats }) {
   return (
     <section className="animate-in fade-in slide-in-from-bottom-4 grid grid-cols-1 gap-4 duration-500 md:grid-cols-2 lg:grid-cols-4">
       <StatsAverageHeroCard

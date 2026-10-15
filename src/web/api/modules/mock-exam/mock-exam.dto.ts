@@ -1,3 +1,9 @@
+type KnowledgeAreaLabelKey =
+  | 'languages'
+  | 'humanities'
+  | 'naturalSciences'
+  | 'mathematics';
+
 export type AreaPerformanceDto = {
   id: string;
   area: string;
@@ -23,12 +29,6 @@ export type AreaPerformanceDto = {
   };
 };
 
-type KnowledgeAreaLabelKey =
-  | 'languages'
-  | 'humanities'
-  | 'naturalSciences'
-  | 'mathematics';
-
 export type MockExamDto = {
   id: string;
   authorId: string;
@@ -43,21 +43,13 @@ type AreaSummaryDto = {
   totalCriticalErrors: number;
 };
 
-type MockExamStatisticsDto = {
+export type MockExamStatsDto = {
   totalMockExams: number;
-
   globalAveragePerformance: number;
-
   performancePerArea: Record<KnowledgeAreaLabelKey, AreaSummaryDto>;
-
   errorPrevalence: {
     distractionAverage: number;
     interpretationAverage: number;
     knowledgeGapAverage: number;
   };
-};
-
-export type UserMockExamsOverviewDto = {
-  statistics: MockExamStatisticsDto;
-  mockExams: MockExamDto[];
 };

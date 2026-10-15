@@ -4,7 +4,7 @@ import type {
 } from '@/src/core/application/use-cases/subject';
 import type { Mapper } from '@/src/core/domain/contracts';
 import { TopicStatus } from '@/src/core/domain/entities';
-import type { PrismaTopicWithProgress } from '@/src/core/infrastructure/databases/prisma/types';
+import type { PrismaTopicWithProgress } from '@/src/core/infrastructure/databases/prisma/contracts/includes';
 import type { PrismaClient } from '@/src/generated/prisma/client';
 
 type PrismaListSubjectProgressByTargetUserQueryDeps = {

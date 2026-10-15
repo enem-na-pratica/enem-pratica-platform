@@ -3,13 +3,13 @@ import type { KnowledgeArea } from '@/src/web/config';
 import type {
   AreaPerformanceDto,
   MockExamDto,
-  UserMockExamsOverviewDto,
+  MockExamStatsDto,
 } from './mock-exam.dto';
 import type {
   AreaPerformance,
   KnowledgeAreaLabelKey,
   MockExam,
-  UserMockExamsOverview,
+  MockExamStats,
 } from './mock-exam.model';
 
 export const MockExamMapper = {
@@ -35,10 +35,11 @@ export const MockExamMapper = {
     };
   },
 
-  toOverviewModel(dto: UserMockExamsOverviewDto): UserMockExamsOverview {
+  toStats(dto: MockExamStatsDto): MockExamStats {
     return {
       ...dto,
-      mockExams: dto.mockExams.map((exam) => this.toModel(exam)),
+      performancePerArea: { ...dto.performancePerArea },
+      errorPrevalence: { ...dto.errorPrevalence },
     };
   },
 };

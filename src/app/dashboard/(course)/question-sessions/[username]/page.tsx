@@ -9,7 +9,11 @@ import {
   QuestionSessionToggleProvider,
   SessionToggleButton,
 } from '../_components/_form';
-import { fetchListSubjects, fetchUserQuestionSessionStats } from '../api';
+import {
+  fetchListQuestionSessionsByAuthor,
+  fetchListSubjects,
+  fetchQuestionSessionStatsByAuthor,
+} from '../api';
 
 const FORBIDDEN = 403;
 const NOT_FOUND = 404;
@@ -20,7 +24,7 @@ type PageProps = {
 
 export default async function QuestionSessionPage({ params }: PageProps) {
   const resolvedParams = await params;
-  const { statistics, questionSessions, subjects } = await fetchPageData(
+  const { stats, questionSessions, subjects } = await fetchPageData(
     resolvedParams.username,
   );
 
@@ -29,9 +33,7 @@ export default async function QuestionSessionPage({ params }: PageProps) {
       <QuestionSessionHeader username={resolvedParams.username} />
 
       <main className="mx-auto w-full max-w-6xl space-y-8 px-4 py-8">
-        {questionSessions.length > 0 && (
-          <StatsSection statistics={statistics} />
-        )}
+        {questionSessions.length > 0 && <StatsSection statistics={stats} />}
 
         <hr className="border-(--foreground)/10" />
 
@@ -55,13 +57,14 @@ export default async function QuestionSessionPage({ params }: PageProps) {
 
 async function fetchPageData(username: string) {
   try {
-    const [statsResult, subjects] = await Promise.all([
-      fetchUserQuestionSessionStats(username),
+    const [questionSessions, subjects, stats] = await Promise.all([
+      fetchListQuestionSessionsByAuthor(username),
       fetchListSubjects(),
+      fetchQuestionSessionStatsByAuthor(username),
     ]);
     return {
-      statistics: statsResult.statistics,
-      questionSessions: statsResult.questionSessions,
+      stats,
+      questionSessions: questionSessions,
       subjects,
     };
   } catch (error) {

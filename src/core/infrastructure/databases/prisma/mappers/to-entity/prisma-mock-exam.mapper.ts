@@ -4,7 +4,7 @@ import {
   type KnowledgeAreaLabelKey,
   MockExam,
 } from '@/src/core/domain/entities';
-import type { PrismaMockExamFull } from '@/src/core/infrastructure/databases/prisma/types';
+import type { PrismaMockExamFull } from '@/src/core/infrastructure/databases/prisma/contracts/includes';
 
 export class MockExamEntityMapper implements Mapper<
   PrismaMockExamFull,

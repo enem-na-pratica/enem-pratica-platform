@@ -15,7 +15,7 @@ export type QuestionSession = {
   updatedAt: Date;
 };
 
-export type QuestionSessionWithTopicAndSubject = DeepPrettify<
+export type QuestionSessionExtended = DeepPrettify<
   QuestionSession & {
     topic: Topic & {
       subject: Subject;
@@ -23,7 +23,7 @@ export type QuestionSessionWithTopicAndSubject = DeepPrettify<
   }
 >;
 
-export type QuestionSessionStatistics = {
+export type QuestionSessionStats = {
   totalSessions: number;
   totalQuestions: number;
   totalCorrect: number;
@@ -34,9 +34,4 @@ export type QuestionSessionStatistics = {
   };
   studyStreak: number;
   pendingReviewsCount: number;
-};
-
-export type UserQuestionSessionsOverview = {
-  statistics: QuestionSessionStatistics;
-  questionSessions: QuestionSessionWithTopicAndSubject[];
 };

@@ -2,12 +2,14 @@ import { HttpClient } from '@/src/web/api/shared';
 
 import {
   QuestionSessionDto,
-  UserQuestionSessionsOverviewDto,
+  QuestionSessionExtendedDto,
+  QuestionSessionStatsDto,
 } from './question-session.dto';
 import { QuestionSessionMapper } from './question-session.mapper';
 import {
   QuestionSession,
-  UserQuestionSessionsOverview,
+  QuestionSessionExtended,
+  QuestionSessionStats,
 } from './question-session.model';
 
 type QuestionSessionServiceDeps = {
@@ -61,14 +63,29 @@ export class QuestionSessionService {
     return QuestionSessionMapper.toModel(data);
   }
 
-  async listQuestionSessionsStatisticsForUser(
+  async getQuestionSessionStatsByAuthor(
     username: string,
-  ): Promise<UserQuestionSessionsOverview> {
-    const data = await this.httpClient.get<UserQuestionSessionsOverviewDto>({
+  ): Promise<QuestionSessionStats> {
+    const stats = await this.httpClient.get<QuestionSessionStatsDto>({
+      endpoint: '/question-sessions/users/:username/stats',
+      options: { params: { username } },
+    });
+
+    return QuestionSessionMapper.toStats(stats);
+  }
+
+  async listQuestionSessionsByAuthor(
+    username: string,
+  ): Promise<QuestionSessionExtended[]> {
+    const questionSessions = await this.httpClient.get<
+      QuestionSessionExtendedDto[]
+    >({
       endpoint: '/question-sessions/users/:username',
       options: { params: { username } },
     });
 
-    return QuestionSessionMapper.toOverviewModel(data);
+    return questionSessions.map((questionSession) =>
+      QuestionSessionMapper.toExtendedModel(questionSession),
+    );
   }
 }

@@ -5,7 +5,7 @@ import { UserNotFoundError } from '@/src/core/domain/errors';
 import {
   type PrismaUserPublic,
   userPublicSelect,
-} from '@/src/core/infrastructure/databases/prisma/selects';
+} from '@/src/core/infrastructure/databases/prisma/contracts/selects';
 import type { PrismaClient } from '@/src/generated/prisma/client';
 
 type PrismaListStudentsByInstructorQueryDeps = {

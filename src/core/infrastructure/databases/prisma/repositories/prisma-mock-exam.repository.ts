@@ -1,7 +1,7 @@
 import type { Mapper } from '@/src/core/domain/contracts/mappers';
 import type { MockExamRepository } from '@/src/core/domain/contracts/repositories';
 import type { MockExam } from '@/src/core/domain/entities';
-import type { PrismaMockExamFull } from '@/src/core/infrastructure/databases/prisma/types';
+import type { PrismaMockExamFull } from '@/src/core/infrastructure/databases/prisma/contracts/includes';
 import type { PrismaClient } from '@/src/generated/prisma/client';
 
 type PrismaMockExamRepositoryDeps = {
