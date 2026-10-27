@@ -386,6 +386,30 @@ describe('ListEssaysController (integration)', () => {
       expect(body.data[0].authorId).toBe(student.id);
       expect(body.data[0].theme).toBe('Redação do Aluno');
     });
+
+    it('should allow an admin to list the essays of any student without an explicit link', async () => {
+      const admin = await createUser({
+        name: 'Admin Teste',
+        username: TEST_ADMIN_USERNAME,
+        role: ROLES.ADMIN,
+      });
+      const student = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      await createEssay(student.id, { theme: 'Redação do Aluno' });
+
+      const response = await makeSut().handle(
+        makeRequest({ requester: admin, username: TEST_STUDENT_USERNAME }),
+      );
+
+      expect(response.statusCode).toBe(200);
+
+      const body = response.body as EssayPaginatedResponse;
+      expect(body.data).toHaveLength(1);
+      expect(body.data[0].authorId).toBe(student.id);
+    });
   });
 
   describe('GET /api/essays/users/:username — error cases', () => {});
