@@ -341,7 +341,7 @@ describe('ListEssaysController (integration)', () => {
         createdAt: localDate(12),
       });
 
-      // 6:00 PM on the 10th to 6:00 AM on the 11th: the use case should expand to cover the entire day
+      // 18:00 on the 10th to 06:00 on the 11th: the use case should expand to cover the entire day
       const response = await makeSut().handle(
         makeRequest({
           requester: student,
