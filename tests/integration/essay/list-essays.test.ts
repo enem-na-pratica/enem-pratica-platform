@@ -486,5 +486,26 @@ describe('ListEssaysController (integration)', () => {
       expect(response.statusCode).toBe(404);
       expect((response.body as ErrorResponse).message).toContain('not found');
     });
+
+    it("should return 403 when a student tries to list another student's essays", async () => {
+      const student = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      const otherStudent = await createUser({
+        name: 'Outro Aluno',
+        username: TEST_STUDENT2_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      await createEssay(otherStudent.id, { theme: 'Tema Privado' });
+
+      const response = await makeSut().handle(
+        makeRequest({ requester: student, username: TEST_STUDENT2_USERNAME }),
+      );
+
+      expect(response.statusCode).toBe(403);
+      expect(response.body).not.toHaveProperty('data');
+    });
   });
 });
