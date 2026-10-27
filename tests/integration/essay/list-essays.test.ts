@@ -412,5 +412,27 @@ describe('ListEssaysController (integration)', () => {
     });
   });
 
-  describe('GET /api/essays/users/:username — error cases', () => {});
+  describe('GET /api/essays/users/:username — error cases', () => {
+    it('should return 400 with details for every invalid query field at once', async () => {
+      const student = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+
+      const response = await makeSut().handle(
+        makeRequest({
+          requester: student,
+          query: { page: 'abc', limit: '101', sortBy: 'invalido', theme: 'ab' },
+        }),
+      );
+
+      expect(response.statusCode).toBe(400);
+
+      const body = response.body as ValidationErrorBody;
+      expect(Object.keys(body.details ?? {})).toEqual(
+        expect.arrayContaining(['page', 'limit', 'sortBy', 'theme']),
+      );
+    });
+  });
 });
