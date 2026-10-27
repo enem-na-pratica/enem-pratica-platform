@@ -191,6 +191,40 @@ describe('ListEssaysController (integration)', () => {
         createdAt: essay.createdAt.toISOString(),
       });
     });
+
+    it('should sort by createdAt descending by default', async () => {
+      const student = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+
+      await createEssay(student.id, {
+        theme: 'Mais Antiga',
+        createdAt: localDate(1),
+      });
+      await createEssay(student.id, {
+        theme: 'Mais Recente',
+        createdAt: localDate(3),
+      });
+      await createEssay(student.id, {
+        theme: 'Intermediaria',
+        createdAt: localDate(2),
+      });
+
+      const response = await makeSut().handle(
+        makeRequest({ requester: student }),
+      );
+
+      expect(response.statusCode).toBe(200);
+
+      const body = response.body as EssayPaginatedResponse;
+      expect(body.data.map((e) => e.theme)).toEqual([
+        'Mais Recente',
+        'Intermediaria',
+        'Mais Antiga',
+      ]);
+    });
   });
 
   describe('GET /api/essays/users/:username — error cases', () => {});
