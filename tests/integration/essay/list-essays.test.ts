@@ -291,6 +291,31 @@ describe('ListEssaysController (integration)', () => {
       expect(lastBody.meta.hasNextPage).toBe(false);
       expect(lastBody.meta.hasPreviousPage).toBe(true);
     });
+
+    it('should filter by theme using a case-insensitive partial match', async () => {
+      const student = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+
+      await createEssay(student.id, { theme: 'Desafios da Educação Publica' });
+      await createEssay(student.id, { theme: 'Educação Digital' });
+      await createEssay(student.id, { theme: 'Meio Ambiente' });
+
+      const response = await makeSut().handle(
+        makeRequest({ requester: student, query: { theme: 'educação' } }),
+      );
+
+      expect(response.statusCode).toBe(200);
+
+      const body = response.body as EssayPaginatedResponse;
+      expect(body.meta.totalItems).toBe(2);
+      expect(body.data.map((e) => e.theme).sort()).toEqual([
+        'Desafios da Educação Publica',
+        'Educação Digital',
+      ]);
+    });
   });
 
   describe('GET /api/essays/users/:username — error cases', () => {});
