@@ -249,6 +249,48 @@ describe('ListEssaysController (integration)', () => {
       const body = response.body as EssayPaginatedResponse;
       expect(body.data.map((e) => e.theme)).toEqual(['Alpha', 'Beta', 'Gamma']);
     });
+
+    it('should paginate results and compute meta correctly across pages', async () => {
+      const student = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+
+      for (let day = 1; day <= 5; day++) {
+        await createEssay(student.id, {
+          theme: `Tema ${day}`,
+          createdAt: localDate(day),
+        });
+      }
+
+      const sut = makeSut();
+
+      const middlePage = await sut.handle(
+        makeRequest({ requester: student, query: { page: '2', limit: '2' } }),
+      );
+      const lastPage = await sut.handle(
+        makeRequest({ requester: student, query: { page: '3', limit: '2' } }),
+      );
+
+      expect(middlePage.statusCode).toBe(200);
+      const middleBody = middlePage.body as EssayPaginatedResponse;
+      expect(middleBody.data.map((e) => e.theme)).toEqual(['Tema 3', 'Tema 2']);
+      expect(middleBody.meta).toEqual({
+        page: 2,
+        limit: 2,
+        totalItems: 5,
+        totalPages: 3,
+        hasNextPage: true,
+        hasPreviousPage: true,
+      });
+
+      expect(lastPage.statusCode).toBe(200);
+      const lastBody = lastPage.body as EssayPaginatedResponse;
+      expect(lastBody.data.map((e) => e.theme)).toEqual(['Tema 1']);
+      expect(lastBody.meta.hasNextPage).toBe(false);
+      expect(lastBody.meta.hasPreviousPage).toBe(true);
+    });
   });
 
   describe('GET /api/essays/users/:username — error cases', () => {});
