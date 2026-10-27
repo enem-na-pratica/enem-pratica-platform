@@ -1,8 +1,8 @@
 import { nextRouteAdapter } from '@/src/core/main/adapters';
 import { EssayFactories } from '@/src/core/main/factories';
 
-const listAuthorEssays = EssayFactories.makeListAuthorEssays();
-export const GET = nextRouteAdapter(listAuthorEssays);
+const listEssays = EssayFactories.makeListEssays();
+export const GET = nextRouteAdapter(listEssays);
 
 const createEssay = EssayFactories.makeCreateEssay();
 export const POST = nextRouteAdapter(createEssay);
