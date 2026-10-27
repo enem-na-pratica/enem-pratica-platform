@@ -457,5 +457,19 @@ describe('ListEssaysController (integration)', () => {
       const body = response.body as ValidationErrorBody;
       expect(body.details).toHaveProperty('startDate');
     });
+
+    it('should return 400 when the username param is invalid', async () => {
+      const student = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+
+      const response = await makeSut().handle(
+        makeRequest({ requester: student, username: '-invalido' }),
+      );
+
+      expect(response.statusCode).toBe(400);
+    });
   });
 });
