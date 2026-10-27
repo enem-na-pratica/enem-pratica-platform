@@ -155,6 +155,42 @@ describe('ListEssaysController (integration)', () => {
         hasPreviousPage: false,
       });
     });
+
+    it("should return only the requester's own essays mapped to the DTO shape when using 'me'", async () => {
+      const student = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      const otherStudent = await createUser({
+        name: 'Outro Aluno',
+        username: TEST_STUDENT2_USERNAME,
+        role: ROLES.STUDENT,
+      });
+
+      const essay = await createEssay(student.id, {
+        theme: 'Tema Próprio',
+        grades: [160, 120, 140, 180, 200],
+      });
+      await createEssay(otherStudent.id, { theme: 'Tema de Outro Aluno' });
+
+      const response = await makeSut().handle(
+        makeRequest({ requester: student }),
+      );
+
+      expect(response.statusCode).toBe(200);
+
+      const body = response.body as EssayPaginatedResponse;
+      expect(body.data).toHaveLength(1);
+      expect(body.meta.totalItems).toBe(1);
+      expect(body.data[0]).toEqual({
+        id: essay.id,
+        authorId: student.id,
+        theme: 'Tema Próprio',
+        grades: { c1: 160, c2: 120, c3: 140, c4: 180, c5: 200, total: 800 },
+        createdAt: essay.createdAt.toISOString(),
+      });
+    });
   });
 
   describe('GET /api/essays/users/:username — error cases', () => {});
