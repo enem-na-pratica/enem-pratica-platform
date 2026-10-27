@@ -30,7 +30,7 @@ type ListEssaysParams = { username: string };
 type ListEssaysControllerDeps = {
   listEssaysUseCase: UseCase<ListEssaysInput, EssayPaginatedResponse>;
   usernameValidator: Validator<string>;
-  essayQueryValidator: Validator<EssayQuery>;
+  listEssaysQueryValidator: Validator<EssayQuery>;
 };
 
 export class ListEssaysController implements Controller<
@@ -44,16 +44,16 @@ export class ListEssaysController implements Controller<
     EssayPaginatedResponse
   >;
   private readonly usernameValidator: Validator<string>;
-  private readonly essayQueryValidator: Validator<EssayQuery>;
+  private readonly listEssaysQueryValidator: Validator<EssayQuery>;
 
   constructor({
     listEssaysUseCase,
     usernameValidator,
-    essayQueryValidator,
+    listEssaysQueryValidator,
   }: ListEssaysControllerDeps) {
     this.listEssaysUseCase = listEssaysUseCase;
     this.usernameValidator = usernameValidator;
-    this.essayQueryValidator = essayQueryValidator;
+    this.listEssaysQueryValidator = listEssaysQueryValidator;
   }
 
   async handle(
@@ -66,7 +66,7 @@ export class ListEssaysController implements Controller<
       );
 
       const { page, limit, sortBy, sortOrder, ...filters } =
-        this.essayQueryValidator.validate(request.query);
+        this.listEssaysQueryValidator.validate(request.query);
 
       const essays = await this.listEssaysUseCase.execute({
         essayPaginationParams: {

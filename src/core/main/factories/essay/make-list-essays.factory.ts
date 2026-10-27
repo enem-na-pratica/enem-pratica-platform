@@ -27,6 +27,6 @@ export function makeListEssays() {
   return new ListEssaysController({
     listEssaysUseCase,
     usernameValidator,
-    essayQueryValidator: listEssaysQueryValidator,
+    listEssaysQueryValidator,
   });
 }
