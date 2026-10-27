@@ -507,5 +507,26 @@ describe('ListEssaysController (integration)', () => {
       expect(response.statusCode).toBe(403);
       expect(response.body).not.toHaveProperty('data');
     });
+
+    it('should return 403 when a teacher tries to list essays of a student not assigned to them', async () => {
+      const teacher = await createUser({
+        name: 'Professor Teste',
+        username: TEST_TEACHER_USERNAME,
+        role: ROLES.TEACHER,
+      });
+      const student = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      await createEssay(student.id, { theme: 'Tema Privado' });
+
+      const response = await makeSut().handle(
+        makeRequest({ requester: teacher, username: TEST_STUDENT_USERNAME }),
+      );
+
+      expect(response.statusCode).toBe(403);
+      expect(response.body).not.toHaveProperty('data');
+    });
   });
 });
