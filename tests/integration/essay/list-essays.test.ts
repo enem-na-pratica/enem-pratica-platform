@@ -130,6 +130,32 @@ afterAll(async () => {
 });
 
 describe('ListEssaysController (integration)', () => {
-  describe('GET /api/essays/users/:username — success cases', () => {});
+  describe('GET /api/essays/users/:username — success cases', () => {
+    it('should return 200 with empty data and zeroed meta when the user has no essays', async () => {
+      const student = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+
+      const response = await makeSut().handle(
+        makeRequest({ requester: student }),
+      );
+
+      expect(response.statusCode).toBe(200);
+
+      const body = response.body as EssayPaginatedResponse;
+      expect(body.data).toEqual([]);
+      expect(body.meta).toEqual({
+        page: 1,
+        limit: 10,
+        totalItems: 0,
+        totalPages: 0,
+        hasNextPage: false,
+        hasPreviousPage: false,
+      });
+    });
+  });
+
   describe('GET /api/essays/users/:username — error cases', () => {});
 });
