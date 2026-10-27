@@ -316,6 +316,50 @@ describe('ListEssaysController (integration)', () => {
         'Educação Digital',
       ]);
     });
+
+    it('should filter by date range including the whole start and end days', async () => {
+      const student = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+
+      await createEssay(student.id, {
+        theme: 'Dia 09',
+        createdAt: localDate(9),
+      });
+      await createEssay(student.id, {
+        theme: 'Dia 10',
+        createdAt: localDate(10),
+      });
+      await createEssay(student.id, {
+        theme: 'Dia 11',
+        createdAt: localDate(11),
+      });
+      await createEssay(student.id, {
+        theme: 'Dia 12',
+        createdAt: localDate(12),
+      });
+
+      // 6:00 PM on the 10th to 6:00 AM on the 11th: the use case should expand to cover the entire day
+      const response = await makeSut().handle(
+        makeRequest({
+          requester: student,
+          query: {
+            startDate: '2024-03-10T18:00:00',
+            endDate: '2024-03-11T06:00:00',
+          },
+        }),
+      );
+
+      expect(response.statusCode).toBe(200);
+
+      const body = response.body as EssayPaginatedResponse;
+      expect(body.data.map((e) => e.theme).sort()).toEqual([
+        'Dia 10',
+        'Dia 11',
+      ]);
+    });
   });
 
   describe('GET /api/essays/users/:username — error cases', () => {});
