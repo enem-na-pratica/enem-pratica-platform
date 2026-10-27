@@ -101,3 +101,35 @@ function makeRequest({
 function localDate(day: number, hour = 12): Date {
   return new Date(2024, 2, day, hour, 0, 0, 0);
 }
+
+beforeAll(async () => {
+  await prisma.$connect();
+  const bcrypt = makeBcryptAdapter();
+  cachedPasswordHash = await bcrypt.hash(TEST_PASSWORD);
+});
+
+afterEach(async () => {
+  await prisma.essay.deleteMany({
+    where: { author: { username: { in: ALL_TEST_USERNAMES } } },
+  });
+  await prisma.studentTeacher.deleteMany({
+    where: {
+      OR: [
+        { student: { username: { in: ALL_TEST_USERNAMES } } },
+        { teacher: { username: { in: ALL_TEST_USERNAMES } } },
+      ],
+    },
+  });
+  await prisma.user.deleteMany({
+    where: { username: { in: ALL_TEST_USERNAMES } },
+  });
+});
+
+afterAll(async () => {
+  await prisma.$disconnect();
+});
+
+describe('ListEssaysController (integration)', () => {
+  describe('GET /api/essays/users/:username — success cases', () => {});
+  describe('GET /api/essays/users/:username — error cases', () => {});
+});
