@@ -434,5 +434,28 @@ describe('ListEssaysController (integration)', () => {
         expect.arrayContaining(['page', 'limit', 'sortBy', 'theme']),
       );
     });
+
+    it('should return 400 when startDate is later than endDate', async () => {
+      const student = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+
+      const response = await makeSut().handle(
+        makeRequest({
+          requester: student,
+          query: {
+            startDate: '2024-03-12T12:00:00',
+            endDate: '2024-03-10T12:00:00',
+          },
+        }),
+      );
+
+      expect(response.statusCode).toBe(400);
+
+      const body = response.body as ValidationErrorBody;
+      expect(body.details).toHaveProperty('startDate');
+    });
   });
 });
