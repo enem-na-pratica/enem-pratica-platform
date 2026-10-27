@@ -360,6 +360,32 @@ describe('ListEssaysController (integration)', () => {
         'Dia 11',
       ]);
     });
+
+    it('should allow a teacher to list the essays of a student assigned to them', async () => {
+      const teacher = await createUser({
+        name: 'Professor Teste',
+        username: TEST_TEACHER_USERNAME,
+        role: ROLES.TEACHER,
+      });
+      const student = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+      await linkStudentToTeacher(student.id, teacher.id);
+      await createEssay(student.id, { theme: 'Redação do Aluno' });
+
+      const response = await makeSut().handle(
+        makeRequest({ requester: teacher, username: TEST_STUDENT_USERNAME }),
+      );
+
+      expect(response.statusCode).toBe(200);
+
+      const body = response.body as EssayPaginatedResponse;
+      expect(body.data).toHaveLength(1);
+      expect(body.data[0].authorId).toBe(student.id);
+      expect(body.data[0].theme).toBe('Redação do Aluno');
+    });
   });
 
   describe('GET /api/essays/users/:username — error cases', () => {});
