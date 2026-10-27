@@ -80,3 +80,24 @@ async function createEssay(
     },
   });
 }
+
+function makeRequest({
+  requester,
+  username = 'me',
+  query = {},
+}: {
+  requester: TestRequester;
+  username?: string;
+  query?: Record<string, string>;
+}): AuthenticatedRequest<void, { username: string }, Record<string, string>> {
+  return {
+    body: undefined,
+    params: { username },
+    query,
+    requester,
+  };
+}
+
+function localDate(day: number, hour = 12): Date {
+  return new Date(2024, 2, day, hour, 0, 0, 0);
+}
