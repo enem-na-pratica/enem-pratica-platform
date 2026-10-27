@@ -471,5 +471,20 @@ describe('ListEssaysController (integration)', () => {
 
       expect(response.statusCode).toBe(400);
     });
+
+    it('should return 404 when the target user does not exist', async () => {
+      const admin = await createUser({
+        name: 'Admin Teste',
+        username: TEST_ADMIN_USERNAME,
+        role: ROLES.ADMIN,
+      });
+
+      const response = await makeSut().handle(
+        makeRequest({ requester: admin, username: 'usuario.inexistente' }),
+      );
+
+      expect(response.statusCode).toBe(404);
+      expect((response.body as ErrorResponse).message).toContain('not found');
+    });
   });
 });
