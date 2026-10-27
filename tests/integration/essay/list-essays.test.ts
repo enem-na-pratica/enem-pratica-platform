@@ -225,6 +225,30 @@ describe('ListEssaysController (integration)', () => {
         'Mais Antiga',
       ]);
     });
+
+    it('should sort by theme ascending when requested', async () => {
+      const student = await createUser({
+        name: 'Aluno Teste',
+        username: TEST_STUDENT_USERNAME,
+        role: ROLES.STUDENT,
+      });
+
+      await createEssay(student.id, { theme: 'Gamma' });
+      await createEssay(student.id, { theme: 'Alpha' });
+      await createEssay(student.id, { theme: 'Beta' });
+
+      const response = await makeSut().handle(
+        makeRequest({
+          requester: student,
+          query: { sortBy: 'theme', sortOrder: 'asc' },
+        }),
+      );
+
+      expect(response.statusCode).toBe(200);
+
+      const body = response.body as EssayPaginatedResponse;
+      expect(body.data.map((e) => e.theme)).toEqual(['Alpha', 'Beta', 'Gamma']);
+    });
   });
 
   describe('GET /api/essays/users/:username — error cases', () => {});
