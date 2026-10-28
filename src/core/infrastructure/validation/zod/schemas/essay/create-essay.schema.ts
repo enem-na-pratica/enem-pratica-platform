@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { usernameSchema } from './common';
+import { usernameSchema } from '../common';
 
 const THEME_CONFIG = {
   MIN: 5,
